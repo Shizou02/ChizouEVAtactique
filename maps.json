@@ -1,0 +1,10 @@
+[
+  { "id": "artefact", "name": "Artefact", "file": "maps/Artefact.png" },
+  { "id": "atlantis", "name": "Atlantis", "file": "maps/Atlantis.png" },
+  { "id": "cliff", "name": "Cliff", "file": "maps/Cliff.png" },
+  { "id": "engine", "name": "Engine", "file": "maps/Engine.png" },
+  { "id": "helios_station", "name": "Helios Station", "file": "maps/Helios_Station.png" },
+  { "id": "horizon", "name": "Horizon", "file": "maps/Horizon.png" },
+  { "id": "outlaw", "name": "Outlaw", "file": "maps/Outlaw.png" },
+  { "id": "silva", "name": "Silva", "file": "maps/Silva.png" }
+]

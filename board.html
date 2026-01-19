@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EVA — Board</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Konva via CDN -->
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <a href="index.html" class="btn">← Maps</a>
+    <div id="mapTitle" style="font-weight:800;">Board</div>
+    <div style="opacity:.75;">Drag & drop • Save/Load • Export</div>
+  </div>
+
+  <div class="board-wrap">
+    <div class="panel">
+      <div class="row">
+        <button class="primary" id="toolSelect">Sélection</button>
+        <button id="toolDraw">Flèche/Ligne</button>
+      </div>
+
+      <label style="display:block;margin-top:10px;font-weight:800;">
+        Couleur flèche
+      </label>
+      <input type="color" id="arrowColorPicker" value="#ffffff">
+
+      <hr />
+<hr />
+
+<div style="font-weight:800; margin-bottom:6px;">Noms des joueurs</div>
+
+<input id="nameP1" placeholder="Joueur 1"
+  style="width:100%;margin-bottom:6px;padding:8px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);color:#e8eef6;" />
+
+<input id="nameP2" placeholder="Joueur 2"
+  style="width:100%;margin-bottom:6px;padding:8px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);color:#e8eef6;" />
+
+<input id="nameP3" placeholder="Joueur 3"
+  style="width:100%;margin-bottom:6px;padding:8px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);color:#e8eef6;" />
+
+<input id="nameP4" placeholder="Joueur 4"
+  style="width:100%;margin-bottom:10px;padding:8px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);color:#e8eef6;" />
+
+<hr />
+
+      <div style="font-weight:800; margin-bottom:8px;">Ajouter des pions</div>
+      <div class="row">
+        <button id="addP1">Joueur 1</button>
+        <button id="addP2">Joueur 2</button>
+        <button id="addP3">Joueur 3</button>
+        <button id="addP4">Joueur 4</button>
+      </div>
+      <div class="row">
+        <button id="addEnemy">Ennemi</button>
+        <button id="addObj">Objectif</button>
+        <button id="addSmoke">Grenade</button>
+      </div>
+
+      <hr />
+
+      <div style="font-weight:800; margin-bottom:8px;">Édition</div>
+      <div class="row">
+        <button id="rotateLeft">↺ -15°</button>
+        <button id="rotateRight">↻ +15°</button>
+        <button class="danger" id="deleteSelected">Supprimer</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label style="display:block; font-weight:800; margin-bottom:6px;">Zoom</label>
+        <input id="zoom" type="range" min="50" max="200" value="100">
+        <small class="muted">Ajuste l’affichage. (Les coordonnées restent cohérentes.)</small>
+      </div>
+
+      <hr />
+
+      <div style="font-weight:800; margin-bottom:8px;">Notes (Plan de round)</div>
+      <textarea id="notes"
+        placeholder="Ex: Plan A: 1 hold long, 2 split. Plan B: rotate si pick. Timing: 20s."
+        style="width:100%;min-height:120px;resize:vertical;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:#e8eef6;"></textarea>
+      <small class="muted">Ces notes seront sauvegardées dans le JSON.</small>
+
+      <div style="font-weight:800; margin-bottom:8px;">Sauvegarde</div>
+      <div class="row">
+        <button class="primary" id="saveJson">Sauvegarder (JSON)</button>
+        <button id="exportPng">Exporter (PNG)</button>
+      </div>
+      <div style="margin-top:8px;">
+        <label style="display:block; font-weight:800; margin-bottom:6px;">Charger une strat (JSON)</label>
+        <input id="loadJson" type="file" accept="application/json" />
+      </div>
+
+      <hr />
+      <small class="muted">
+        Raccourcis : <kbd>Suppr</kbd> pour supprimer • Clique un pion pour le sélectionner.<br/>
+        Mode Flèche : clique-déplace-relâche pour tracer.
+      </small>
+    </div>
+
+    <div class="canvas-area" id="stageParent"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

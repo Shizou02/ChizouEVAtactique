@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EVA — Table Tactique</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header">
+    <div style="font-weight:800;">EVA — Table Tactique</div>
+    <div style="opacity:.75;">Choisis une map</div>
+  </div>
+
+  <div class="container">
+    <div id="maps" class="grid"></div>
+    <small class="muted">
+      Astuce : tu peux héberger ce dossier sur GitHub Pages / Netlify, ou juste l’ouvrir en local.
+    </small>
+  </div>
+
+  <script>
+    async function loadMaps() {
+      const res = await fetch('maps.json');
+      const maps = await res.json();
+      const root = document.getElementById('maps');
+
+      root.innerHTML = maps.map(m => `
+        <a class="card" href="board.html?map=${encodeURIComponent(m.id)}">
+          <img src="${m.file}" alt="${m.name}">
+          <div class="title">${m.name}</div>
+          <small class="muted">${m.file}</small>
+        </a>
+      `).join('');
+    }
+    loadMaps().catch(err => {
+      document.getElementById('maps').innerHTML =
+        '<div class="card">Impossible de charger maps.json. Vérifie que tu ouvres le site via un serveur local (voir instructions).</div>';
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
