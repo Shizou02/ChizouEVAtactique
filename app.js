@@ -334,6 +334,7 @@ function serialize() {
     mapId: currentMap?.id ?? null,
     mapFile: currentMap?.file ?? null,
     createdAt: new Date().toISOString(),
+    stratName: document.getElementById("stratName")?.value || "",
     notes: document.getElementById("notes")?.value || "",
     players: {
       p1: document.getElementById("nameP1")?.value || "",
@@ -357,6 +358,9 @@ function clearBoard() {
 
 function hydrate(data) {
   clearBoard();
+
+  const stratEl = document.getElementById("stratName");
+  if (stratEl) stratEl.value = data.stratName || "";
 
   const notesEl = document.getElementById("notes");
   if (notesEl) notesEl.value = data.notes || "";
