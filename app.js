@@ -139,9 +139,21 @@ function setupStage() {
 
   stage.on("mouseup touchend", () => {
     if (tool !== "draw") return;
+    if (!isDrawing) return;
+
     isDrawing = false;
-    drawLine = null;
-  });
+
+  // si l'utilisateur a juste cliqué sans tirer, on supprime la "flèche point"
+  if (drawLine) {
+    const pts = drawLine.points();
+    const isClick = Math.hypot(pts[2] - pts[0], pts[3] - pts[1]) < 3;
+    if (isClick) drawLine.destroy();
+  }
+
+  drawLine = null;
+  layerMain.draw();
+  pushHistory(); // ✅ maintenant Undo/Redo marche pour les flèches
+});
 
   // Supprimer via touche Suppr
   window.addEventListener("keydown", (e) => {
@@ -372,11 +384,17 @@ function serialize() {
         rotation: n.rotation()
       });
     } else if (n.className === "Arrow") {
-      drawings.push({
-        type: "arrow",
-        points: n.points()
-      });
-    }
+    drawings.push({
+      type: "arrow",
+      points: n.points(),
+      stroke: n.stroke(),
+      fill: n.fill(),
+      strokeWidth: n.strokeWidth(),
+      opacity: n.opacity(),
+      pointerLength: n.pointerLength(),
+      pointerWidth: n.pointerWidth()
+    });
+  }
   });
 
   return {
@@ -410,7 +428,7 @@ function hydrate(data) {
   clearBoard();
 
   const stratEl = document.getElementById("stratName");
-    if (stratEl) stratEl.value = data.stratName || "";
+  if (stratEl) stratEl.value = data.stratName || "";
 
   const notesEl = document.getElementById("notes");
   if (notesEl) notesEl.value = data.notes || "";
@@ -436,19 +454,19 @@ function hydrate(data) {
 
   // dessins
   for (const d of (data.drawings || [])) {
-    if (d.type === "arrow") {
-      const arr = new Konva.Arrow({
-        points: d.points,
-        stroke: arrowColor,
-        fill: arrowColor,
-        strokeWidth: 4,
-        pointerLength: 12,
-        pointerWidth: 12,
-        lineCap: "round",
-        lineJoin: "round",
-        opacity: 0.9
-      });
-      layerMain.add(arr);
+   if (d.type === "arrow") {
+    const arr = new Konva.Arrow({
+      points: d.points,
+      stroke: d.stroke ?? arrowColor,
+      fill: d.fill ?? arrowColor,
+      strokeWidth: d.strokeWidth ?? 4,
+      pointerLength: d.pointerLength ?? 12,
+      pointerWidth: d.pointerWidth ?? 12,
+      lineCap: "round",
+      lineJoin: "round",
+      opacity: d.opacity ?? 0.9
+    });
+    layerMain.add(arr)
     }
   }
 
