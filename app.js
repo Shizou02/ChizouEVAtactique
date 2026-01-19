@@ -5,6 +5,48 @@ let tool = "select"; // "select" | "draw"
 let isDrawing = false;
 let drawLine = null;
 let arrowColor = "#ffffff";
+let undoStack = [];
+let redoStack = [];
+let isRestoring = false;
+let historyTimer = null;
+
+function pushHistoryDebounced() {
+  clearTimeout(historyTimer);
+  historyTimer = setTimeout(pushHistory, 200);
+}
+
+function pushHistory() {
+  if (isRestoring) return;
+  const state = serialize();
+  const last = undoStack[undoStack.length - 1];
+  if (last && JSON.stringify(last) === JSON.stringify(state)) return;
+  undoStack.push(state);
+  redoStack = [];
+}
+
+function resetHistoryToCurrent() {
+  undoStack = [serialize()];
+  redoStack = [];
+}
+
+function undo() {
+  if (undoStack.length <= 1) return;
+  const current = undoStack.pop();
+  redoStack.push(current);
+  const prev = undoStack[undoStack.length - 1];
+  isRestoring = true;
+  hydrate(prev);
+  isRestoring = false;
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  const next = redoStack.pop();
+  undoStack.push(next);
+  isRestoring = true;
+  hydrate(next);
+  isRestoring = false;
+}
 
 const TOKENS = {
   p1: { label: "1", fill: "#4da3ff" },
@@ -31,6 +73,7 @@ async function init() {
   setupStage();
   await loadBackground(currentMap.file);
   setupUI();
+  resetHistoryToCurrent();
   fitStageToContainer();
   window.addEventListener("resize", fitStageToContainer);
 }
@@ -197,6 +240,11 @@ document.getElementById("addSmoke").onclick = () => addToken("smoke");
   arrowPicker.addEventListener("input", () => {
     arrowColor = arrowPicker.value;
   });
+  const undoBtn = document.getElementById("undoBtn");
+  const redoBtn = document.getElementById("redoBtn");
+
+  if (undoBtn) undoBtn.onclick = undo;
+  if (redoBtn) redoBtn.onclick = redo;
 }
 
   setTool("select");
@@ -270,12 +318,14 @@ function addToken(kind) {
 
   // Remettre texte centré si Konva recalcule width/height après ajout
   group.on("dragmove", () => layerMain.batchDraw());
+  group.on("dragend", () => pushHistory());
 
   group.setAttr("tokenKind", kind);
 
   layerMain.add(group);
   selectNode(group);
   layerMain.draw();
+  pushHistory();
 }
 
 function selectNode(node) {
@@ -446,6 +496,8 @@ function exportPNG() {
   transformer.nodes([]);
   layerMain.draw();
 
+  const stratName = document.getElementById("stratName")?.value || "";
+
   // récupérer les notes
   const notesText = document.getElementById("notes")?.value || "";
 
@@ -471,7 +523,9 @@ function exportPNG() {
       x: padding,
       y: padding,
       width: width - padding * 2,
-      text: "PLAN DE ROUND:\n" + notesText,
+      text:      
+       (stratName.trim() ? (stratName.trim() + "\n\n") : "") +
+       "PLAN DE ROUND:\n" + notesText,
       fill: "#ffffff",
       fontSize: 14,
       lineHeight: 1.3,
