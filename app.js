@@ -10,6 +10,14 @@ let redoStack = [];
 let isRestoring = false;
 let historyTimer = null;
 
+// 🎓 Mode entraînement
+let training = {
+  solutionState: null, // snapshot JSON de la solution
+  active: false,
+  remaining: 20,
+  timerId: null
+};
+
 function pushHistoryDebounced() {
   clearTimeout(historyTimer);
   historyTimer = setTimeout(pushHistory, 200);
@@ -187,7 +195,7 @@ async function loadBackground(src) {
         const iw = img.width;
         const ih = img.height;
 
-        const scale = Math.max(sw / iw, sh / ih);
+        const scale = Math.min(sw / iw, sh / ih);
         const nw = iw * scale;
         const nh = ih * scale;
 
@@ -258,6 +266,19 @@ document.getElementById("addSmoke").onclick = () => addToken("smoke");
   if (undoBtn) undoBtn.onclick = undo;
   if (redoBtn) redoBtn.onclick = redo;
 }
+  // 🎓 Mode entraînement
+  const btnSet = document.getElementById("setSolution");
+  const btnStart = document.getElementById("startTraining");
+  const btnShow = document.getElementById("showSolution");
+  const btnStop = document.getElementById("stopTraining");
+
+  if (btnSet) btnSet.onclick = captureSolution;
+  if (btnStart) btnStart.onclick = () => startTraining(20);
+  if (btnShow) btnShow.onclick = showSolution;
+  if (btnStop) btnStop.onclick = stopTraining;
+
+  uiSetTrainingLabel("off");
+  uiSetTrainingTimer(20);
 
   setTool("select");
 }
@@ -580,6 +601,95 @@ function dataURLToBlob(dataURL) {
   const ia = new Uint8Array(ab);
   for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
   return new Blob([ab], { type: mimeString });
+}
+
+function uiSetTrainingLabel(text) {
+  const el = document.getElementById("trainingLabel");
+  if (el) el.textContent = text;
+}
+
+function uiSetTrainingTimer(n) {
+  const el = document.getElementById("trainingTimer");
+  if (el) el.textContent = String(n);
+}
+
+function captureSolution() {
+  training.solutionState = serialize();
+  uiSetTrainingLabel("solution enregistrée");
+  uiSetTrainingTimer(20);
+}
+
+function setEnemiesVisible(visible) {
+  layerMain.getChildren().forEach(n => {
+    if (n === transformer) return;
+    if (!n.hasName || !n.hasName("token")) return;
+
+    const kind = n.getAttr("tokenKind");
+    if (kind === "enemy") {
+      n.visible(visible);
+      n.listening(visible);
+    }
+  });
+  selectNode(null);
+  layerMain.draw();
+}
+
+function stopTrainingTimer() {
+  if (training.timerId) {
+    clearInterval(training.timerId);
+    training.timerId = null;
+  }
+}
+
+function startTraining(seconds = 20) {
+  if (!training.solutionState) {
+    alert('D’abord : clique sur "Définir la solution" (place tes ennemis + ta strat).');
+    return;
+  }
+
+  training.active = true;
+  training.remaining = seconds;
+  uiSetTrainingLabel("entrainement (ennemis cachés)");
+  uiSetTrainingTimer(training.remaining);
+
+  setEnemiesVisible(false);
+
+  stopTrainingTimer();
+  training.timerId = setInterval(() => {
+    training.remaining -= 1;
+    uiSetTrainingTimer(training.remaining);
+
+    if (training.remaining <= 0) {
+      stopTrainingTimer();
+      uiSetTrainingLabel("temps écoulé — affiche la solution");
+      // showSolution(); // si tu veux auto-afficher
+    }
+  }, 1000);
+}
+
+function showSolution() {
+  if (!training.solutionState) {
+    alert('Pas de solution enregistrée. Clique sur "Définir la solution" d’abord.');
+    return;
+  }
+
+  stopTrainingTimer();
+  training.active = false;
+
+  isRestoring = true;
+  hydrate(training.solutionState);
+  isRestoring = false;
+
+  uiSetTrainingLabel("solution affichée");
+  uiSetTrainingTimer(20);
+}
+
+function stopTraining() {
+  stopTrainingTimer();
+  training.active = false;
+  setEnemiesVisible(true);
+  uiSetTrainingLabel("off");
+  uiSetTrainingTimer(20);
 }
 
 init().catch(err => {

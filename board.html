@@ -27,7 +27,26 @@
       </label>
       <input type="color" id="arrowColorPicker" value="#ffffff">
 
-      <hr />
+<hr />
+
+     <div style="font-weight:800; margin-bottom:8px;">🎓 Mode entraînement</div>
+
+  <div class="row">
+    <button id="setSolution">Définir la solution</button>
+    <button class="primary" id="startTraining">Start 20s</button>
+  </div>
+
+  <div class="row">
+    <button id="showSolution">Afficher la solution</button>
+    <button class="danger" id="stopTraining">Stop</button>
+  </div>
+
+  <div id="trainingStatus" class="training-status">
+    <span>Statut :</span>
+    <strong id="trainingLabel">off</strong>
+    <span class="training-pill" id="trainingTimer">20</span>
+  </div>
+
 <hr />
 
 <div style="font-weight:800; margin-bottom:6px;">Noms des joueurs</div>
