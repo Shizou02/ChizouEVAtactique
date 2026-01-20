@@ -6,5 +6,8 @@
   { "id": "helios_station", "name": "Helios Station", "file": "maps/Helios_Station.png" },
   { "id": "horizon", "name": "Horizon", "file": "maps/Horizon.png" },
   { "id": "outlaw", "name": "Outlaw", "file": "maps/Outlaw.png" },
-  { "id": "silva", "name": "Silva", "file": "maps/Silva.png" }
+  { "id": "silva", "name": "Silva", "file": "maps/Silva.png" },
+  { "id": "polaris", "name": "Polaris", "file": "maps/Polaris.png" },
+  { "id": "ceres", "name": "Ceres", "file": "maps/Ceres.png" },
+  { "id": "lunar", "name": "Lunar", "file": "maps/Lunar.png" }
 ]
