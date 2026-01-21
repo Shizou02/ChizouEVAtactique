@@ -256,16 +256,18 @@ document.getElementById("addSmoke").onclick = () => addToken("smoke");
 
   // Sélecteur de couleur des flèches
   const arrowPicker = document.getElementById("arrowColorPicker");
-  if (arrowPicker) {
+if (arrowPicker) {
   arrowPicker.addEventListener("input", () => {
     arrowColor = arrowPicker.value;
   });
+}
+
   const undoBtn = document.getElementById("undoBtn");
   const redoBtn = document.getElementById("redoBtn");
 
   if (undoBtn) undoBtn.onclick = undo;
   if (redoBtn) redoBtn.onclick = redo;
-}
+
   // 🎓 Mode entraînement
   const btnSet = document.getElementById("setSolution");
   const btnStart = document.getElementById("startTraining");
@@ -614,8 +616,14 @@ function uiSetTrainingTimer(n) {
 }
 
 function captureSolution() {
-  training.solutionState = serialize();
-  uiSetTrainingLabel("solution enregistrée");
+  const data = serialize();
+
+  // 👇 ON ENLÈVE LES ENNEMIS DE LA SOLUTION
+  data.tokens = data.tokens.filter(t => t.kind !== "enemy");
+
+  training.solutionState = data;
+
+  uiSetTrainingLabel("solution enregistrée (joueurs)");
   uiSetTrainingTimer(20);
 }
 
@@ -634,6 +642,37 @@ function setEnemiesVisible(visible) {
   layerMain.draw();
 }
 
+function setPlayersVisible(visible) {
+  layerMain.getChildren().forEach(n => {
+    if (n === transformer) return;
+    if (!n.hasName || !n.hasName("token")) return;
+
+    const kind = n.getAttr("tokenKind");
+    if (
+  kind === "p1" ||
+  kind === "p2" ||
+  kind === "p3" ||
+  kind === "p4" ||
+  kind === "smoke"
+) {
+
+      n.visible(visible);
+      n.listening(visible);
+    }
+  });
+  selectNode(null);
+  layerMain.draw();
+}
+function setArrowsVisible(visible) {
+  layerMain.getChildren().forEach(n => {
+    if (n.className === "Arrow") {
+      n.visible(visible);
+      n.listening(visible);
+    }
+  });
+  layerMain.draw();
+}
+
 function stopTrainingTimer() {
   if (training.timerId) {
     clearInterval(training.timerId);
@@ -649,10 +688,11 @@ function startTraining(seconds = 20) {
 
   training.active = true;
   training.remaining = seconds;
-  uiSetTrainingLabel("entrainement (ennemis cachés)");
+  uiSetTrainingLabel("entrainement (joueurs cachés)");
   uiSetTrainingTimer(training.remaining);
 
-  setEnemiesVisible(false);
+  setPlayersVisible(false);
+  setArrowsVisible(false);
 
   stopTrainingTimer();
   training.timerId = setInterval(() => {
@@ -660,7 +700,7 @@ function startTraining(seconds = 20) {
     uiSetTrainingTimer(training.remaining);
 
     if (training.remaining <= 0) {
-      stopTrainingTimer();
+      stopTrainingTimer();      
       uiSetTrainingLabel("temps écoulé — affiche la solution");
       // showSolution(); // si tu veux auto-afficher
     }
@@ -680,6 +720,9 @@ function showSolution() {
   hydrate(training.solutionState);
   isRestoring = false;
 
+  setPlayersVisible(true);
+  setArrowsVisible(true);
+
   uiSetTrainingLabel("solution affichée");
   uiSetTrainingTimer(20);
 }
@@ -687,7 +730,8 @@ function showSolution() {
 function stopTraining() {
   stopTrainingTimer();
   training.active = false;
-  setEnemiesVisible(true);
+  setPlayersVisible(true);
+  setArrowsVisible(true);
   uiSetTrainingLabel("off");
   uiSetTrainingTimer(20);
 }
