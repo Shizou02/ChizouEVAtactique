@@ -1,5 +1,4 @@
-/*
-// StratHub — Konva
+/* StratHub — Konva
 Auteur: Shizou
 Année: 2006
 Description: Outil de planification tactique pour EVA
