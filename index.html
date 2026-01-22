@@ -3,22 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EVA — Table Tactique</title>
+  <title>StratHub — Plan tactique pour EVA</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="header">
-    <div style="font-weight:800;">EVA — Table Tactique</div>
-    <div style="opacity:.75;">Choisis une map</div>
-  </div>
 
+<body>
+
+  <!-- HEADER -->
+<!-- HEADER / HERO -->
+<div class="header header-centered hero">
+  <div>
+    <img
+      src="assets/logoStratHub.png"
+      alt="StratHub"
+      class="hero-logo"
+    >
+
+    <div class="hero-subtitle">
+      Plan tactique pour EVA
+    </div>
+  </div>
+</div>
+
+  <!-- CONTENU PRINCIPAL -->
   <div class="container">
     <div id="maps" class="grid"></div>
-    <small class="muted">
-      Astuce : tu peux héberger ce dossier sur GitHub Pages / Netlify, ou juste l’ouvrir en local.
+    <small class="muted" style="text-align:center; display:block; margin-top:10px;">
+      Choisis une map pour commencer
     </small>
   </div>
 
+  <!-- FOOTER -->
+  <footer class="footer">
+    © 2026 — StratHub · Créé par Shizou
+  </footer>
+
+  <!-- SCRIPT -->
   <script>
     async function loadMaps() {
       const res = await fetch('maps.json');
@@ -33,11 +53,14 @@
         </a>
       `).join('');
     }
+
     loadMaps().catch(err => {
-      document.getElementById('maps').innerHTML =
-        '<div class="card">Impossible de charger maps.json. Vérifie que tu ouvres le site via un serveur local (voir instructions).</div>';
       console.error(err);
+      document.getElementById('maps').innerHTML =
+        '<div class="card">Impossible de charger les maps.</div>';
     });
   </script>
+
 </body>
 </html>
+

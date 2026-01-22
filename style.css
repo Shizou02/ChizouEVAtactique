@@ -127,3 +127,122 @@ select {
   min-width: 44px;
   text-align:center;
 }
+/* =========================
+   StratHub – Branding & layout
+   ========================= */
+
+/* Header centré (branding) */
+.header-centered {
+  justify-content: center;
+  text-align: center;
+}
+
+/* Titre principal du site */
+.brand-title {
+  font-weight: 800;
+  font-size: 20px;
+}
+
+/* Sous-titre du site */
+.brand-subtitle {
+  opacity: 0.7;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Footer global */
+.footer {
+  text-align: center;
+  padding: 20px;
+  opacity: 0.6;
+  font-size: 12px;
+}
+
+/* Footer plus compact (board) */
+.footer--compact {
+  padding: 10px;
+  opacity: 0.5;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  height: 28px;
+  width: auto;
+}
+/* ===== Hero (page d'accueil) ===== */
+
+.hero {
+  padding: 40px 0 30px;
+}
+
+.hero-logo {
+  height: 96px;   /* tu peux tester 88 / 96 / 112 */
+  width: auto;
+  margin-bottom: 12px;
+}
+
+.hero-subtitle {
+  opacity: 0.7;
+  font-size: 14px;
+}
+/* ===== Responsive global ===== */
+@media (max-width: 768px) {
+  .container { padding: 12px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .card img { height: 120px; }
+}
+
+/* Très petit écran */
+@media (max-width: 420px) {
+  .grid { grid-template-columns: 1fr; }
+  .card img { height: 150px; }
+}
+/* ===== Board responsive ===== */
+@media (max-width: 900px) {
+  .board-wrap {
+    grid-template-columns: 1fr;  /* 1 colonne */
+  }
+
+  .panel {
+    height: auto;               /* ne force plus 100vh */
+    max-height: 45vh;           /* évite de prendre tout l'écran */
+  }
+
+  .canvas-area {
+    height: 55vh;               /* le canvas prend le reste */
+  }
+}
+
+/* Option: boutons plus faciles à toucher */
+@media (max-width: 600px) {
+  button, .btn {
+    padding: 12px 12px;
+    border-radius: 14px;
+  }
+}
+/* =========================
+   Mobile / tactile améliorations
+   ========================= */
+
+/* Sur mobile : le header ne colle plus */
+@media (max-width: 600px) {
+  .header {
+    position: relative;
+  }
+}
+
+/* Empêche le scroll au doigt sur le canvas (Konva) */
+.canvas-area {
+  touch-action: none;
+}
+
+/* Empêche le zoom automatique iOS */
+input, select, textarea, button {
+  font-size: 16px;
+}
+

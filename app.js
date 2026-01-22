@@ -1,4 +1,10 @@
-// EVA Table Tactique — Konva
+/*
+// StratHub — Konva
+Auteur: Shizou
+Année: 2006
+Description: Outil de planification tactique pour EVA
+*/
+
 let stage, layerBg, layerMain, transformer;
 let currentMap = null;
 let tool = "select"; // "select" | "draw"
@@ -25,7 +31,7 @@ function pushHistoryDebounced() {
 
 function pushHistory() {
   if (isRestoring) return;
-  const state = serialize();
+  const state = serialize(true);
   const last = undoStack[undoStack.length - 1];
   if (last && JSON.stringify(last) === JSON.stringify(state)) return;
   undoStack.push(state);
@@ -33,7 +39,7 @@ function pushHistory() {
 }
 
 function resetHistoryToCurrent() {
-  undoStack = [serialize()];
+  undoStack = [serialize(true)];
   redoStack = [];
 }
 
@@ -382,6 +388,7 @@ function rotateSelected(deltaDeg) {
   if (!node) return;
   node.rotation((node.rotation() + deltaDeg) % 360);
   layerMain.draw();
+  pushHistory();
 }
 
 function deleteSelected() {
@@ -390,9 +397,10 @@ function deleteSelected() {
   node.destroy();
   transformer.nodes([]);
   layerMain.draw();
+  pushHistory();
 }
 
-function serialize() {
+function serialize(forHistory = false) {
   const tokens = [];
   const drawings = [];
 
@@ -407,24 +415,23 @@ function serialize() {
         rotation: n.rotation()
       });
     } else if (n.className === "Arrow") {
-    drawings.push({
-      type: "arrow",
-      points: n.points(),
-      stroke: n.stroke(),
-      fill: n.fill(),
-      strokeWidth: n.strokeWidth(),
-      opacity: n.opacity(),
-      pointerLength: n.pointerLength(),
-      pointerWidth: n.pointerWidth()
-    });
-  }
+      drawings.push({
+        type: "arrow",
+        points: n.points(),
+        stroke: n.stroke(),
+        fill: n.fill(),
+        strokeWidth: n.strokeWidth(),
+        opacity: n.opacity(),
+        pointerLength: n.pointerLength(),
+        pointerWidth: n.pointerWidth()
+      });
+    }
   });
 
-  return {
+  const data = {
     version: 1,
     mapId: currentMap?.id ?? null,
     mapFile: currentMap?.file ?? null,
-    createdAt: new Date().toISOString(),
     stratName: document.getElementById("stratName")?.value || "",
     notes: document.getElementById("notes")?.value || "",
     players: {
@@ -432,10 +439,17 @@ function serialize() {
       p2: document.getElementById("nameP2")?.value || "",
       p3: document.getElementById("nameP3")?.value || "",
       p4: document.getElementById("nameP4")?.value || ""
-},
+    },
     tokens,
     drawings
   };
+
+  // createdAt UNIQUEMENT hors historique
+  if (!forHistory) {
+    data.createdAt = new Date().toISOString();
+  }
+
+  return data;
 }
 
 function clearBoard() {
@@ -523,6 +537,7 @@ function loadStrategyFile(file) {
     try {
       const data = JSON.parse(String(reader.result));
       hydrate(data);
+      resetHistoryToCurrent();
     } catch (e) {
       alert("JSON invalide.");
       console.error(e);
