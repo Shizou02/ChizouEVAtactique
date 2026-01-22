@@ -1,4 +1,5 @@
-/* StratHub — Konva
+/*
+// StratHub — Konva
 Auteur: Shizou
 Année: 2006
 Description: Outil de planification tactique pour EVA
@@ -10,6 +11,7 @@ let tool = "select"; // "select" | "draw"
 let isDrawing = false;
 let drawLine = null;
 let arrowColor = "#ffffff";
+let arrowStyle = "solid";
 let undoStack = [];
 let redoStack = [];
 let isRestoring = false;
@@ -121,6 +123,16 @@ function setupStage() {
     }
   });
 
+  // ✅ Backup: si on clique une flèche en mode select, on la sélectionne
+  stage.on("mousedown touchstart", (e) => {
+    if (tool !== "select") return;
+
+    if (e.target && e.target.className === "Arrow") {
+    selectNode(e.target);
+    e.cancelBubble = true;
+  }
+});
+
   // Dessin de flèches/lignes
   stage.on("mousedown touchstart", (e) => {
     if (tool !== "draw") return;
@@ -137,7 +149,8 @@ function setupStage() {
       pointerWidth: 12,
       lineCap: "round",
       lineJoin: "round",
-      opacity: 0.9
+      opacity: 0.9,
+      dash: arrowStyle === "dashed" ? [10, 6] : []
     });
     layerMain.add(drawLine);
   });
@@ -157,11 +170,16 @@ function setupStage() {
     isDrawing = false;
 
   // si l'utilisateur a juste cliqué sans tirer, on supprime la "flèche point"
-  if (drawLine) {
-    const pts = drawLine.points();
-    const isClick = Math.hypot(pts[2] - pts[0], pts[3] - pts[1]) < 3;
-    if (isClick) drawLine.destroy();
+if (drawLine) {
+  const pts = drawLine.points();
+  const isClick = Math.hypot(pts[2] - pts[0], pts[3] - pts[1]) < 3;
+
+  if (isClick) {
+    drawLine.destroy();
+  } else {
+    makeArrowInteractive(drawLine);
   }
+}
 
   drawLine = null;
   layerMain.draw();
@@ -267,6 +285,24 @@ if (arrowPicker) {
   });
 }
 
+const btnSolid = document.getElementById("arrowSolid");
+const btnDashed = document.getElementById("arrowDashed");
+
+if (btnSolid && btnDashed) {
+  btnSolid.onclick = () => {
+    arrowStyle = "solid";
+    btnSolid.classList.add("primary");
+    btnDashed.classList.remove("primary");
+  };
+
+  btnDashed.onclick = () => {
+    arrowStyle = "dashed";
+    btnDashed.classList.add("primary");
+    btnSolid.classList.remove("primary");
+  };
+}
+
+
   const undoBtn = document.getElementById("undoBtn");
   const redoBtn = document.getElementById("redoBtn");
 
@@ -366,6 +402,20 @@ function addToken(kind) {
   selectNode(group);
   layerMain.draw();
   pushHistory();
+}
+
+function makeArrowInteractive(arr) {
+  arr.hitStrokeWidth(25); // ✅ rend la flèche beaucoup plus facile à cliquer
+  arr.draggable(true);
+
+  arr.on("mousedown touchstart", (e) => {
+    if (tool !== "select") return;
+    selectNode(arr);
+    e.cancelBubble = true;
+  });
+
+  arr.on("dragmove", () => layerMain.batchDraw());
+  arr.on("dragend", () => pushHistory());
 }
 
 function selectNode(node) {
@@ -502,7 +552,8 @@ function hydrate(data) {
       lineJoin: "round",
       opacity: d.opacity ?? 0.9
     });
-    layerMain.add(arr)
+    layerMain.add(arr);
+    makeArrowInteractive(arr);
     }
   }
 
