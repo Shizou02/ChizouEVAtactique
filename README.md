@@ -1,18 +1,21 @@
+Site StratHub créé en 2026 par Shizou
+La création du site est née de la volonté d’évoluer au sein de la compétition EVA After Battle Arena.
+
 1) Choisir une map
 
-Page d’accueil avec toutes tes maps (Artefact, Atlantis, Cliff, Engine, Helios Station, Horizon, Outlaw, Silva).
+Page d’accueil avec toutes tes maps.
 
 Tu cliques sur une map → ça ouvre le board de cette map.
 
 2) Placer des pions (drag & drop)
 
-Ajouter joueurs P1 / P2 / P3 / P4 (maintenant avec les noms réels).
+Ajouter joueurs P1 / P2 / P3 / P4 (les noms réels des joueurs de votre équipe).
 
 Ajouter ennemi (E).
 
 Ajouter objectif (OBJ).
 
-Ajouter grenade (G) (ancien bouton “Smoke” renommé visuellement).
+Ajouter grenade (G).
 
 Tu peux :
 
@@ -68,3 +71,7 @@ Input Charger une strat : remet exactement la strat.
 Bouton Exporter (PNG) : génère une image à partager.
 
 Le PNG contient aussi les notes/plan de round (en bas) + tout le visuel.
+
+8) Mode entrainement,
+
+Il s'agit d'un mode pour les coachs - Toujours en construction
