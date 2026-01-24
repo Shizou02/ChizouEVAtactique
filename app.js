@@ -345,6 +345,16 @@ function setTool(next) {
   }
 }
 
+function isSoldier(kind) {
+  return (
+    kind === "p1" ||
+    kind === "p2" ||
+    kind === "p3" ||
+    kind === "p4" ||
+    kind === "enemy"
+  );
+}
+
 function addToken(kind, opts = {}) {
   const cfg = TOKENS[kind];
   const center = { x: stage.width() / 2, y: stage.height() / 2 };
@@ -357,15 +367,7 @@ function addToken(kind, opts = {}) {
     id: opts.id || `token_${kind}_${crypto.randomUUID()}`,
   });
 
-  const r = 22;
-  const circle = new Konva.Circle({
-    radius: r,
-    fill: cfg.fill,
-    opacity: 0.92,
-    stroke: "rgba(255,255,255,0.35)",
-    strokeWidth: 2,
-  });
-
+  // ✅ 1) label d'abord (sinon label undefined)
   const label =
     opts.label ??
     (kind === "p1"
@@ -378,29 +380,128 @@ function addToken(kind, opts = {}) {
             ? document.getElementById("nameP4")?.value || cfg.label
             : cfg.label);
 
-  const text = new Konva.Text({
-    text: label,
-    fontSize: kind === "obj" ? 14 : 18,
-    fontStyle: "bold",
-    fill: "#0b0f14",
-    align: "center",
-    verticalAlign: "middle",
-  });
+  const r = 22;
 
-  // Centrage du texte
-  text.offsetX(text.width() / 2);
-  text.offsetY(text.height() / 2);
+  if (isSoldier(kind)) {
+    // ennemis inversés par défaut (seulement pour soldats)
+    if (opts.rotation != null) {
+      group.rotation(opts.rotation);
+    } else if (kind === "enemy") {
+      group.rotation(180);
+    }
 
-  group.add(circle);
-  group.add(text);
+    const ring = new Konva.Circle({
+      radius: r,
+      stroke: cfg.fill,
+      strokeWidth: 3,
+      opacity: 0.9,
+    });
+    ring.shadowColor("black");
+    ring.shadowBlur(6);
+    ring.shadowOpacity(0.35);
+    ring.shadowOffset({ x: 0, y: 2 });
 
+    const head = new Konva.Circle({
+      x: -4,
+      y: -8,
+      radius: 5,
+      fill: "#f1f5f9",
+      opacity: 0.95,
+    });
+
+    const body = new Konva.Rect({
+      x: -7,
+      y: -2,
+      width: 10,
+      height: 14,
+      fill: cfg.fill,
+      cornerRadius: 4,
+      opacity: 0.95,
+    });
+
+    const gun = new Konva.Rect({
+      x: 3,
+      y: -5,
+      width: 16,
+      height: 4,
+      fill: "#0b0f14",
+      cornerRadius: 2,
+      opacity: 0.95,
+    });
+
+    const muzzle = new Konva.Circle({
+      x: 20,
+      y: -3,
+      radius: 2,
+      fill: "#e8eef6",
+      opacity: 0.9,
+    });
+
+    const nameText = new Konva.Text({
+      text: label,
+      fontSize: 11,
+      fontStyle: "bold",
+      fill: "#ffffff",
+      y: 20,
+      align: "center",
+    });
+    nameText.shadowColor("black");
+    nameText.shadowBlur(6);
+    nameText.shadowOpacity(0.8);
+    nameText.offsetX(nameText.width() / 2);
+
+    group.add(ring, head, body, gun, muzzle, nameText);
+  } else if (kind === "obj") {
+    // Objectif : badge simple
+    const badge = new Konva.Rect({
+      x: -22,
+      y: -14,
+      width: 44,
+      height: 28,
+      fill: "rgba(11,15,20,0.85)",
+      cornerRadius: 10,
+      stroke: cfg.fill,
+      strokeWidth: 2,
+    });
+
+    const txt = new Konva.Text({
+      text: "OBJ",
+      fontSize: 12,
+      fontStyle: "bold",
+      fill: cfg.fill,
+    });
+    txt.offsetX(txt.width() / 2);
+    txt.offsetY(txt.height() / 2);
+
+    group.add(badge, txt);
+  } else if (kind === "smoke") {
+    // Grenade : pastille simple
+    const pin = new Konva.Circle({
+      radius: 16,
+      fill: "rgba(11,15,20,0.85)",
+      stroke: cfg.fill,
+      strokeWidth: 2,
+    });
+
+    const g = new Konva.Text({
+      text: "G",
+      fontSize: 14,
+      fontStyle: "bold",
+      fill: "#ffffff",
+    });
+    g.offsetX(g.width() / 2);
+    g.offsetY(g.height() / 2);
+
+    group.add(pin, g);
+  }
+
+  // interactions (inchangé)
   group.on("mousedown touchstart", (e) => {
     if (tool !== "select") return;
     selectNode(group);
     e.cancelBubble = true;
   });
 
-  // Remettre texte centré si Konva recalcule width/height après ajout
   group.on("dragmove", () => layerMain.batchDraw());
   group.on("dragend", () => pushHistory());
 
@@ -410,6 +511,7 @@ function addToken(kind, opts = {}) {
   selectNode(group);
   layerMain.draw();
   pushHistory();
+
   return group;
 }
 
@@ -545,10 +647,13 @@ function hydrate(data) {
 
   // tokens
   for (const t of data.tokens || []) {
-    const node = addToken(t.kind, { id: t.id, label: t.label });
+    const node = addToken(t.kind, {
+      id: t.id,
+      label: t.label,
+      rotation: t.rotation,
+    });
     if (!node) continue;
     node.position({ x: t.x, y: t.y });
-    node.rotation(t.rotation || 0);
   }
 
   // dessins
