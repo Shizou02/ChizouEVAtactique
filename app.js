@@ -15,6 +15,7 @@ let undoStack = [];
 let redoStack = [];
 let isRestoring = false;
 let historyTimer = null;
+let bgNode = null;
 
 // 🎓 Mode entraînement
 let training = {
@@ -72,6 +73,14 @@ const TOKENS = {
   obj: { label: "OBJ", fill: "#ff9f1c" },
   smoke: { label: "G", fill: "#160d0dff" },
 };
+
+function getPointerPosInLayer() {
+  const p = stage.getPointerPosition();
+  if (!p) return null;
+
+  const t = layerMain.getAbsoluteTransform().copy().invert();
+  return t.point(p);
+}
 
 function qs(name) {
   const url = new URL(window.location.href);
@@ -140,7 +149,8 @@ function setupStage() {
     if (e.target !== stage && e.target.getLayer() !== layerBg) return;
 
     isDrawing = true;
-    const pos = stage.getPointerPosition();
+    const pos = getPointerPosInLayer();
+    if (!pos) return;
     drawLine = new Konva.Arrow({
       points: [pos.x, pos.y, pos.x, pos.y],
       stroke: arrowColor,
@@ -158,7 +168,8 @@ function setupStage() {
 
   stage.on("mousemove touchmove", () => {
     if (!isDrawing || tool !== "draw" || !drawLine) return;
-    const pos = stage.getPointerPosition();
+    const pos = getPointerPosInLayer();
+    if (!pos) return;
     const pts = drawLine.points();
     drawLine.points([pts[0], pts[1], pos.x, pos.y]);
     layerMain.batchDraw();
@@ -209,8 +220,8 @@ async function loadBackground(src) {
       layerBg.destroyChildren();
 
       // On place la map en "contain" (on voit toute la map, avec marges possibles)
-      const bg = new Konva.Image({ image: img, x: 0, y: 0 });
-      layerBg.add(bg);
+      bgNode = new Konva.Image({ image: img, x: 0, y: 0 });
+      layerBg.add(bgNode);
 
       // Resize cover
       function resizeBg() {
@@ -223,11 +234,16 @@ async function loadBackground(src) {
         const nw = iw * scale;
         const nh = ih * scale;
 
-        bg.width(nw);
-        bg.height(nh);
-        bg.x((sw - nw) / 2);
-        bg.y((sh - nh) / 2);
+        bgNode.width(nw);
+        bgNode.height(nh);
+        bgNode.x((sw - nw) / 2);
+        bgNode.y((sh - nh) / 2);
         layerBg.draw();
+
+        // ✅ IMPORTANT : pions + flèches suivent la map
+        layerMain.position({ x: bgNode.x(), y: bgNode.y() });
+        layerMain.scale({ x: scale, y: scale });
+        layerMain.draw();
       }
 
       resizeBg();
