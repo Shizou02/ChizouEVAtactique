@@ -19,6 +19,7 @@ let historyTimer = null;
 
 // 🎓 Mode entraînement
 let training = {
+  baselineState: null,
   solutionState: null, // snapshot JSON de la solution
   active: false,
   remaining: 20,
@@ -472,7 +473,8 @@ function serialize(forHistory = false) {
         strokeWidth: n.strokeWidth(),
         opacity: n.opacity(),
         pointerLength: n.pointerLength(),
-        pointerWidth: n.pointerWidth()
+        pointerWidth: n.pointerWidth(),
+        dash: n.dash()
       });
     }
   });
@@ -490,7 +492,9 @@ function serialize(forHistory = false) {
       p4: document.getElementById("nameP4")?.value || ""
     },
     tokens,
-    drawings
+    drawings,
+    trainingSolution: training.solutionState,
+    trainingBaseline: training.baselineState
   };
 
   // createdAt UNIQUEMENT hors historique
@@ -550,6 +554,7 @@ function hydrate(data) {
       pointerWidth: d.pointerWidth ?? 12,
       lineCap: "round",
       lineJoin: "round",
+      dash: d.dash ?? [],
       opacity: d.opacity ?? 0.9
     });
     layerMain.add(arr);
@@ -587,6 +592,12 @@ function loadStrategyFile(file) {
     try {
       const data = JSON.parse(String(reader.result));
       hydrate(data);
+      training.baselineState = data.trainingBaseline || null;
+      training.solutionState = data.trainingSolution || null;
+
+      uiSetTrainingLabel(training.solutionState ? "solution chargée" : "off");
+      uiSetTrainingTimer(20);      
+
       resetHistoryToCurrent();
     } catch (e) {
       alert("JSON invalide.");
@@ -681,16 +692,25 @@ function uiSetTrainingTimer(n) {
 }
 
 function captureSolution() {
-  const data = serialize();
+  // 1) BASELINE = ce qui reste toujours visible (ennemis + obj)
+  const base = serialize();
+  base.tokens = (base.tokens || []).filter(t => t.kind === "enemy" || t.kind === "obj");
+  base.drawings = []; // baseline ne garde pas les flèches
 
-  // 👇 ON ENLÈVE LES ENNEMIS DE LA SOLUTION
-  data.tokens = data.tokens.filter(t => t.kind !== "enemy");
+  // 2) SOLUTION = ce que le joueur doit refaire (joueurs + smoke + flèches)
+  const sol = serialize();
+  sol.tokens = (sol.tokens || []).filter(t =>
+    t.kind === "p1" || t.kind === "p2" || t.kind === "p3" || t.kind === "p4" || t.kind === "smoke"
+  );
+  // sol.drawings garde les flèches (déjà dans serialize)
 
-  training.solutionState = data;
+  training.baselineState = base;
+  training.solutionState = sol;
 
-  uiSetTrainingLabel("solution enregistrée (joueurs)");
+  uiSetTrainingLabel("solution enregistrée (ennemis/obj gardés)");
   uiSetTrainingTimer(20);
 }
+
 
 function setEnemiesVisible(visible) {
   layerMain.getChildren().forEach(n => {
@@ -745,19 +765,85 @@ function stopTrainingTimer() {
   }
 }
 
+function removeAttemptPieces() {
+  // enlève sélection
+  transformer.nodes([]);
+  selectNode(null);
+
+  // 1) supprime TOUS les tokens sauf enemy/obj
+  const tokens = layerMain.find(".token"); // Konva selector
+  tokens.forEach(node => {
+    const kind = node.getAttr("tokenKind");
+    if (kind !== "enemy" && kind !== "obj") {
+      node.destroy();
+    }
+  });
+
+  // 2) supprime TOUTES les flèches
+  const arrows = layerMain.find("Arrow");
+  arrows.forEach(a => a.destroy());
+
+  layerMain.draw();
+}
+
+function applySolutionPieces(solutionData) {
+  if (!solutionData) return;
+
+  // 1) on enlève la tentative du joueur
+  removeAttemptPieces();
+
+  // 2) on remet joueurs + smoke
+  for (const t of (solutionData.tokens || [])) {
+    addToken(t.kind);
+    const node = getSelected();
+    if (!node) continue;
+    node.position({ x: t.x, y: t.y });
+    node.rotation(t.rotation || 0);
+  }
+
+  // 3) on remet les flèches
+  for (const d of (solutionData.drawings || [])) {
+    if (d.type !== "arrow") continue;
+
+    const arr = new Konva.Arrow({
+      points: d.points,
+      stroke: d.stroke ?? arrowColor,
+      fill: d.fill ?? arrowColor,
+      strokeWidth: d.strokeWidth ?? 4,
+      pointerLength: d.pointerLength ?? 12,
+      pointerWidth: d.pointerWidth ?? 12,
+      lineCap: "round",
+      lineJoin: "round",
+      dash: d.dash ?? [],
+      opacity: d.opacity ?? 0.9
+    });
+
+    layerMain.add(arr);
+    makeArrowInteractive(arr);
+  }
+
+  selectNode(null);
+  layerMain.draw();
+}
+
 function startTraining(seconds = 20) {
-  if (!training.solutionState) {
-    alert('D’abord : clique sur "Définir la solution" (place tes ennemis + ta strat).');
+  if (!training.baselineState || !training.solutionState) {
+    alert('D’abord : clique sur "Définir la solution" (ennemis + strat).');
     return;
   }
 
+  // Remet le board baseline (ennemis + obj visibles)
+  isRestoring = true;
+  hydrate(training.baselineState);
+  isRestoring = false;
+
+  // Enlève ce que le joueur doit replacer (joueurs + flèches + smoke)
+  removeAttemptPieces();
+
   training.active = true;
   training.remaining = seconds;
-  uiSetTrainingLabel("entrainement (joueurs cachés)");
+  uiSetTrainingLabel("entrainement (place joueurs + flèches + grenades)");
   uiSetTrainingTimer(training.remaining);
-
-  setPlayersVisible(false);
-  setArrowsVisible(false);
 
   stopTrainingTimer();
   training.timerId = setInterval(() => {
@@ -765,9 +851,8 @@ function startTraining(seconds = 20) {
     uiSetTrainingTimer(training.remaining);
 
     if (training.remaining <= 0) {
-      stopTrainingTimer();      
+      stopTrainingTimer();
       uiSetTrainingLabel("temps écoulé — affiche la solution");
-      // showSolution(); // si tu veux auto-afficher
     }
   }, 1000);
 }
@@ -782,11 +867,16 @@ function showSolution() {
   training.active = false;
 
   isRestoring = true;
-  hydrate(training.solutionState);
-  isRestoring = false;
 
-  setPlayersVisible(true);
-  setArrowsVisible(true);
+  // On remet toujours le baseline (ennemis + obj) pour repartir propre
+  if (training.baselineState) {
+    hydrate(training.baselineState);
+  }
+
+  // Puis on applique la solution (joueurs + smoke + flèches)
+  applySolutionPieces(training.solutionState);
+
+  isRestoring = false;
 
   uiSetTrainingLabel("solution affichée");
   uiSetTrainingTimer(20);
