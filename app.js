@@ -1,7 +1,6 @@
-/*
-// StratHub — Konva
+/*StratHub — Konva
 Auteur: Shizou
-Année: 2006
+Année: 2026
 Description: Outil de planification tactique pour EVA
 */
 
@@ -23,7 +22,7 @@ let training = {
   solutionState: null, // snapshot JSON de la solution
   active: false,
   remaining: 20,
-  timerId: null
+  timerId: null,
 };
 
 function pushHistoryDebounced() {
@@ -71,7 +70,7 @@ const TOKENS = {
   p4: { label: "4", fill: "#cdb4ff" },
   enemy: { label: "E", fill: "#ff4d6d" },
   obj: { label: "OBJ", fill: "#ff9f1c" },
-  smoke: { label: "G", fill: "#160d0dff" }
+  smoke: { label: "G", fill: "#160d0dff" },
 };
 
 function qs(name) {
@@ -82,9 +81,10 @@ function qs(name) {
 async function init() {
   const mapId = qs("map");
   const maps = await (await fetch("maps.json")).json();
-  currentMap = maps.find(m => m.id === mapId) || maps[0];
+  currentMap = maps.find((m) => m.id === mapId) || maps[0];
 
-  document.getElementById("mapTitle").textContent = `Board — ${currentMap?.name ?? "Map"}`;
+  document.getElementById("mapTitle").textContent =
+    `Board — ${currentMap?.name ?? "Map"}`;
 
   setupStage();
   await loadBackground(currentMap.file);
@@ -110,7 +110,7 @@ function setupStage() {
   transformer = new Konva.Transformer({
     rotateEnabled: false,
     enabledAnchors: [], // on ne resize pas les pions (plus simple)
-    ignoreStroke: true
+    ignoreStroke: true,
   });
   layerMain.add(transformer);
 
@@ -129,10 +129,10 @@ function setupStage() {
     if (tool !== "select") return;
 
     if (e.target && e.target.className === "Arrow") {
-    selectNode(e.target);
-    e.cancelBubble = true;
-  }
-});
+      selectNode(e.target);
+      e.cancelBubble = true;
+    }
+  });
 
   // Dessin de flèches/lignes
   stage.on("mousedown touchstart", (e) => {
@@ -151,7 +151,7 @@ function setupStage() {
       lineCap: "round",
       lineJoin: "round",
       opacity: 0.9,
-      dash: arrowStyle === "dashed" ? [10, 6] : []
+      dash: arrowStyle === "dashed" ? [10, 6] : [],
     });
     layerMain.add(drawLine);
   });
@@ -170,22 +170,22 @@ function setupStage() {
 
     isDrawing = false;
 
-  // si l'utilisateur a juste cliqué sans tirer, on supprime la "flèche point"
-if (drawLine) {
-  const pts = drawLine.points();
-  const isClick = Math.hypot(pts[2] - pts[0], pts[3] - pts[1]) < 3;
+    // si l'utilisateur a juste cliqué sans tirer, on supprime la "flèche point"
+    if (drawLine) {
+      const pts = drawLine.points();
+      const isClick = Math.hypot(pts[2] - pts[0], pts[3] - pts[1]) < 3;
 
-  if (isClick) {
-    drawLine.destroy();
-  } else {
-    makeArrowInteractive(drawLine);
-  }
-}
+      if (isClick) {
+        drawLine.destroy();
+      } else {
+        makeArrowInteractive(drawLine);
+      }
+    }
 
-  drawLine = null;
-  layerMain.draw();
-  pushHistory(); // ✅ maintenant Undo/Redo marche pour les flèches
-});
+    drawLine = null;
+    layerMain.draw();
+    pushHistory(); // ✅ maintenant Undo/Redo marche pour les flèches
+  });
 
   // Supprimer via touche Suppr
   window.addEventListener("keydown", (e) => {
@@ -208,7 +208,7 @@ async function loadBackground(src) {
     img.onload = () => {
       layerBg.destroyChildren();
 
-      // On place la map en "cover" (remplit le stage)
+      // On place la map en "contain" (on voit toute la map, avec marges possibles)
       const bg = new Konva.Image({ image: img, x: 0, y: 0 });
       layerBg.add(bg);
 
@@ -255,7 +255,7 @@ function setupUI() {
   document.getElementById("addP4").onclick = () => addToken("p4");
   document.getElementById("addEnemy").onclick = () => addToken("enemy");
   document.getElementById("addObj").onclick = () => addToken("obj");
-document.getElementById("addSmoke").onclick = () => addToken("smoke");
+  document.getElementById("addSmoke").onclick = () => addToken("smoke");
 
   // Rotation / Delete
   document.getElementById("rotateLeft").onclick = () => rotateSelected(-15);
@@ -265,7 +265,9 @@ document.getElementById("addSmoke").onclick = () => addToken("smoke");
   // Save/Load/Export
   document.getElementById("saveJson").onclick = () => saveStrategy();
   document.getElementById("exportPng").onclick = () => exportPNG();
-  document.getElementById("loadJson").addEventListener("change", (e) => loadStrategyFile(e.target.files?.[0]));
+  document
+    .getElementById("loadJson")
+    .addEventListener("change", (e) => loadStrategyFile(e.target.files?.[0]));
 
   // Zoom (simple scale visuel)
   const zoom = document.getElementById("zoom");
@@ -280,29 +282,28 @@ document.getElementById("addSmoke").onclick = () => addToken("smoke");
 
   // Sélecteur de couleur des flèches
   const arrowPicker = document.getElementById("arrowColorPicker");
-if (arrowPicker) {
-  arrowPicker.addEventListener("input", () => {
-    arrowColor = arrowPicker.value;
-  });
-}
+  if (arrowPicker) {
+    arrowPicker.addEventListener("input", () => {
+      arrowColor = arrowPicker.value;
+    });
+  }
 
-const btnSolid = document.getElementById("arrowSolid");
-const btnDashed = document.getElementById("arrowDashed");
+  const btnSolid = document.getElementById("arrowSolid");
+  const btnDashed = document.getElementById("arrowDashed");
 
-if (btnSolid && btnDashed) {
-  btnSolid.onclick = () => {
-    arrowStyle = "solid";
-    btnSolid.classList.add("primary");
-    btnDashed.classList.remove("primary");
-  };
+  if (btnSolid && btnDashed) {
+    btnSolid.onclick = () => {
+      arrowStyle = "solid";
+      btnSolid.classList.add("primary");
+      btnDashed.classList.remove("primary");
+    };
 
-  btnDashed.onclick = () => {
-    arrowStyle = "dashed";
-    btnDashed.classList.add("primary");
-    btnSolid.classList.remove("primary");
-  };
-}
-
+    btnDashed.onclick = () => {
+      arrowStyle = "dashed";
+      btnDashed.classList.add("primary");
+      btnSolid.classList.remove("primary");
+    };
+  }
 
   const undoBtn = document.getElementById("undoBtn");
   const redoBtn = document.getElementById("redoBtn");
@@ -344,7 +345,7 @@ function setTool(next) {
   }
 }
 
-function addToken(kind) {
+function addToken(kind, opts = {}) {
   const cfg = TOKENS[kind];
   const center = { x: stage.width() / 2, y: stage.height() / 2 };
 
@@ -353,7 +354,7 @@ function addToken(kind) {
     y: center.y,
     draggable: true,
     name: "token",
-    id: `token_${kind}_${crypto.randomUUID()}`
+    id: opts.id || `token_${kind}_${crypto.randomUUID()}`,
   });
 
   const r = 22;
@@ -362,22 +363,28 @@ function addToken(kind) {
     fill: cfg.fill,
     opacity: 0.92,
     stroke: "rgba(255,255,255,0.35)",
-    strokeWidth: 2
+    strokeWidth: 2,
   });
 
+  const label =
+    opts.label ??
+    (kind === "p1"
+      ? document.getElementById("nameP1")?.value || cfg.label
+      : kind === "p2"
+        ? document.getElementById("nameP2")?.value || cfg.label
+        : kind === "p3"
+          ? document.getElementById("nameP3")?.value || cfg.label
+          : kind === "p4"
+            ? document.getElementById("nameP4")?.value || cfg.label
+            : cfg.label);
+
   const text = new Konva.Text({
-   text: (
-  kind === "p1" ? (document.getElementById("nameP1")?.value || cfg.label) :
-  kind === "p2" ? (document.getElementById("nameP2")?.value || cfg.label) :
-  kind === "p3" ? (document.getElementById("nameP3")?.value || cfg.label) :
-  kind === "p4" ? (document.getElementById("nameP4")?.value || cfg.label) :
-  cfg.label
-),
+    text: label,
     fontSize: kind === "obj" ? 14 : 18,
     fontStyle: "bold",
     fill: "#0b0f14",
     align: "center",
-    verticalAlign: "middle"
+    verticalAlign: "middle",
   });
 
   // Centrage du texte
@@ -403,6 +410,7 @@ function addToken(kind) {
   selectNode(group);
   layerMain.draw();
   pushHistory();
+  return group;
 }
 
 function makeArrowInteractive(arr) {
@@ -454,15 +462,17 @@ function serialize(forHistory = false) {
   const tokens = [];
   const drawings = [];
 
-  layerMain.getChildren().forEach(n => {
+  layerMain.getChildren().forEach((n) => {
     if (n === transformer) return;
 
     if (n.hasName("token")) {
       tokens.push({
+        id: n.id(),
         kind: n.getAttr("tokenKind"),
         x: n.x(),
         y: n.y(),
-        rotation: n.rotation()
+        rotation: n.rotation(),
+        label: n.findOne("Text")?.text() || "",
       });
     } else if (n.className === "Arrow") {
       drawings.push({
@@ -474,7 +484,7 @@ function serialize(forHistory = false) {
         opacity: n.opacity(),
         pointerLength: n.pointerLength(),
         pointerWidth: n.pointerWidth(),
-        dash: n.dash()
+        dash: n.dash(),
       });
     }
   });
@@ -489,12 +499,12 @@ function serialize(forHistory = false) {
       p1: document.getElementById("nameP1")?.value || "",
       p2: document.getElementById("nameP2")?.value || "",
       p3: document.getElementById("nameP3")?.value || "",
-      p4: document.getElementById("nameP4")?.value || ""
+      p4: document.getElementById("nameP4")?.value || "",
     },
     tokens,
     drawings,
     trainingSolution: training.solutionState,
-    trainingBaseline: training.baselineState
+    trainingBaseline: training.baselineState,
   };
 
   // createdAt UNIQUEMENT hors historique
@@ -507,7 +517,7 @@ function serialize(forHistory = false) {
 
 function clearBoard() {
   // garde transformer mais supprime le reste
-  layerMain.getChildren().forEach(n => {
+  layerMain.getChildren().forEach((n) => {
     if (n !== transformer) n.destroy();
   });
   transformer.nodes([]);
@@ -534,31 +544,30 @@ function hydrate(data) {
   if (n4) n4.value = p.p4 || "";
 
   // tokens
-  for (const t of (data.tokens || [])) {
-    addToken(t.kind);
-    const node = getSelected();
+  for (const t of data.tokens || []) {
+    const node = addToken(t.kind, { id: t.id, label: t.label });
     if (!node) continue;
     node.position({ x: t.x, y: t.y });
     node.rotation(t.rotation || 0);
   }
 
   // dessins
-  for (const d of (data.drawings || [])) {
-   if (d.type === "arrow") {
-    const arr = new Konva.Arrow({
-      points: d.points,
-      stroke: d.stroke ?? arrowColor,
-      fill: d.fill ?? arrowColor,
-      strokeWidth: d.strokeWidth ?? 4,
-      pointerLength: d.pointerLength ?? 12,
-      pointerWidth: d.pointerWidth ?? 12,
-      lineCap: "round",
-      lineJoin: "round",
-      dash: d.dash ?? [],
-      opacity: d.opacity ?? 0.9
-    });
-    layerMain.add(arr);
-    makeArrowInteractive(arr);
+  for (const d of data.drawings || []) {
+    if (d.type === "arrow") {
+      const arr = new Konva.Arrow({
+        points: d.points,
+        stroke: d.stroke ?? arrowColor,
+        fill: d.fill ?? arrowColor,
+        strokeWidth: d.strokeWidth ?? 4,
+        pointerLength: d.pointerLength ?? 12,
+        pointerWidth: d.pointerWidth ?? 12,
+        lineCap: "round",
+        lineJoin: "round",
+        dash: d.dash ?? [],
+        opacity: d.opacity ?? 0.9,
+      });
+      layerMain.add(arr);
+      makeArrowInteractive(arr);
     }
   }
 
@@ -581,7 +590,7 @@ function downloadFile(filename, content, type) {
 function saveStrategy() {
   const data = serialize();
   const niceName = (currentMap?.name || "map").replace(/\s+/g, "_");
-  const filename = `strat_${niceName}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}.json`;
+  const filename = `strat_${niceName}_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.json`;
   downloadFile(filename, JSON.stringify(data, null, 2), "application/json");
 }
 
@@ -596,7 +605,7 @@ function loadStrategyFile(file) {
       training.solutionState = data.trainingSolution || null;
 
       uiSetTrainingLabel(training.solutionState ? "solution chargée" : "off");
-      uiSetTrainingTimer(20);      
+      uiSetTrainingTimer(20);
 
       resetHistoryToCurrent();
     } catch (e) {
@@ -607,74 +616,82 @@ function loadStrategyFile(file) {
   reader.readAsText(file);
 }
 
+// ✅ Remplace entièrement ta fonction exportPNG() par celle-ci
+// Objectif : l'export PNG ne doit JAMAIS affecter l'historique (undo/redo)
+// et doit toujours restaurer l'état même si une erreur arrive.
+
 function exportPNG() {
+  const prevRestoring = isRestoring;
+  isRestoring = true;
+
   // cacher le transformer
   const prev = transformer.nodes();
   transformer.nodes([]);
   layerMain.draw();
 
   const stratName = document.getElementById("stratName")?.value || "";
-
-  // récupérer les notes
   const notesText = document.getElementById("notes")?.value || "";
 
   let notesGroup = null;
 
-  if (notesText.trim() !== "") {
-    const padding = 12;
-    const width = stage.width();
-    const height = 90;
+  try {
+    if (notesText.trim() !== "") {
+      const padding = 12;
+      const width = stage.width();
+      const height = 90;
 
-    notesGroup = new Konva.Group({
-      x: 0,
-      y: stage.height() - height,
-    });
+      notesGroup = new Konva.Group({
+        x: 0,
+        y: stage.height() - height,
+      });
 
-    const bg = new Konva.Rect({
-      width,
-      height,
-      fill: "rgba(0,0,0,0.7)",
-    });
+      const bg = new Konva.Rect({
+        width,
+        height,
+        fill: "rgba(0,0,0,0.7)",
+      });
 
-    const txt = new Konva.Text({
-      x: padding,
-      y: padding,
-      width: width - padding * 2,
-      text:      
-       (stratName.trim() ? (stratName.trim() + "\n\n") : "") +
-       "PLAN DE ROUND:\n" + notesText,
-      fill: "#ffffff",
-      fontSize: 14,
-      lineHeight: 1.3,
-    });
+      const txt = new Konva.Text({
+        x: padding,
+        y: padding,
+        width: width - padding * 2,
+        text:
+          (stratName.trim() ? stratName.trim() + "\n\n" : "") +
+          "PLAN DE ROUND:\n" +
+          notesText,
+        fill: "#ffffff",
+        fontSize: 14,
+        lineHeight: 1.3,
+      });
 
-    notesGroup.add(bg);
-    notesGroup.add(txt);
-    layerMain.add(notesGroup);
+      notesGroup.add(bg);
+      notesGroup.add(txt);
+      layerMain.add(notesGroup);
+      layerMain.draw();
+    }
+
+    // export
+    const url = stage.toDataURL({ pixelRatio: 2 });
+    downloadFile(
+      `export_${currentMap?.id || "map"}.png`,
+      dataURLToBlob(url),
+      "image/png",
+    );
+  } finally {
+    // nettoyage garanti
+    if (notesGroup) notesGroup.destroy();
+
+    transformer.nodes(prev);
     layerMain.draw();
+
+    isRestoring = prevRestoring;
   }
-
-  // export
-  const url = stage.toDataURL({ pixelRatio: 2 });
-  downloadFile(
-    `export_${currentMap?.id || "map"}.png`,
-    dataURLToBlob(url),
-    "image/png"
-  );
-
-  // nettoyage
-  if (notesGroup) {
-    notesGroup.destroy();
-  }
-
-  transformer.nodes(prev);
-  layerMain.draw();
 }
 
 function dataURLToBlob(dataURL) {
-  const parts = dataURL.split(',');
+  const parts = dataURL.split(",");
   const byteString = atob(parts[1]);
-  const mimeString = parts[0].split(':')[1].split(';')[0];
+  const mimeString = parts[0].split(":")[1].split(";")[0];
   const ab = new ArrayBuffer(byteString.length);
   const ia = new Uint8Array(ab);
   for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
@@ -694,13 +711,20 @@ function uiSetTrainingTimer(n) {
 function captureSolution() {
   // 1) BASELINE = ce qui reste toujours visible (ennemis + obj)
   const base = serialize();
-  base.tokens = (base.tokens || []).filter(t => t.kind === "enemy" || t.kind === "obj");
+  base.tokens = (base.tokens || []).filter(
+    (t) => t.kind === "enemy" || t.kind === "obj",
+  );
   base.drawings = []; // baseline ne garde pas les flèches
 
   // 2) SOLUTION = ce que le joueur doit refaire (joueurs + smoke + flèches)
   const sol = serialize();
-  sol.tokens = (sol.tokens || []).filter(t =>
-    t.kind === "p1" || t.kind === "p2" || t.kind === "p3" || t.kind === "p4" || t.kind === "smoke"
+  sol.tokens = (sol.tokens || []).filter(
+    (t) =>
+      t.kind === "p1" ||
+      t.kind === "p2" ||
+      t.kind === "p3" ||
+      t.kind === "p4" ||
+      t.kind === "smoke",
   );
   // sol.drawings garde les flèches (déjà dans serialize)
 
@@ -711,9 +735,8 @@ function captureSolution() {
   uiSetTrainingTimer(20);
 }
 
-
 function setEnemiesVisible(visible) {
-  layerMain.getChildren().forEach(n => {
+  layerMain.getChildren().forEach((n) => {
     if (n === transformer) return;
     if (!n.hasName || !n.hasName("token")) return;
 
@@ -728,19 +751,18 @@ function setEnemiesVisible(visible) {
 }
 
 function setPlayersVisible(visible) {
-  layerMain.getChildren().forEach(n => {
+  layerMain.getChildren().forEach((n) => {
     if (n === transformer) return;
     if (!n.hasName || !n.hasName("token")) return;
 
     const kind = n.getAttr("tokenKind");
     if (
-  kind === "p1" ||
-  kind === "p2" ||
-  kind === "p3" ||
-  kind === "p4" ||
-  kind === "smoke"
-) {
-
+      kind === "p1" ||
+      kind === "p2" ||
+      kind === "p3" ||
+      kind === "p4" ||
+      kind === "smoke"
+    ) {
       n.visible(visible);
       n.listening(visible);
     }
@@ -749,7 +771,7 @@ function setPlayersVisible(visible) {
   layerMain.draw();
 }
 function setArrowsVisible(visible) {
-  layerMain.getChildren().forEach(n => {
+  layerMain.getChildren().forEach((n) => {
     if (n.className === "Arrow") {
       n.visible(visible);
       n.listening(visible);
@@ -772,7 +794,7 @@ function removeAttemptPieces() {
 
   // 1) supprime TOUS les tokens sauf enemy/obj
   const tokens = layerMain.find(".token"); // Konva selector
-  tokens.forEach(node => {
+  tokens.forEach((node) => {
     const kind = node.getAttr("tokenKind");
     if (kind !== "enemy" && kind !== "obj") {
       node.destroy();
@@ -781,7 +803,7 @@ function removeAttemptPieces() {
 
   // 2) supprime TOUTES les flèches
   const arrows = layerMain.find("Arrow");
-  arrows.forEach(a => a.destroy());
+  arrows.forEach((a) => a.destroy());
 
   layerMain.draw();
 }
@@ -793,16 +815,15 @@ function applySolutionPieces(solutionData) {
   removeAttemptPieces();
 
   // 2) on remet joueurs + smoke
-  for (const t of (solutionData.tokens || [])) {
-    addToken(t.kind);
-    const node = getSelected();
+  for (const t of solutionData.tokens || []) {
+    const node = addToken(t.kind, { id: t.id, label: t.label });
     if (!node) continue;
     node.position({ x: t.x, y: t.y });
     node.rotation(t.rotation || 0);
   }
 
   // 3) on remet les flèches
-  for (const d of (solutionData.drawings || [])) {
+  for (const d of solutionData.drawings || []) {
     if (d.type !== "arrow") continue;
 
     const arr = new Konva.Arrow({
@@ -815,7 +836,7 @@ function applySolutionPieces(solutionData) {
       lineCap: "round",
       lineJoin: "round",
       dash: d.dash ?? [],
-      opacity: d.opacity ?? 0.9
+      opacity: d.opacity ?? 0.9,
     });
 
     layerMain.add(arr);
@@ -859,7 +880,9 @@ function startTraining(seconds = 20) {
 
 function showSolution() {
   if (!training.solutionState) {
-    alert('Pas de solution enregistrée. Clique sur "Définir la solution" d’abord.');
+    alert(
+      'Pas de solution enregistrée. Clique sur "Définir la solution" d’abord.',
+    );
     return;
   }
 
@@ -891,7 +914,7 @@ function stopTraining() {
   uiSetTrainingTimer(20);
 }
 
-init().catch(err => {
+init().catch((err) => {
   console.error(err);
   alert("Erreur de chargement (maps.json / images).");
 });
