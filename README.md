@@ -1,77 +1,55 @@
-Site StratHub créé en 2026 par Shizou
-La création du site est née de la volonté d’évoluer au sein de la compétition EVA After Battle Arena.
+# StratHub , créé en 2026 par Shizou
 
-1) Choisir une map
+StratHub est un outil de **planification tactique et d’entraînement décisionnel** pour EVA.
+Il permet aux équipes et aux coachs de :
+- préparer des stratégies,
+- s’entraîner à les exécuter,
+- et surtout **apprendre à réagir quand une strat ne se déroule pas comme prévu**.
+ ---
+## 🎯 Pourquoi StratHub ?
 
-Page d’accueil avec toutes tes maps.
+La majorité des outils de strat servent à dessiner un plan parfait.  
+StratHub va plus loin : il entraîne la **prise de décision**, l’**adaptation** et la **lecture de jeu**.
 
-Tu cliques sur une map → ça ouvre le board de cette map.
+---
 
-2) Placer des pions (drag & drop)
+## 🧭 Les 3 modes
 
-Ajouter joueurs P1 / P2 / P3 / P4 (les noms réels des joueurs de votre équipe).
+### Mode Strat
+Préparer et partager des stratégies :
+- placement des joueurs, ennemis et objectifs
+- dessin de flèches / lignes
+- grenades, notes de plan de round
+- sauvegarde JSON et export PNG
 
-Ajouter ennemi (E).
+### Mode Entraînement
+Mémoriser et exécuter une strat :
+- le coach définit une solution
+- chrono (ex : 20 secondes)
+- les joueurs doivent replacer positions, flèches et grenades
+- affichage de la solution possible
 
-Ajouter objectif (OBJ).
+### Mode Coaching (en cours)
 
-Ajouter grenade (G).
+---
 
-Tu peux :
+## 🧠 Philosophie
 
-déplacer les pions librement
+StratHub ne donne pas la “bonne réponse”.  
+Il pose la question :
 
-les sélectionner
+> **Dans cette situation, qu’est-ce que tu fais ?**
 
-les tourner (↺ / ↻)
+---
 
-les supprimer (bouton ou touche Suppr)
+## 🚧 État du projet
 
-3) Dessiner la strat
+- Mode Strat : ✅ fonctionnel  
+- Mode Entraînement : ✅ fonctionnel  
+- Mode Coaching : 🚧 en développement  
 
-Mode Flèche/Ligne : tu cliques + glisses pour tracer une flèche.
+---
 
-Tu peux choisir la couleur des flèches avec le sélecteur.
-
-Chaque flèche garde sa couleur.
-
-4) Zoom & contrôle
-
-Slider Zoom pour mieux voir / travailler la map.
-
-5) Notes / Plan de round
-
-Zone texte “Notes (Plan de round)” pour écrire Plan A / Plan B / timings / conditions.
-
-Ces notes sont sauvegardées et restaurées.
-
-6) Sauvegarder / partager
-Sauvegarde JSON
-
-Bouton Sauvegarder (JSON) : télécharge un fichier stratégie.
-
-Quand quelqu’un charge le JSON, il récupère :
-
-✅ noms des joueurs
-
-✅ notes
-
-✅ pions + positions
-
-✅ flèches + couleurs
-
-✅ grenade/ennemi/obj
-
-Charger JSON
-
-Input Charger une strat : remet exactement la strat.
-
-7) Export PNG (image)
-
-Bouton Exporter (PNG) : génère une image à partager.
-
-Le PNG contient aussi les notes/plan de round (en bas) + tout le visuel.
-
-8) Mode entrainement,
-
-Il s'agit d'un mode pour les coachs - Toujours en construction
+## 👤 Auteur
+Shizou — 2026  
+Projet personnel pour la scène EVA
