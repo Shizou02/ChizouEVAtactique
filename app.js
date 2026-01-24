@@ -325,6 +325,22 @@ function setupUI() {
   uiSetTrainingLabel("off");
   uiSetTrainingTimer(20);
 
+  const modeSelect = document.getElementById("modeSelect");
+  const trainBlock = document.getElementById("modeTrainBlock");
+  const coachBlock = document.getElementById("modeCoachBlock");
+
+  function applyModeUI(mode) {
+    if (trainBlock)
+      trainBlock.style.display = mode === "train" ? "block" : "none";
+    if (coachBlock)
+      coachBlock.style.display = mode === "coach" ? "block" : "none";
+  }
+
+  if (modeSelect) {
+    modeSelect.addEventListener("change", () => applyModeUI(modeSelect.value));
+    applyModeUI(modeSelect.value);
+  }
+
   setTool("select");
 }
 
