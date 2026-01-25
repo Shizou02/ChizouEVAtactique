@@ -1,76 +1,96 @@
 <!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>StratHub — Plan tactique pour EVA</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-585D88K6');</script>
-  <!-- End Google Tag Manager -->
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Plan tactique pour EVA</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-585D88K6");
+    </script>
+    <!-- End Google Tag Manager -->
+  </head>
 
-<body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-585D88K6"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-585D88K6"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
-<!-- HEADER / HERO -->
-<div class="header header-centered hero">
-  <div>
-    <img
-      src="assets/logoStratHub.png"
-      alt="StratHub"
-      class="hero-logo"
-    >
-
-    <div class="hero-subtitle">
-      Plan tactique pour EVA
+    <!-- HERO -->
+    <div class="header header-centered hero">
+      <div class="hero-content">
+        <img
+          src="assets/logoStratHub.png"
+          alt="StratHub"
+          class="hero-logo hero-logo--big"
+        />
+        <div class="hero-subtitle">Plan tactique pour EVA</div>
+      </div>
     </div>
-  </div>
-</div>
 
-  <!-- CONTENU PRINCIPAL -->
-  <div class="container">
-    <div id="maps" class="grid"></div>
-    <small class="muted" style="text-align:center; display:block; margin-top:10px;">
-      Choisis une map pour commencer
-    </small>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    © 2026 — StratHub · Créé par Shizou
-  </footer>
-
-  <!-- SCRIPT -->
-  <script>
-    async function loadMaps() {
-      const res = await fetch('maps.json');
-      const maps = await res.json();
-      const root = document.getElementById('maps');
-
-      root.innerHTML = maps.map(m => `
-        <a class="card" href="board.html?map=${encodeURIComponent(m.id)}">
-          <img src="${m.file}" alt="${m.name}">
-          <div class="title">${m.name}</div>
-          <small class="muted">${m.file}</small>
+    <!-- MENU -->
+    <div class="container home">
+      <div class="grid home-grid">
+        <!-- MAPS -->
+        <a class="card" href="maps.html">
+          <img src="maps/Maps.png" alt="Maps" />
+          <div class="title">Maps</div>
+          <small class="muted">Stratégies & plans tactiques</small>
         </a>
-      `).join('');
-    }
 
-    loadMaps().catch(err => {
-      console.error(err);
-      document.getElementById('maps').innerHTML =
-        '<div class="card">Impossible de charger les maps.</div>';
-    });
-  </script>
+        <!-- ARMES -->
+        <a class="card" href="armes.html">
+          <img src="armes/Modele_Arme.webp" alt="Armes" />
+          <div class="title">Armes</div>
+          <small class="muted">Stats & équipements</small>
+        </a>
+      </div>
 
-</body>
+      <!-- TEXTE SOUS LES CARTES -->
+      <div class="home-description">
+        <p>
+          <strong>StratHub</strong> est un outil de planification tactique et
+          d’entraînement décisionnel pour <strong>EVA</strong>.
+        </p>
+
+        <p>Il permet aux équipes et aux coachs de :</p>
+
+        <ul>
+          <li>préparer des stratégies,</li>
+          <li>s’entraîner à les exécuter,</li>
+          <li>
+            et surtout <strong>apprendre à réagir</strong> quand une strat ne se
+            déroule pas comme prévu.
+          </li>
+        </ul>
+
+        <p class="why">
+          🎯 <strong>Pourquoi StratHub ?</strong><br />
+          La majorité des outils de strat servent à dessiner un plan parfait.<br />
+          <strong>StratHub va plus loin</strong> : il entraîne la prise de
+          décision, l’adaptation et la lecture de jeu.
+        </p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">© 2026 — StratHub · Créé par Shizou</footer>
+  </body>
 </html>
-

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Plan tactique pour EVA</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- HEADER / HERO -->
+    <div class="header header-centered hero">
+      <div>
+        <img src="assets/logoStratHub.png" alt="StratHub" class="hero-logo" />
+
+        <div class="hero-subtitle">Plan tactique pour EVA</div>
+      </div>
+    </div>
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="container">
+      <div id="maps" class="grid"></div>
+      <small
+        class="muted"
+        style="text-align: center; display: block; margin-top: 10px"
+      >
+        Choisis une map pour commencer
+      </small>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">© 2026 — StratHub · Créé par Shizou</footer>
+
+    <!-- SCRIPT -->
+    <script>
+      async function loadMaps() {
+        const res = await fetch("maps.json");
+        const maps = await res.json();
+        const root = document.getElementById("maps");
+
+        // 🗺️ Cartes Maps (comme avant)
+        const mapsCards = maps
+          .map(
+            (m) => `
+        <a class="card" href="board.html?map=${encodeURIComponent(m.id)}">
+          <img src="${m.file}" alt="${m.name}">
+          <div class="title">${m.name}</div>
+          <small class="muted">${m.file}</small>
+        </a>
+      `,
+          )
+          .join("");
+
+        root.innerHTML = mapsCards;
+      }
+
+      loadMaps().catch((err) => {
+        console.error(err);
+        document.getElementById("maps").innerHTML =
+          '<div class="card">Erreur de chargement</div>';
+      });
+    </script>
+  </body>
+</html>

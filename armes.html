@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Armes</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="header">
+      <a href="index.html" class="btn">← Retour</a>
+      <div style="font-weight: 800">Armes</div>
+      <div style="opacity: 0.7">Stats & caractéristiques</div>
+    </div>
+
+    <div class="container">
+      <div id="weapons" class="weapons-list"></div>
+    </div>
+
+    <footer class="footer footer--compact">
+      © 2026 — StratHub · Créé par Shizou
+    </footer>
+
+    <script>
+      function groupBy(list, keyFn) {
+        const out = {};
+        for (const item of list) {
+          const k = keyFn(item) || "Autres";
+          (out[k] ||= []).push(item);
+        }
+        return out;
+      }
+
+      async function loadWeapons() {
+        const res = await fetch("armes.json");
+        const weapons = await res.json();
+        const root = document.getElementById("weapons");
+
+        const groups = groupBy(weapons, (w) => w.group);
+
+        // ✅ ordre des groupes (comme tu veux)
+        const order = [
+          "Fusils d’assaut",
+          "Longue portée",
+          "Armes rapprochées",
+          "Spéciales",
+          "Accessoires",
+        ];
+
+        const rest = Object.keys(groups)
+          .filter((g) => !order.includes(g))
+          .sort();
+        const groupNames = [...order.filter((g) => groups[g]), ...rest];
+
+        root.innerHTML = groupNames
+          .map((groupName) => {
+            const cards = groups[groupName]
+              .map((w) => {
+                const statsHtml = Object.entries(w.stats || {})
+                  .map(([k, v]) => `<li><strong>${k} :</strong> ${v}</li>`)
+                  .join("");
+
+                return `
+              <div class="weapon-row card">
+                <img class="weapon-img" src="${w.image}" alt="${w.name}">
+                <div class="weapon-info">
+                  <div class="title">${w.name}</div>
+                  <small class="muted">${w.type || ""}</small>
+                  <ul class="weapon-stats">${statsHtml}</ul>
+                </div>
+              </div>
+            `;
+              })
+              .join("");
+
+            return `
+          <div class="weapon-group">
+            <h2 class="weapon-group-title">${groupName}</h2>
+            <div class="weapons-list">${cards}</div>
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      loadWeapons().catch((err) => {
+        console.error(err);
+        document.getElementById("weapons").innerHTML =
+          '<div class="card">Impossible de charger les armes.</div>';
+      });
+    </script>
+  </body>
+</html>

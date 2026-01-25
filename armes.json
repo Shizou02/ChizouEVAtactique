@@ -1,0 +1,131 @@
+[
+  {
+    "id": "ak77",
+    "name": "AK-77",
+    "group": "Fusils d’assaut",
+    "image": "armes/ak77.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Recul": "-", "Portée": "-" }
+  },
+  {
+    "id": "mx42",
+    "name": "MX-42",
+    "group": "Fusils d’assaut",
+    "image": "armes/mx42.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Recul": "-", "Portée": "-" }
+  },
+  {
+    "id": "Vulcan",
+    "name": "Vulcan",
+    "group": "Fusils d’assaut",
+    "image": "armes/Vulcan.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Recul": "-", "Portée": "-" }
+  },
+
+  {
+    "id": "atlas",
+    "name": "Atlas",
+    "group": "Longue portée",
+    "image": "armes/atlas.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "fury",
+    "name": "Fury",
+    "group": "Longue portée",
+    "image": "armes/fury.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "Needle",
+    "name": "Needle",
+    "group": "Longue portée",
+    "image": "armes/Needle.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "t1Gauss",
+    "name": "T1 Gauss",
+    "group": "Armes rapprochées",
+    "image": "armes/t1gauss.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "mp52",
+    "name": "MP-52",
+    "group": "Armes rapprochées",
+    "image": "armes/mp52.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "spectre",
+    "name": "Spectre",
+    "group": "Armes rapprochées",
+    "image": "armes/spectre.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "striker",
+    "name": "Striker",
+    "group": "Armes rapprochées",
+    "image": "armes/striker.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "ERG",
+    "name": "ERG",
+    "group": "Spéciales",
+    "image": "armes/ERG.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "warden",
+    "name": "Warden",
+    "group": "Spéciales",
+    "image": "armes/warden.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "Westfire",
+    "name": "Westfire",
+    "group": "Spéciales",
+    "image": "armes/Westfire.webp",
+    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+  },
+  {
+    "id": "DX3",
+    "name": "DX3",
+    "group": "Accessoires",
+    "image": "armes/DX3.webp",
+    "stats": { "Dégâts": 100, "Temps de recharge seconde": 45, "Portée": "2" }
+  },
+  {
+    "id": "Sticky",
+    "name": "Sticky",
+    "group": "Accessoires",
+    "image": "armes/Sticky.webp",
+    "stats": { "Dégâts": 95, "Temps de recharge seconde": 20, "Portée": "3" }
+  },
+  {
+    "id": "Sonar",
+    "name": "Sonar",
+    "group": "Accessoires",
+    "image": "armes/Sonar.webp",
+    "stats": {
+      "Dégâts": 0,
+      "Temps de recharge seconde": 40,
+      "Portée": "8",
+      "Ojetcif": "détection des ennemis"
+    }
+  },
+  {
+    "id": "Shield",
+    "name": "Shield",
+    "group": "Accessoires",
+    "image": "armes/Shield.webp",
+    "stats": {
+      "HP": 400,
+      "Temps de recharge seconde": 45,
+      "Durée second": "10"
+    }
+  }
+]
