@@ -4,7 +4,7 @@ Année: 2026
 Description: Outil de planification tactique pour EVA
 */
 
-let stage, layerBg, layerMain, transformer;
+let stage, layerBg, layerMain, layerFx, transformer;
 let currentMap = null;
 let tool = "select"; // "select" | "draw"
 let isDrawing = false;
@@ -16,6 +16,11 @@ let redoStack = [];
 let isRestoring = false;
 let historyTimer = null;
 let bgNode = null;
+let currentMode = "strat"; // "strat" | "train" | "coach"
+let coachSignalArmed = false; // quand true, le prochain clic pose un ping
+let coachZoneArmed = false; // ✅ quand true, on trace une zone au drag
+let coachZoneRect = null; // ✅ le rectangle en cours
+let coachZoneStart = null; // ✅ point de départ du drag
 
 // 🎓 Mode entraînement
 let training = {
@@ -112,9 +117,11 @@ function setupStage() {
 
   layerBg = new Konva.Layer();
   layerMain = new Konva.Layer();
+  layerFx = new Konva.Layer(); // ✅ pings & effets temporaires (non sauvegardés)
 
   stage.add(layerBg);
   stage.add(layerMain);
+  stage.add(layerFx); // ✅ au-dessus
 
   transformer = new Konva.Transformer({
     rotateEnabled: false,
@@ -204,6 +211,104 @@ function setupStage() {
       deleteSelected();
     }
   });
+  stage.on("mousedown touchstart", (e) => {
+    // ✅ Ping coaching : uniquement si armé + mode coach
+    if (currentMode !== "coach" || !coachSignalArmed) return;
+
+    // On veut cliquer sur la map/vide, pas sur un pion
+    if (e.target !== stage && e.target.getLayer() !== layerBg) return;
+
+    const pos = getPointerPosInLayer();
+    if (!pos) return;
+
+    coachSignalArmed = false;
+    stage.container().style.cursor = tool === "draw" ? "crosshair" : "default";
+
+    const ping = new Konva.Circle({
+      x: pos.x,
+      y: pos.y,
+      radius: 16,
+      fill: "rgba(255, 80, 80, 0.75)",
+      stroke: "rgba(255, 180, 180, 0.9)",
+      strokeWidth: 2,
+    });
+
+    layerFx.add(ping);
+    layerFx.draw();
+
+    setTimeout(() => {
+      ping.destroy();
+      layerFx.draw();
+    }, 1500);
+  });
+  stage.on("mousedown touchstart", (e) => {
+    if (currentMode !== "coach" || !coachZoneArmed) return;
+
+    // On veut tracer sur la map/vide (comme pour les flèches)
+    if (e.target !== stage && e.target.getLayer() !== layerBg) return;
+
+    const pos = getPointerPosInLayer();
+    if (!pos) return;
+
+    coachZoneStart = { x: pos.x, y: pos.y };
+
+    coachZoneRect = new Konva.Rect({
+      x: pos.x,
+      y: pos.y,
+      width: 1,
+      height: 1,
+      fill: "rgba(255, 200, 80, 0.18)",
+      stroke: "rgba(255, 200, 80, 0.8)",
+      strokeWidth: 2,
+      cornerRadius: 8,
+    });
+
+    layerFx.add(coachZoneRect);
+    layerFx.draw();
+  });
+  stage.on("mousemove touchmove", () => {
+    if (currentMode !== "coach" || !coachZoneArmed) return;
+    if (!coachZoneRect || !coachZoneStart) return;
+
+    const pos = getPointerPosInLayer();
+    if (!pos) return;
+
+    // Pour gérer drag dans toutes les directions (haut/gauche)
+    const x = Math.min(coachZoneStart.x, pos.x);
+    const y = Math.min(coachZoneStart.y, pos.y);
+    const w = Math.abs(pos.x - coachZoneStart.x);
+    const h = Math.abs(pos.y - coachZoneStart.y);
+
+    coachZoneRect.position({ x, y });
+    coachZoneRect.size({ width: w, height: h });
+
+    layerFx.batchDraw();
+  });
+  stage.on("mouseup touchend", () => {
+    if (currentMode !== "coach" || !coachZoneArmed) return;
+    if (!coachZoneRect) return;
+
+    // Si la zone est trop petite (clic sans drag), on supprime
+    const tooSmall = coachZoneRect.width() < 8 || coachZoneRect.height() < 8;
+    if (tooSmall) {
+      coachZoneRect.destroy();
+      layerFx.draw();
+    } else {
+      // Disparition automatique (1,5s)
+      const rectToRemove = coachZoneRect;
+      setTimeout(() => {
+        rectToRemove.destroy();
+        layerFx.draw();
+      }, 1500);
+    }
+
+    // Reset état
+    coachZoneRect = null;
+    coachZoneStart = null;
+    coachZoneArmed = false;
+
+    stage.container().style.cursor = tool === "draw" ? "crosshair" : "default";
+  });
 }
 
 function fitStageToContainer() {
@@ -244,6 +349,9 @@ async function loadBackground(src) {
         layerMain.position({ x: bgNode.x(), y: bgNode.y() });
         layerMain.scale({ x: scale, y: scale });
         layerMain.draw();
+        layerFx.position({ x: bgNode.x(), y: bgNode.y() });
+        layerFx.scale({ x: scale, y: scale });
+        layerFx.draw();
       }
 
       resizeBg();
@@ -353,8 +461,41 @@ function setupUI() {
   }
 
   if (modeSelect) {
-    modeSelect.addEventListener("change", () => applyModeUI(modeSelect.value));
+    currentMode = modeSelect.value; // ✅ init
+    modeSelect.addEventListener("change", () => {
+      currentMode = modeSelect.value; // ✅ maj
+      coachSignalArmed = false; // ✅ sécurité: on désarme
+      stage.container().style.cursor =
+        tool === "draw" ? "crosshair" : "default";
+      applyModeUI(modeSelect.value);
+    });
     applyModeUI(modeSelect.value);
+  }
+  const coachSignalBtn = document.getElementById("coachSignal");
+  if (coachSignalBtn) {
+    coachSignalBtn.onclick = () => {
+      if (currentMode !== "coach") return; // sécurité
+
+      coachSignalArmed = !coachSignalArmed; // ✅ toggle ON/OFF
+
+      stage.container().style.cursor = coachSignalArmed
+        ? "crosshair"
+        : tool === "draw"
+          ? "crosshair"
+          : "default";
+    };
+  }
+  const coachZoneBtn = document.getElementById("coachZone");
+  if (coachZoneBtn) {
+    coachZoneBtn.onclick = () => {
+      if (currentMode !== "coach") return;
+
+      // On arme la zone, et on désarme le signal (simple)
+      coachZoneArmed = true;
+      coachSignalArmed = false;
+
+      stage.container().style.cursor = "crosshair";
+    };
   }
 
   setTool("select");
