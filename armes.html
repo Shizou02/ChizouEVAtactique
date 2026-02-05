@@ -39,7 +39,6 @@
 
         const groups = groupBy(weapons, (w) => w.group);
 
-        // ✅ ordre des groupes (comme tu veux)
         const order = [
           "Fusils d’assaut",
           "Longue portée",
@@ -51,6 +50,7 @@
         const rest = Object.keys(groups)
           .filter((g) => !order.includes(g))
           .sort();
+
         const groupNames = [...order.filter((g) => groups[g]), ...rest];
 
         root.innerHTML = groupNames
@@ -74,8 +74,15 @@
               })
               .join("");
 
+            const groupClass = groupName
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/(^-|-$)/g, "");
+
             return `
-          <div class="weapon-group">
+          <div class="weapon-group group-${groupClass}">
             <h2 class="weapon-group-title">${groupName}</h2>
             <div class="weapons-list">${cards}</div>
           </div>

@@ -313,22 +313,51 @@ button {
   flex-direction: column;
   gap: 12px;
 }
+/* Par groupe : grille (armes côte à côte) */
+.weapon-group .weapons-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 12px;
+}
+@media (min-width: 1200px) {
+  .weapon-group .weapons-list {
+    grid-template-columns: repeat(3, minmax(320px, 1fr));
+  }
+}
+
+/* La carte doit pouvoir rétrécir en grille */
+.weapon-row {
+  height: 100%;
+}
 
 /* ===== Page armes : override du style global .card img ===== */
-.weapon-row {
-  display: flex;
-  gap: 16px;
-  align-items: center;
+.weapon-row.card {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 18px;
 }
 
 .weapon-row .weapon-img {
-  width: 220px;
-  height: 120px;
+  width: 270px;
+  height: 150px;
+  padding: 12px; /* espace entre cadre et image */
   object-fit: contain;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  flex: 0 0 auto; /* empêche l'image de s'étirer */
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 55%);
+
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent), transparent 75%),
+    0 6px 16px rgba(0, 0, 0, 0.35);
+
+  flex: 0 0 auto;
 }
 
 /* le reste prend la place disponible */
@@ -342,6 +371,20 @@ button {
   padding-left: 18px;
   color: rgba(232, 238, 246, 0.85);
   line-height: 1.4;
+}
+.weapon-stats strong {
+  font-weight: 600;
+  color: rgba(232, 238, 246, 0.75);
+}
+.weapon-stats li:last-child {
+  opacity: 0.75;
+  font-size: 0.9em;
+}
+
+@media (max-width: 900px) {
+  .weapon-group .weapons-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Responsive */
@@ -361,17 +404,36 @@ button {
 }
 
 .weapon-group-title {
-  margin: 10px 0 12px;
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--accent, #e8eef6);
 }
 
 .weapon-group-title::after {
   content: "";
   display: block;
   margin-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--accent, rgba(255, 255, 255, 0.1));
 }
+
+/* ===== Couleurs par groupe ===== */
+.group-fusils-d-assaut {
+  --accent: rgba(120, 180, 255, 0.7);
+}
+.group-longue-portee {
+  --accent: rgba(180, 120, 255, 0.7);
+}
+.group-armes-rapprochees {
+  --accent: rgba(255, 160, 120, 0.7);
+}
+.group-speciales {
+  --accent: rgba(120, 220, 180, 0.7);
+}
+.group-accessoires {
+  --accent: rgba(233, 208, 128, 0.6);
+}
+
 /* =========================
    PAGE D'ACCUEIL (INDEX)
    ========================= */
