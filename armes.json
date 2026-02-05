@@ -4,21 +4,46 @@
     "name": "AK-77",
     "group": "Fusils d’assaut",
     "image": "armes/ak77.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Recul": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 17,
+      "Dégâts Torse": 15,
+      "Dégâts Extrèmités": 14,
+      "Dispersion": 0.3,
+      "Cadence RPM": 552,
+      "Munitions": 35,
+      "Portée": "0-25m=Max / 25-35m= 83% / >35m= 75%"
+    }
   },
   {
     "id": "mx42",
     "name": "MX-42",
     "group": "Fusils d’assaut",
     "image": "armes/mx42.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Recul": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 15,
+      "Dégâts Torse": 13,
+      "Dégâts Extrèmités": 10,
+      "Dispersion": 0.25,
+      "Cadence RPM": 660,
+      "Munitions": 40,
+      "Portée": "0-22m=Max / 22-30m= 85% / >35m= 75%"
+    }
   },
   {
     "id": "Vulcan",
     "name": "Vulcan",
     "group": "Fusils d’assaut",
     "image": "armes/Vulcan.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Recul": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 19,
+      "Dégâts Torse": 17,
+      "Dégâts Extrèmités": 15,
+      "Dispersion": 0.1,
+      "Note dispersion": "à partir de la 2ème balle",
+      "Cadence RPM": 750,
+      "Munitions": 30,
+      "Portée": "0-30m=Max / >30m= 75%"
+    }
   },
 
   {
@@ -26,70 +51,150 @@
     "name": "Atlas",
     "group": "Longue portée",
     "image": "armes/atlas.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 150,
+      "Dégâts Torse": 95,
+      "Dégâts Extrèmités": 95,
+      "Cadence RPM": 60,
+      "Munitions": 5,
+      "Portée": " >0m= -25%"
+    }
   },
   {
     "id": "fury",
     "name": "Fury",
     "group": "Longue portée",
     "image": "armes/fury.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 25,
+      "Dégâts Torse": 20,
+      "Dégâts Extrèmités": 18,
+      "Dispersion": 0.3,
+      "Cadence RPM": 450,
+      "Munitions": 75,
+      "Portée": "0-50m=Max / 50-70m= 80% / >70m= 70%"
+    }
   },
   {
     "id": "Needle",
     "name": "Needle",
     "group": "Longue portée",
     "image": "armes/Needle.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 34,
+      "Dégâts Torse": 28,
+      "Dégâts Extrèmités": 28,
+      "Dispersion": 0,
+      "Cadence RPM": 258,
+      "Munitions": 35,
+      "Portée": " >0m= 100%"
+    }
   },
   {
     "id": "t1Gauss",
     "name": "T1 Gauss",
     "group": "Armes rapprochées",
     "image": "armes/t1gauss.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 110,
+      "Dégâts Torse": 100,
+      "Dégâts Extrèmités": 110,
+      "Dispersion": 2,
+      "Cadence RPM": 54,
+      "Munitions": 5,
+      "Portée": "0-4m=Max / 4-6m= 50% / 6-10m= 40% / 10-15m=20% >15m=0"
+    }
   },
   {
     "id": "mp52",
     "name": "MP-52",
     "group": "Armes rapprochées",
     "image": "armes/mp52.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 19,
+      "Dégâts Torse": 16,
+      "Dégâts Extrèmités": 14,
+      "Dispersion": 1.4,
+      "Cadence RPM": 588,
+      "Munitions": 35,
+      "Portée": "0-8m=Max / 8-9m= 70% / 9-15m= 55% / >15m= 45%"
+    }
   },
   {
     "id": "spectre",
     "name": "Spectre",
     "group": "Armes rapprochées",
     "image": "armes/spectre.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 12,
+      "Dégâts Torse": 10,
+      "Dégâts Extrèmités": 9,
+      "Dispersion": 1.35,
+      "Cadence RPM": 1020,
+      "Munitions": 45,
+      "Portée": "0-8m=Max / 8-12m= 65% / 12-20m= 50% / >20m= 40%"
+    }
   },
   {
     "id": "striker",
     "name": "Striker",
     "group": "Armes rapprochées",
     "image": "armes/striker.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 19,
+      "Dégâts Torse": 15,
+      "Dégâts Extrèmités": 13,
+      "Dispersion": 1.5,
+      "Cadence RPM": 780,
+      "Munitions": 30,
+      "Portée": "0-5m=Max / 5-8m= 65% / 8-10m= 55% / >10m= 30%"
+    }
   },
   {
     "id": "ERG",
     "name": "ERG",
     "group": "Spéciales",
     "image": "armes/ERG.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 162,
+      "Dégâts Torse": 122,
+      "Dégâts Extrèmités": 110,
+      "Dispersion": 0,
+      "Cadence RPM": 6000,
+      "Munitions": 4,
+      "Durée seconde": 1,
+      "Portée": "0-20m=Max / 20-30m= 80% / >30m= 70%"
+    }
   },
   {
     "id": "warden",
     "name": "Warden",
     "group": "Spéciales",
     "image": "armes/warden.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 49,
+      "Dégâts Torse": 32,
+      "Dégâts Extrèmités": 28,
+      "Dispersion": 0,
+      "Cadence RPM": 288,
+      "Munitions": 9,
+      "Portée": ">0m= Max"
+    }
   },
   {
     "id": "Westfire",
     "name": "Westfire",
     "group": "Spéciales",
     "image": "armes/Westfire.webp",
-    "stats": { "Dégâts": 0, "Cadence": 0, "Précision": "-", "Portée": "-" }
+    "stats": {
+      "Dégâts Tête": 100,
+      "Dégâts Torse": 60,
+      "Dégâts Extrèmités": 45,
+      "Dispersion": 0,
+      "Cadence RPM": 63,
+      "Munitions": 9,
+      "Portée": "0-5m= 70% / 5-25m= Max / >25m= 80%"
+    }
   },
   {
     "id": "DX3",
@@ -114,7 +219,7 @@
       "Dégâts": 0,
       "Temps de recharge seconde": 40,
       "Portée": "8",
-      "Ojetcif": "détection des ennemis"
+      "Ojectif": "détection des ennemis"
     }
   },
   {
