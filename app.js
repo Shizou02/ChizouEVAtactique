@@ -27,7 +27,7 @@ const loadout = {
   weapons: [], // toutes les armes (armes.json)
   selectedWeaponIds: [], // max 2 ids d’armes
   selectedPlayerNode: null, // le joueur sélectionné sur la map
-  meterToPx: 10, // conversion m → pixels (on ajustera plus tard)
+  meterToPx: 20, // conversion m → pixels (on ajustera plus tard)
 };
 
 // Loadout par joueur (persistant)
