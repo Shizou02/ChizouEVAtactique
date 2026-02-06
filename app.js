@@ -21,14 +21,150 @@ let coachSignalArmed = false; // quand true, le prochain clic pose un ping
 let coachZoneArmed = false; // ✅ quand true, on trace une zone au drag
 let coachZoneRect = null; // ✅ le rectangle en cours
 let coachZoneStart = null; // ✅ point de départ du drag
+let selectedPlayer = null;
+
+const loadout = {
+  weapons: [], // toutes les armes (armes.json)
+  selectedWeaponIds: [], // max 2 ids d’armes
+  selectedPlayerNode: null, // le joueur sélectionné sur la map
+  meterToPx: 10, // conversion m → pixels (on ajustera plus tard)
+};
+
+// Loadout par joueur (persistant)
+const playerLoadouts = {
+  p1: [],
+  p2: [],
+  p3: [],
+  p4: [],
+};
+
+let activePlayerKind = null; // "p1" | "p2" | "p3" | "p4"
+
+function parseEffectiveRangeMeters(weapon) {
+  // Ex: "0-25m=Max / 25-35m=83% / >35m=75%"
+  const s = String(weapon?.stats?.["Portée"] ?? "");
+  const m = s.match(/0\s*-\s*([0-9]+(?:\.[0-9]+)?)\s*m/i);
+  return m ? Number(m[1]) : null;
+}
+
+function clearRanges() {
+  // on supprime uniquement ce qu'on a dessiné pour la portée
+  layerFx.find(".range").forEach((n) => n.destroy());
+  layerFx.draw();
+}
+
+function drawRangesForSelection() {
+  clearRanges();
+
+  // il faut un joueur sélectionné + 1 arme mini
+  if (!loadout.selectedPlayerNode) return;
+
+  const ids = loadout.selectedWeaponIds;
+  if (!ids || ids.length === 0) return;
+
+  const center = {
+    x: loadout.selectedPlayerNode.x(),
+    y: loadout.selectedPlayerNode.y(),
+  };
+
+  // arme 1 = vert ; arme 2 = bleu
+  const colors = ["#4ade80", "#3b82f6"];
+  const dashes = [[], [10, 8]];
+
+  ids.slice(0, 2).forEach((id, i) => {
+    const w = loadout.weapons.find((x) => x.id === id);
+    const meters = parseEffectiveRangeMeters(w);
+    if (meters == null) return;
+
+    const circle = new Konva.Circle({
+      x: center.x,
+      y: center.y,
+      radius: meters * loadout.meterToPx,
+      stroke: colors[i],
+      strokeWidth: 3,
+      dash: dashes[i],
+      opacity: 0.9,
+      name: "range", // <- important (pour clearRanges)
+      listening: false,
+    });
+
+    layerFx.add(circle);
+  });
+
+  layerFx.draw();
+}
+
+function drawRangesForAllPlayers() {
+  clearRanges();
+
+  const kinds = ["p1", "p2", "p3", "p4"];
+
+  for (const kind of kinds) {
+    const weaponIds = playerLoadouts[kind];
+    if (!weaponIds || weaponIds.length === 0) continue;
+
+    // retrouver le node du joueur sur la map
+    const playerNode = layerMain
+      .find(".token")
+      .find((n) => n.getAttr("tokenKind") === kind);
+
+    if (!playerNode) continue;
+
+    const center = { x: playerNode.x(), y: playerNode.y() };
+
+    const w1 = loadout.weapons.find((w) => w.id === weaponIds[0]);
+    const w2 = loadout.weapons.find((w) => w.id === weaponIds[1]);
+
+    const r1m = w1 ? parseEffectiveRangeMeters(w1) : null;
+    const r2m = w2 ? parseEffectiveRangeMeters(w2) : null;
+
+    if (r1m != null) {
+      layerFx.add(
+        new Konva.Circle({
+          x: center.x,
+          y: center.y,
+          radius: r1m * loadout.meterToPx,
+          stroke: "#4ade80",
+          strokeWidth: 3,
+          dash: [],
+          opacity: 0.9,
+          name: "range",
+          listening: false,
+        }),
+      );
+    }
+
+    if (r2m != null) {
+      layerFx.add(
+        new Konva.Circle({
+          x: center.x,
+          y: center.y,
+          radius: r2m * loadout.meterToPx,
+          stroke: "#3b82f6",
+          strokeWidth: 3,
+          dash: [10, 8],
+          opacity: 0.9,
+          name: "range",
+          listening: false,
+        }),
+      );
+    }
+  }
+
+  layerFx.draw();
+}
 
 // 🎓 Mode entraînement
 let training = {
   baselineState: null,
-  solutionState: null, // snapshot JSON de la solution
+  solutionState: null,
   active: false,
   remaining: 20,
   timerId: null,
+
+  // ✅ nouveau
+  planAState: null, // snapshot du plan A validé
+  enemiesManualArmed: false, // mode placement ennemis à la souris
 };
 
 function pushHistoryDebounced() {
@@ -309,6 +445,23 @@ function setupStage() {
 
     stage.container().style.cursor = tool === "draw" ? "crosshair" : "default";
   });
+
+  // 🎓 Placement ennemis manuel
+  stage.on("mousedown touchstart", (e) => {
+    if (currentMode !== "train" || !training.enemiesManualArmed) return;
+
+    if (e.target !== stage && e.target.getLayer() !== layerBg) return;
+
+    const pos = getPointerPosInLayer();
+    if (!pos) return;
+
+    const node = addToken("enemy");
+    if (!node) return;
+    node.position({ x: pos.x, y: pos.y });
+
+    layerMain.draw();
+    pushHistoryDebounced();
+  });
 }
 
 function fitStageToContainer() {
@@ -440,11 +593,19 @@ function setupUI() {
   const btnStart = document.getElementById("startTraining");
   const btnShow = document.getElementById("showSolution");
   const btnStop = document.getElementById("stopTraining");
+  const btnPlanA = document.getElementById("validatePlanA");
+  const btnRestorePlanA = document.getElementById("restorePlanA");
+  const btnEnManual = document.getElementById("trainEnemiesManual");
+  const btnEnAuto = document.getElementById("trainEnemiesAuto");
 
   if (btnSet) btnSet.onclick = captureSolution;
   if (btnStart) btnStart.onclick = () => startTraining(20);
   if (btnShow) btnShow.onclick = showSolution;
   if (btnStop) btnStop.onclick = stopTraining;
+  if (btnPlanA) btnPlanA.onclick = validatePlanA;
+  if (btnRestorePlanA) btnRestorePlanA.onclick = restorePlanA;
+  if (btnEnManual) btnEnManual.onclick = toggleTrainingEnemiesManual;
+  if (btnEnAuto) btnEnAuto.onclick = () => autoPlaceEnemies(4);
 
   uiSetTrainingLabel("off");
   uiSetTrainingTimer(20);
@@ -497,6 +658,121 @@ function setupUI() {
       stage.container().style.cursor = "crosshair";
     };
   }
+  // LOADOUT (STEP 2) — ouvrir/fermer le panneau
+  const panel = document.getElementById("loadoutPanel");
+  const openBtn = document.getElementById("openLoadout");
+  const closeBtn = document.getElementById("closeLoadout");
+
+  openBtn.addEventListener("click", () => {
+    panel.classList.add("open");
+    document.body.classList.add("loadout-open");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    panel.classList.remove("open");
+    document.body.classList.remove("loadout-open");
+  });
+
+  const loadoutList = document.getElementById("loadoutWeapons");
+  if (!loadoutList) return;
+
+  fetch("armes.json")
+    .then((r) => r.json())
+    .then((weapons) => {
+      allWeapons = weapons;
+      loadout.weapons = weapons;
+      // Regrouper par "group"
+      const groups = {};
+      weapons.forEach((w) => {
+        const g = w.group || "Autres";
+        (groups[g] ||= []).push(w);
+      });
+
+      // Ordre souhaité (comme ta page armes)
+      const order = [
+        "Fusils d’assaut",
+        "Longue portée",
+        "Armes rapprochées",
+        "Spéciales",
+        "Accessoires",
+      ];
+
+      // Construire la liste des groupes à afficher
+      const groupNames = [
+        ...order.filter((g) => groups[g]),
+        ...Object.keys(groups)
+          .filter((g) => !order.includes(g))
+          .sort(),
+      ];
+
+      // HTML final
+      loadoutList.innerHTML = groupNames
+        .map((groupName) => {
+          const buttons = groups[groupName]
+            .map(
+              (w) =>
+                `<button class="weapon-item" type="button" data-id="${w.id}">${w.name}</button>`,
+            )
+            .join("");
+
+          return `
+      <div class="loadout-group">
+        <div class="loadout-group-title">${groupName}</div>
+        <div class="loadout-group-weapons">${buttons}</div>
+      </div>
+    `;
+        })
+        .join("");
+    });
+
+  const selectedLabel = document.getElementById("loadoutSelected");
+
+  let allWeapons = [];
+
+  let selectedWeapons = [];
+
+  loadoutList.addEventListener("click", (e) => {
+    if (e.target.tagName !== "BUTTON") return;
+
+    const weaponId = e.target.dataset.id;
+    const weaponName = e.target.textContent;
+
+    // si déjà sélectionnée → on enlève
+    if (selectedWeapons.includes(weaponId)) {
+      selectedWeapons = selectedWeapons.filter((id) => id !== weaponId);
+      e.target.classList.remove("selected");
+    } else {
+      // si déjà 2 → on enlève la plus ancienne
+      if (selectedWeapons.length === 2) {
+        const removed = selectedWeapons.shift();
+        const oldBtn = loadoutList.querySelector(
+          `button[data-id="${removed}"]`,
+        );
+        if (oldBtn) oldBtn.classList.remove("selected");
+      }
+
+      // on ajoute la nouvelle
+      selectedWeapons.push(weaponId);
+      e.target.classList.add("selected");
+    }
+
+    if (selectedLabel) {
+      const lines = selectedWeapons.map((id) => {
+        const w = allWeapons.find((x) => x.id === id);
+        return w ? `${w.name} → ${w.stats["Portée"]}` : id;
+      });
+
+      selectedLabel.textContent = lines.length
+        ? lines.join(" | ")
+        : "Aucune arme sélectionnée";
+      loadout.selectedWeaponIds = [...selectedWeapons];
+      drawRangesForSelection();
+    }
+
+    if (activePlayerKind)
+      playerLoadouts[activePlayerKind] = [...selectedWeapons];
+    drawRangesForAllPlayers();
+  });
 
   setTool("select");
 }
@@ -710,6 +986,31 @@ function selectNode(node) {
   }
   transformer.nodes([node]);
   layerMain.draw();
+
+  const loadoutPlayer = document.getElementById("loadoutPlayer");
+
+  if (loadoutPlayer) {
+    const kind = node.getAttr("tokenKind");
+
+    if (kind === "p1" || kind === "p2" || kind === "p3" || kind === "p4") {
+      activePlayerKind = kind;
+      loadoutPlayer.textContent = "Joueur sélectionné : " + kind.toUpperCase();
+
+      // 🔹 charger les armes de ce joueur dans le panneau
+      selectedWeapons = [...playerLoadouts[kind]];
+
+      // 🔹 remettre le visuel sélectionné
+      loadoutList.querySelectorAll("button.weapon-item").forEach((b) => {
+        const id = b.dataset.id;
+        b.classList.toggle("selected", selectedWeapons.includes(id));
+      });
+    } else {
+      loadoutPlayer.textContent = "Joueur : aucun";
+
+      loadout.selectedPlayerNode = null; // <- NEW
+      clearRanges(); // <- NEW
+    }
+  }
 }
 
 function getSelected() {
@@ -1011,6 +1312,102 @@ function captureSolution() {
 
   uiSetTrainingLabel("solution enregistrée (ennemis/obj gardés)");
   uiSetTrainingTimer(20);
+}
+
+function validatePlanA() {
+  const state = serialize(true);
+
+  // ✅ Plan A = uniquement nos pièces (et optionnellement OBJ)
+  const keep = new Set(["p1", "p2", "p3", "p4", "smoke", "obj"]);
+
+  if (state.tokens && Array.isArray(state.tokens)) {
+    state.tokens = state.tokens.filter((t) => keep.has(t.kind));
+  }
+
+  training.planAState = state;
+  uiSetTrainingLabel("Plan A validé");
+}
+
+function restorePlanA() {
+  if (!training.planAState) {
+    alert("Aucun Plan A validé.");
+    return;
+  }
+
+  // ✅ 0) On coupe tous les "modes en cours" qui peuvent continuer à modifier l'état après le clic
+  coachSignalArmed = false;
+  coachZoneArmed = false;
+
+  training.enemiesManualArmed = false;
+  // (optionnel mais sûr) si tu veux que le curseur revienne normal
+  stage.container().style.cursor = "default";
+
+  // ✅ 1) On annule un éventuel dessin en cours (sinon le mouseup peut pousser un nouvel état)
+  isDrawing = false;
+  if (drawLine) {
+    drawLine.destroy();
+    drawLine = null;
+  }
+
+  // ✅ 2) Restore plan A (sans polluer l'historique)
+  isRestoring = true;
+  hydrate(training.planAState);
+  isRestoring = false;
+
+  console.log(
+    "TOKENS APRES RESTORE:",
+    layerMain.find(".token").map((n) => n.getAttr("tokenKind")),
+  );
+
+  // ✅ 3) On tue un pushHistoryDebounced en attente (ennemis manuels / actions récentes)
+  clearTimeout(historyTimer);
+
+  // ✅ 4) On repart avec un historique clean : Plan A = état 0
+  resetHistoryToCurrent();
+
+  // ✅ 5) On repasse en sélection (évite les "effets bizarres" juste après)
+  setTool("select");
+
+  uiSetTrainingLabel("Retour au Plan A");
+}
+
+function toggleTrainingEnemiesManual() {
+  if (currentMode !== "train") return;
+
+  training.enemiesManualArmed = !training.enemiesManualArmed;
+  stage.container().style.cursor = training.enemiesManualArmed
+    ? "crosshair"
+    : "default";
+
+  uiSetTrainingLabel(
+    training.enemiesManualArmed
+      ? "Place les ennemis (clic map)"
+      : "Mode entraînement",
+  );
+}
+function autoPlaceEnemies(count = 4) {
+  if (!bgNode) return;
+
+  const img = bgNode.image();
+  if (!img) return;
+
+  const w = img.width;
+  const h = img.height;
+
+  const margin = 60;
+
+  for (let i = 0; i < count; i++) {
+    const x = margin + Math.random() * (w - margin * 2);
+    const y = margin + Math.random() * (h - margin * 2);
+
+    const node = addToken("enemy");
+    if (!node) continue;
+    node.position({ x, y });
+  }
+
+  layerMain.draw();
+  pushHistoryDebounced();
+  uiSetTrainingLabel(`Ennemis auto (${count})`);
 }
 
 function setEnemiesVisible(visible) {

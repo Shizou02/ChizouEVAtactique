@@ -105,6 +105,13 @@
             <span class="training-pill" id="trainingTimer">20</span>
           </div>
 
+          <div class="row">
+            <button id="validatePlanA">✅ Valider Plan A</button>
+            <button id="restorePlanA">↺ Revenir au Plan A</button>
+            <button id="trainEnemiesManual">✍️ Ennemis manuels</button>
+            <button id="trainEnemiesAuto">🎲 Ennemis auto</button>
+          </div>
+
           <hr />
         </div>
 
@@ -253,6 +260,29 @@
     <footer class="footer footer--compact">
       © 2026 — StratHub · Créé par Shizou
     </footer>
+
+    <!-- LOADOUT (STEP 1) -->
+    <button id="openLoadout" class="open-loadout">🎯 Loadout</button>
+
+    <aside id="loadoutPanel" class="loadout-panel">
+      <div class="loadout-inner">
+        <div class="loadout-header">
+          <div>
+            <div class="loadout-title">WEAPON LOADOUT</div>
+            <div id="loadoutPlayer" class="loadout-sub">Joueur : aucun</div>
+          </div>
+          <button id="closeLoadout" class="loadout-close">→</button>
+        </div>
+
+        <div class="loadout-body">
+          <div class="loadout-hint">Ici on mettra les armes plus tard.</div>
+          <div id="loadoutWeapons"></div>
+          <div id="loadoutSelected" class="loadout-hint">
+            Aucune arme sélectionnée
+          </div>
+        </div>
+      </div>
+    </aside>
 
     <script src="app.js"></script>
   </body>
