@@ -27,7 +27,7 @@ const loadout = {
   weapons: [], // toutes les armes (armes.json)
   selectedWeaponIds: [], // max 2 ids d’armes
   selectedPlayerNode: null, // le joueur sélectionné sur la map
-  meterToPx: 20, // conversion m → pixels (on ajustera plus tard)
+  meterToPx: 10, // conversion m → pixels (on ajustera plus tard)
 };
 
 // Loadout par joueur (persistant)
@@ -39,6 +39,198 @@ const playerLoadouts = {
 };
 
 let activePlayerKind = null; // "p1" | "p2" | "p3" | "p4"
+
+// Globaux partagés entre setupUI et selectNode
+let allWeapons = [];
+let selectedWeapons = [];
+let loadoutList = null;
+
+// ─── Menu contextuel (clic droit sur pion) ───────────────────────────────────
+let ctxMenuNode = null; // le pion ciblé par le menu contextuel
+
+function showContextMenu(group, pointerPos) {
+  hideContextMenu();
+  ctxMenuNode = group;
+
+  const hasCone      = !!group.findOne(".visionCone");
+  const hasLine      = !!group.findOne(".sightLine");
+  const hasArrow     = !!group.findOne(".tokenArrow");
+  const arrowDashed  = group.findOne(".tokenArrow")?.dash()?.length > 0;
+
+  const menu = document.createElement("div");
+  menu.id = "ctxMenu";
+  menu.style.cssText = `
+    position:fixed; z-index:9999;
+    left:${pointerPos.x}px; top:${pointerPos.y}px;
+    background:rgba(15,20,30,0.97);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px; padding:6px;
+    display:flex; flex-direction:column; gap:4px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.6);
+    min-width:210px;
+  `;
+
+  // Séparateur titre
+  const title = document.createElement("div");
+  title.textContent = "Options du pion";
+  title.style.cssText = "font-size:11px;font-weight:700;opacity:0.45;padding:4px 8px 2px;letter-spacing:0.08em;text-transform:uppercase;color:#e8eef6;";
+  menu.appendChild(title);
+
+  // ── Flèche pleine ──
+  const btnSolid = makeCtxBtn(
+    (hasArrow && !arrowDashed) ? "✅ Flèche pleine (retirer)" : "➡️ Flèche pleine",
+    () => { toggleTokenArrow(group, false); hideContextMenu(); }
+  );
+
+  // ── Flèche pointillée ──
+  const btnDashed = makeCtxBtn(
+    (hasArrow && arrowDashed) ? "✅ Flèche pointillée (retirer)" : "➡️ Flèche pointillée",
+    () => { toggleTokenArrow(group, true); hideContextMenu(); }
+  );
+
+  // ── Cône de vision ──
+  const btnCone = makeCtxBtn(
+    hasCone ? "✅ Cône de vision (retirer)" : "🔶 Cône de vision",
+    () => { toggleCone(group); hideContextMenu(); }
+  );
+
+  // ── Ligne de visée ──
+  const btnLine = makeCtxBtn(
+    hasLine ? "✅ Ligne de visée (retirer)" : "🔴 Ligne de visée",
+    () => { toggleSightLine(group); hideContextMenu(); }
+  );
+
+  menu.appendChild(btnSolid);
+  menu.appendChild(btnDashed);
+  menu.appendChild(btnCone);
+  menu.appendChild(btnLine);
+  document.body.appendChild(menu);
+
+  setTimeout(() => {
+    document.addEventListener("mousedown", hideContextMenu, { once: true });
+  }, 0);
+}
+
+function hideContextMenu() {
+  const el = document.getElementById("ctxMenu");
+  if (el) el.remove();
+  ctxMenuNode = null;
+}
+
+function makeCtxBtn(label, onClick) {
+  const btn = document.createElement("button");
+  btn.textContent = label;
+  btn.style.cssText = `
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+    color:#e8eef6; padding:9px 14px; border-radius:9px; cursor:pointer;
+    font-size:13px; font-weight:600; text-align:left; width:100%;
+  `;
+  btn.onmouseenter = () => btn.style.background = "rgba(255,255,255,0.14)";
+  btn.onmouseleave = () => btn.style.background = "rgba(255,255,255,0.07)";
+  btn.addEventListener("mousedown", (e) => { e.stopPropagation(); onClick(); });
+  return btn;
+}
+
+// ─── Cône de vision ──────────────────────────────────────────────────────────
+function toggleCone(group) {
+  const existing = group.findOne(".visionCone");
+  if (existing) {
+    existing.destroy();
+    layerMain.draw();
+    pushHistory();
+    return;
+  }
+
+  // Le cône pointe vers la droite (direction du fusil dans le token)
+  // angle de 60°, longueur 120px (en coordonnées locales du groupe)
+  const angleRad = (60 / 2) * (Math.PI / 180);
+  const length = 120;
+
+  const cone = new Konva.Shape({
+    name: "visionCone",
+    sceneFunc: (ctx, shape) => {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(length * Math.cos(-angleRad), length * Math.sin(-angleRad));
+      ctx.arc(0, 0, length, -angleRad, angleRad);
+      ctx.lineTo(0, 0);
+      ctx.closePath();
+      ctx.fillStrokeShape(shape);
+    },
+    fill: "rgba(255, 220, 80, 0.18)",
+    stroke: "rgba(255, 220, 80, 0.75)",
+    strokeWidth: 1.5,
+    listening: false,
+  });
+
+  // Insérer AVANT les autres enfants pour qu'il soit derrière le pion
+  group.add(cone);
+  cone.moveToBottom();
+  layerMain.draw();
+  pushHistory();
+}
+
+// ─── Ligne de visée ──────────────────────────────────────────────────────────
+function toggleSightLine(group) {
+  const existing = group.findOne(".sightLine");
+  if (existing) {
+    existing.destroy();
+    layerMain.draw();
+    pushHistory();
+    return;
+  }
+
+  const line = new Konva.Line({
+    name: "sightLine",
+    points: [0, 0, 220, 0], // vers la droite (direction du fusil)
+    stroke: "rgba(255, 60, 60, 0.85)",
+    strokeWidth: 1.5,
+    dash: [8, 5],
+    listening: false,
+  });
+
+  group.add(line);
+  line.moveToBottom();
+  layerMain.draw();
+  pushHistory();
+}
+
+// ─── Flèche attachée au pion ─────────────────────────────────────────────────
+function toggleTokenArrow(group, dashed) {
+  const existing = group.findOne(".tokenArrow");
+
+  // Si déjà une flèche du même style → on retire
+  if (existing) {
+    const isDashed = existing.dash()?.length > 0;
+    if (isDashed === dashed) {
+      existing.destroy();
+      layerMain.draw();
+      pushHistory();
+      return;
+    }
+    // Sinon on remplace par le nouveau style
+    existing.destroy();
+  }
+
+  const arrow = new Konva.Arrow({
+    name: "tokenArrow",
+    points: [0, 0, 80, 0], // vers la droite (direction du fusil)
+    stroke: arrowColor,
+    fill: arrowColor,
+    strokeWidth: 3,
+    pointerLength: 10,
+    pointerWidth: 10,
+    lineCap: "round",
+    dash: dashed ? [8, 5] : [],
+    opacity: 0.9,
+    listening: false,
+  });
+
+  group.add(arrow);
+  arrow.moveToBottom();
+  layerMain.draw();
+  pushHistory();
+}
 
 function parseEffectiveRangeMeters(weapon) {
   // Ex: "0-25m=Max / 25-35m=83% / >35m=75%"
@@ -250,6 +442,49 @@ function setupStage() {
   const h = parent.clientHeight;
 
   stage = new Konva.Stage({ container: "stageParent", width: w, height: h });
+
+  // ─── Bloquer le menu natif du navigateur sur le canvas ───
+  stage.container().addEventListener("contextmenu", (e) => e.preventDefault());
+
+  // ─── Clic droit au niveau du stage : cherche le pion sous le curseur ───
+  stage.container().addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+
+    const tokens = layerMain.find(".token");
+    let closest = null;
+    let closestDist = Infinity;
+
+    for (const token of tokens) {
+      const kind = token.getAttr("tokenKind");
+      if (!isSoldier(kind)) continue;
+
+      // Position absolue du token (dans le repère du stage)
+      const absPos = token.getAbsolutePosition();
+      const dx = absPos.x - pos.x;
+      const dy = absPos.y - pos.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = token;
+      }
+    }
+
+    // Seuil : 40px en coordonnées stage
+    if (!closest || closestDist > 40) return;
+
+    const containerRect = stage.container().getBoundingClientRect();
+    const menuPos = {
+      x: containerRect.left + pos.x,
+      y: containerRect.top  + pos.y,
+    };
+
+    selectNode(closest);
+    showContextMenu(closest, menuPos);
+  });
 
   layerBg = new Konva.Layer();
   layerMain = new Konva.Layer();
@@ -673,7 +908,7 @@ function setupUI() {
     document.body.classList.remove("loadout-open");
   });
 
-  const loadoutList = document.getElementById("loadoutWeapons");
+  loadoutList = document.getElementById("loadoutWeapons");
   if (!loadoutList) return;
 
   fetch("armes.json")
@@ -726,10 +961,6 @@ function setupUI() {
     });
 
   const selectedLabel = document.getElementById("loadoutSelected");
-
-  let allWeapons = [];
-
-  let selectedWeapons = [];
 
   loadoutList.addEventListener("click", (e) => {
     if (e.target.tagName !== "BUTTON") return;
@@ -1049,6 +1280,11 @@ function serialize(forHistory = false) {
         y: n.y(),
         rotation: n.rotation(),
         label: n.findOne("Text")?.text() || "",
+        hasCone: !!n.findOne(".visionCone"),
+        hasSightLine: !!n.findOne(".sightLine"),
+        hasArrow: !!n.findOne(".tokenArrow"),
+        arrowDashed: (n.findOne(".tokenArrow")?.dash()?.length ?? 0) > 0,
+        arrowColor: n.findOne(".tokenArrow")?.stroke() ?? arrowColor,
       });
     } else if (n.className === "Arrow") {
       drawings.push({
@@ -1128,6 +1364,9 @@ function hydrate(data) {
     });
     if (!node) continue;
     node.position({ x: t.x, y: t.y });
+    if (t.hasCone)      toggleCone(node);
+    if (t.hasSightLine) toggleSightLine(node);
+    if (t.hasArrow)     toggleTokenArrow(node, t.arrowDashed ?? false);
   }
 
   // dessins
@@ -1495,7 +1734,10 @@ function applySolutionPieces(solutionData) {
     if (!node) continue;
     node.position({ x: t.x, y: t.y });
     node.rotation(t.rotation || 0);
+    if (t.hasCone)      toggleCone(node);
+    if (t.hasSightLine) toggleSightLine(node);
   }
+    if (t.hasArrow)     toggleTokenArrow(node, t.arrowDashed ?? false);
 
   // 3) on remet les flèches
   for (const d of solutionData.drawings || []) {
