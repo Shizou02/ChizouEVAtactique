@@ -450,8 +450,12 @@ function setupStage() {
   stage.container().addEventListener("contextmenu", (e) => {
     e.preventDefault();
 
-    const pos = stage.getPointerPosition();
-    if (!pos) return;
+    // Utiliser les coordonnées DOM directement (getPointerPosition = null sur contextmenu)
+    const containerRect = stage.container().getBoundingClientRect();
+    const pos = {
+      x: e.clientX - containerRect.left,
+      y: e.clientY - containerRect.top,
+    };
 
     const tokens = layerMain.find(".token");
     let closest = null;
@@ -461,7 +465,6 @@ function setupStage() {
       const kind = token.getAttr("tokenKind");
       if (!isSoldier(kind)) continue;
 
-      // Position absolue du token (dans le repère du stage)
       const absPos = token.getAbsolutePosition();
       const dx = absPos.x - pos.x;
       const dy = absPos.y - pos.y;
@@ -476,10 +479,9 @@ function setupStage() {
     // Seuil : 40px en coordonnées stage
     if (!closest || closestDist > 40) return;
 
-    const containerRect = stage.container().getBoundingClientRect();
     const menuPos = {
-      x: containerRect.left + pos.x,
-      y: containerRect.top  + pos.y,
+      x: e.clientX,
+      y: e.clientY,
     };
 
     selectNode(closest);

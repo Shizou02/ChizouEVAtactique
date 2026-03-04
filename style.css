@@ -1,670 +1,240 @@
-* {
+/* ==========================================================
+   StratHub — style.css
+   Styles de base partagés. Les styles spécifiques à chaque
+   page sont dans leur balise <style> interne.
+   ========================================================== */
+
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
-}
-body {
   margin: 0;
-  font-family:
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Arial,
-    sans-serif;
-  background: #0b0f14;
-  color: #e8eef6;
+  padding: 0;
 }
+
+/* ── Variables globales ────────────────────────────────── */
+:root {
+  --black:     #060a0f;
+  --dark:      #0b1018;
+  --panel:     #0d1520;
+  --border:    rgba(255,255,255,0.07);
+  --gold:      #c8973a;
+  --gold-dim:  rgba(200,151,58,0.15);
+  --gold-glow: rgba(200,151,58,0.4);
+  --cyan:      #2dd4bf;
+  --red:       #ef4444;
+  --text:      #d4dde8;
+  --text-dim:  rgba(212,221,232,0.5);
+  --font-hud:  'Share Tech Mono', monospace;
+  --font-title:'Barlow Condensed', sans-serif;
+  --font-ui:   'Rajdhani', sans-serif;
+}
+
+/* ── Base ──────────────────────────────────────────────── */
+html, body {
+  min-height: 100%;
+  background: var(--black);
+  color: var(--text);
+  font-family: var(--font-ui), system-ui, sans-serif;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0b0f14;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.container {
-  padding: 16px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 12px;
-  transition: transform 0.1s ease;
-}
-.card:hover {
-  transform: translateY(-2px);
-}
-
-.card img {
-  width: 100%;
-  height: 140px;
-  object-fit: contain;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  display: block;
-}
-
-.card .title {
-  margin-top: 10px;
-  font-weight: 700;
-}
-
-.board-wrap {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 12px;
-  padding: 12px;
-}
-
-.panel {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 12px;
-  height: calc(100vh - 86px);
-  overflow: auto;
-}
-
-.canvas-area {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  height: calc(100vh - 86px);
-  overflow: hidden;
-  position: relative;
-}
-
-.row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-button,
-.btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #e8eef6;
-  padding: 10px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 650;
-}
-button:hover {
-  background: rgba(255, 255, 255, 0.14);
-}
-button.primary {
-  background: rgba(120, 180, 255, 0.22);
-  border-color: rgba(120, 180, 255, 0.35);
-}
-button.danger {
-  background: rgba(255, 120, 120, 0.18);
-  border-color: rgba(255, 120, 120, 0.3);
-}
-
-small.muted {
-  color: rgba(232, 238, 246, 0.65);
-  display: block;
-  margin-top: 6px;
-  line-height: 1.35;
-}
-hr {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 12px 0;
-}
-kbd {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-}
-input[type="file"] {
-  width: 100%;
-}
-input[type="range"] {
-  width: 100%;
-}
-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
-  color: #e8eef6;
-}
-/* =========================
-   Mode entraînement (coaching)
-   ========================= */
-
-.training-status {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  margin-top: 8px;
-}
-
-.training-pill {
-  margin-left: auto;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.1);
-  font-weight: 800;
-  min-width: 44px;
-  text-align: center;
-}
-/* =========================
-   StratHub – Branding & layout
-   ========================= */
-
-/* Header centré (branding) */
-.header-centered {
-  justify-content: center;
-  text-align: center;
-}
-
-/* Titre principal du site */
-.brand-title {
-  font-weight: 800;
-  font-size: 20px;
-}
-
-/* Sous-titre du site */
-.brand-subtitle {
-  opacity: 0.7;
-  font-size: 13px;
-  margin-top: 4px;
-}
-
-/* Footer global */
-.footer {
-  text-align: center;
-  padding: 20px;
-  opacity: 0.6;
-  font-size: 12px;
-}
-
-/* Footer plus compact (board) */
-.footer--compact {
-  padding: 10px;
-  opacity: 0.5;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.brand-logo {
-  height: 28px;
-  width: auto;
-}
-/* ===== Hero (page d'accueil) ===== */
-
-.hero {
-  padding: 40px 0 30px;
-}
-
-.hero-logo {
-  height: 200px; /* tu peux tester 88 / 96 / 112 */
-  width: auto;
-  margin-bottom: 12px;
-}
-
-.hero-subtitle {
-  opacity: 0.7;
-  font-size: 14px;
-}
-/* ===== Responsive global ===== */
-@media (max-width: 768px) {
-  .container {
-    padding: 12px;
-  }
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  }
-  .card img {
-    height: 120px;
-  }
-}
-
-/* Très petit écran */
-@media (max-width: 420px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .card img {
-    height: 150px;
-  }
-}
-/* ===== Board responsive ===== */
-@media (max-width: 900px) {
-  .board-wrap {
-    grid-template-columns: 1fr; /* 1 colonne */
-  }
-
-  .panel {
-    height: auto; /* ne force plus 100vh */
-    max-height: 45vh; /* évite de prendre tout l'écran */
-  }
-
-  .canvas-area {
-    height: 55vh; /* le canvas prend le reste */
-  }
-}
-
-/* Option: boutons plus faciles à toucher */
-@media (max-width: 600px) {
-  button,
-  .btn {
-    padding: 12px 12px;
-    border-radius: 14px;
-  }
-}
-/* =========================
-   Mobile / tactile améliorations
-   ========================= */
-
-/* Sur mobile : le header ne colle plus */
-@media (max-width: 600px) {
-  .header {
-    position: relative;
-  }
-}
-
-/* Empêche le scroll au doigt sur le canvas (Konva) */
+/* ── Touch canvas (Konva) ──────────────────────────────── */
 .canvas-area {
   touch-action: none;
 }
 
-/* Empêche le zoom automatique iOS */
-input,
-select,
-textarea,
-button {
-  font-size: 16px;
-}
-
-/* Armes */
-.weapons-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-/* Par groupe : grille (armes côte à côte) */
-.weapon-group .weapons-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
-  gap: 12px;
-}
-@media (min-width: 1200px) {
-  .weapon-group .weapons-list {
-    grid-template-columns: repeat(3, minmax(320px, 1fr));
-  }
-}
-
-/* La carte doit pouvoir rétrécir en grille */
-.weapon-row {
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-/* ===== Page armes : override du style global .card img ===== */
-.weapon-row.card {
-  height: 100%;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  padding: 18px;
-}
-
-.weapon-row .weapon-img {
-  width: 270px;
-  height: 150px;
-  padding: 12px; /* espace entre cadre et image */
-  object-fit: contain;
-
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
-  );
-
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--accent), transparent 55%);
-
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--accent), transparent 75%),
-    0 6px 16px rgba(0, 0, 0, 0.35);
-
-  flex: 0 0 auto;
-}
-
-/* le reste prend la place disponible */
-.weapon-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.weapon-stats {
-  margin: 10px 0 0;
-  padding-left: 18px;
-  color: rgba(232, 238, 246, 0.85);
-  line-height: 1.4;
-}
-.weapon-stats strong {
-  font-weight: 600;
-  color: rgba(232, 238, 246, 0.75);
-}
-.weapon-stats li:last-child {
-  opacity: 0.75;
-  font-size: 0.9em;
-}
-
-@media (max-width: 900px) {
-  .weapon-group .weapons-list {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Responsive */
-@media (max-width: 700px) {
-  .weapon-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .weapon-row .weapon-img {
-    width: 100%;
-    height: 160px;
-  }
-}
-
-.weapon-group {
-  margin-bottom: 22px;
-}
-
-.weapon-group-title {
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: var(--accent, #e8eef6);
-}
-
-.weapon-group-title::after {
-  content: "";
-  display: block;
-  margin-top: 10px;
-  border-top: 1px solid var(--accent, rgba(255, 255, 255, 0.1));
-}
-
-/* ===== Couleurs par groupe ===== */
-.group-fusils-d-assaut {
-  --accent: rgba(120, 180, 255, 0.7);
-}
-.group-longue-portee {
-  --accent: rgba(180, 120, 255, 0.7);
-}
-.group-armes-rapprochees {
-  --accent: rgba(255, 160, 120, 0.7);
-}
-.group-speciales {
-  --accent: rgba(120, 220, 180, 0.7);
-}
-.group-accessoires {
-  --accent: rgba(233, 208, 128, 0.6);
-}
-
-/* =========================
-   PAGE D'ACCUEIL (INDEX)
-   ========================= */
-
-.home {
-  min-height: calc(100vh - 220px);
-  display: flex;
-  flex-direction: column; /* ✅ empile grille + texte */
-  justify-content: center;
-  align-items: center;
-  gap: 28px;
-  padding-bottom: 30px;
-}
-
-.home-grid {
-  max-width: 900px; /* centre et limite la largeur */
-  width: 100%;
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.home-grid .card {
-  padding: 20px;
-}
-
-.home-grid .card img {
-  height: 220px; /* images plus grandes */
-}
-
-.home-grid .title {
-  font-size: 20px;
-}
-
-.home-grid .muted {
-  font-size: 14px;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  .hero-logo--big {
-    height: 110px;
-  }
-
-  .hero-description,
-  .hero-why {
-    font-size: 14px;
-  }
-}
-/* =========================
-   Description – Accueil
-   ========================= */
-
-.home-description {
-  max-width: 760px;
-  margin: 40px auto 0;
-  text-align: center;
-  line-height: 1.7;
-  opacity: 0.9;
-}
-
-.home-description ul {
-  margin: 14px auto;
-  padding-left: 0;
-  list-style: none;
-}
-
-.home-description li {
-  margin: 6px 0;
-}
-
-.home-description li::before {
-  content: "• ";
-  opacity: 0.6;
-}
-
-.home-description .why {
-  margin-top: 18px;
-  font-size: 14px;
-  opacity: 0.85;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  .home-description {
-    margin-top: 28px;
-    font-size: 14px;
-  }
-}
-/* LOADOUT (STEP 1) */
+/* ── Loadout bouton flottant ───────────────────────────── */
 .open-loadout {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  top: 52px;
+  right: 14px;
   z-index: 100;
-
-  padding: 10px 16px;
-  border-radius: 12px;
-
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  padding: 7px 14px;
+  border-radius: 3px;
+  font-family: var(--font-hud);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-
-  color: #ffffff;
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.9),
-    rgba(37, 99, 235, 0.9)
-  );
-
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-
+  color: #fff;
+  background: linear-gradient(135deg, rgba(200,151,58,0.9), rgba(160,110,20,0.9));
+  border: 1px solid var(--gold-glow);
+  box-shadow: 0 4px 20px rgba(200,151,58,0.3);
   cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.open-loadout:hover {
+  box-shadow: 0 4px 28px rgba(200,151,58,0.5);
+  transform: translateY(-1px);
 }
 
+/* ── Loadout panneau ───────────────────────────────────── */
 .loadout-panel {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 0; right: 0;
   height: 100vh;
-  width: 100%;
-  max-width: 320px;
+  width: 300px;
   z-index: 90;
-
-  transform: translateX(100%); /* caché */
+  transform: translateX(100%);
   transition: transform 300ms ease;
-
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 46, 0.95),
-    rgba(26, 26, 46, 0.98)
-  );
+  border-left: 1px solid var(--border);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.6);
+  background: rgba(10,15,24,0.98);
   backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
 }
-
 .loadout-panel.open {
-  transform: translateX(0); /* visible */
+  transform: translateX(0);
 }
-
 .loadout-inner {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-
 .loadout-header {
-  padding: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  position: relative;
 }
-
 .loadout-title {
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  font-size: 14px;
+  font-family: var(--font-hud);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
 }
 .loadout-sub {
-  margin-top: 6px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
+  margin-top: 5px;
+  font-family: var(--font-hud);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
 }
-
 .loadout-close {
   position: absolute;
-  top: 16px;
-  right: 16px; /* position RELATIVE AU PANNEAU */
-
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-
+  top: 12px; right: 12px;
+  width: 30px; height: 30px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 900;
-
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
   cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
 }
-
 .loadout-close:hover {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.6);
-  color: #fff;
+  background: rgba(239,68,68,0.2);
+  border-color: rgba(239,68,68,0.5);
 }
-.loadout-header {
-  position: relative;
-}
-
 .loadout-body {
   padding: 12px;
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200,151,58,0.2) transparent;
 }
 .loadout-hint {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
-  padding: 6px;
+  font-family: var(--font-hud);
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px;
+  line-height: 1.5;
 }
-.weapon-item.selected {
-  border-color: rgba(120, 180, 255, 0.6);
-  background: rgba(120, 180, 255, 0.18);
-}
-.loadout-group-title {
-  font-weight: 900;
-  margin: 12px 6px 6px;
-  opacity: 0.9;
-  font-size: 13px;
-}
-
 .loadout-group {
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border);
   margin-bottom: 10px;
+}
+.loadout-group-title {
+  font-family: var(--font-hud);
+  font-size: 10px;
+  font-weight: 700;
+  margin: 10px 4px 6px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+}
+.loadout-group-weapons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.weapon-item {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.weapon-item:hover {
+  background: rgba(255,255,255,0.09);
+}
+.weapon-item.selected {
+  border-color: var(--gold-glow);
+  background: var(--gold-dim);
+  color: var(--gold);
 }
 body.loadout-open .open-loadout {
   display: none;
 }
+
+/* ── Training status (board) ───────────────────────────── */
+.training-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  margin: 6px 0;
+  font-family: var(--font-hud);
+  font-size: 13px;
+  color: var(--text);
+}
+.training-pill {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--gold-glow);
+  background: var(--gold-dim);
+  font-weight: 800;
+  font-family: var(--font-hud);
+  font-size: 14px;
+  color: var(--gold);
+}
+
+/* ── Animations globales ───────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── Couleurs par groupe armes ─────────────────────────── */
+.group-fusils-d-assaut   { --group-color: rgba(120,180,255,0.85); }
+.group-longue-portee     { --group-color: rgba(180,120,255,0.85); }
+.group-armes-rapprochees { --group-color: rgba(255,160,120,0.85); }
+.group-speciales         { --group-color: rgba(120,220,180,0.85); }
+.group-accessoires       { --group-color: rgba(200,151,58,0.85);  }

@@ -4,283 +4,471 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>StratHub — Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    <!-- Konva via CDN -->
     <script src="https://unpkg.com/konva@9/konva.min.js"></script>
     <!-- Google Tag Manager -->
     <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-585D88K6");
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-585D88K6');
     </script>
-    <!-- End Google Tag Manager -->
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --black:     #060a0f;
+        --panel:     #0d1520;
+        --border:    rgba(255,255,255,0.07);
+        --border2:   rgba(255,255,255,0.04);
+        --gold:      #c8973a;
+        --gold-dim:  rgba(200,151,58,0.15);
+        --gold-glow: rgba(200,151,58,0.4);
+        --cyan:      #2dd4bf;
+        --red:       #ef4444;
+        --blue:      #4da3ff;
+        --text:      #d4dde8;
+        --text-dim:  rgba(212,221,232,0.5);
+        --font-hud:  'Share Tech Mono', monospace;
+        --font-title:'Barlow Condensed', sans-serif;
+        --font-ui:   'Rajdhani', sans-serif;
+      }
+
+      html, body {
+        height: 100%; overflow: hidden;
+        background: var(--black);
+        color: var(--text);
+        font-family: var(--font-ui);
+      }
+
+      /* Scanlines */
+      body::after {
+        content: '';
+        position: fixed; inset: 0; z-index: 999; pointer-events: none;
+        background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+      }
+
+      /* ── Topbar ── */
+      .topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 20px; height: 44px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(6,10,15,0.95);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0; position: relative; z-index: 20;
+      }
+      .topbar-left  { display: flex; align-items: center; gap: 14px; }
+      .topbar-mid   {
+        position: absolute; left: 50%; transform: translateX(-50%);
+        display: flex; align-items: center; gap: 8px;
+      }
+      .topbar-right { display: flex; align-items: center; }
+
+      .topbar-logo  { height: 32px; width: auto; mix-blend-mode: lighten; filter: brightness(1.1); }
+      .topbar-brand {
+        font-family: var(--font-title); font-size: 20px; font-weight: 900;
+        letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
+      }
+      .topbar-brand span { color: var(--gold); }
+
+      .back-btn {
+        font-family: var(--font-hud); font-size: 12px; letter-spacing: 0.1em;
+        color: var(--text-dim); text-decoration: none;
+        border: 1px solid var(--border); padding: 6px 14px; border-radius: 3px;
+        transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
+      }
+      .back-btn:hover { color: var(--gold); border-color: var(--gold-glow); }
+
+      #mapTitle {
+        font-family: var(--font-title); font-size: 16px; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
+      }
+      .status-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--cyan); box-shadow: 0 0 6px var(--cyan);
+        animation: pulse-dot 2s ease-in-out infinite;
+      }
+      @keyframes pulse-dot { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+      .topbar-hint {
+        font-family: var(--font-hud); font-size: 12px;
+        color: var(--text-dim); letter-spacing: 0.05em;
+      }
+
+      /* ── Layout ── */
+      .board-layout {
+        display: grid;
+        grid-template-columns: 310px 1fr;
+        height: calc(100vh - 44px);
+        overflow: hidden;
+      }
+
+      /* ── Panel ── */
+      .panel {
+        background: var(--panel);
+        border-right: 1px solid var(--border);
+        overflow-y: auto; overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(200,151,58,0.2) transparent;
+      }
+      .panel::-webkit-scrollbar { width: 3px; }
+      .panel::-webkit-scrollbar-thumb { background: rgba(200,151,58,0.2); border-radius: 2px; }
+
+      .p-section {
+        border-bottom: 1px solid var(--border2);
+        padding: 10px 12px;
+      }
+
+      .p-label {
+        font-family: var(--font-hud); font-size: 11px;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--gold); margin-bottom: 8px;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .p-label::after {
+        content: ''; flex: 1; height: 1px;
+        background: linear-gradient(90deg, var(--gold-dim), transparent);
+      }
+
+      .p-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
+
+      .p-btn {
+        font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+        background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+        color: var(--text); padding: 7px 11px; border-radius: 3px; cursor: pointer;
+        transition: all 0.15s; white-space: nowrap; letter-spacing: 0.02em;
+      }
+      .p-btn:hover { background: rgba(255,255,255,0.1); }
+      .p-btn.active, .p-btn.primary {
+        background: var(--gold-dim); border-color: var(--gold-glow); color: var(--gold);
+      }
+      .p-btn.danger {
+        background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5;
+      }
+      .p-btn.blue {
+        background: rgba(77,163,255,0.1); border-color: rgba(77,163,255,0.3); color: var(--blue);
+      }
+
+      .token-btn {
+        font-family: var(--font-hud); font-size: 13px; font-weight: 700;
+        padding: 7px 11px; border-radius: 3px; border: 1px solid; cursor: pointer;
+        transition: all 0.15s; letter-spacing: 0.04em;
+      }
+      .token-p1     { background: rgba(77,163,255,0.1);  border-color: rgba(77,163,255,0.4);  color: #4da3ff; }
+      .token-p2     { background: rgba(123,211,137,0.1); border-color: rgba(123,211,137,0.4); color: #7bd389; }
+      .token-p3     { background: rgba(255,209,102,0.1); border-color: rgba(255,209,102,0.4); color: #ffd166; }
+      .token-p4     { background: rgba(205,180,255,0.1); border-color: rgba(205,180,255,0.4); color: #cdb4ff; }
+      .token-enemy  { background: rgba(239,68,68,0.1);   border-color: rgba(239,68,68,0.4);   color: #ff6b6b; }
+      .token-obj    { background: rgba(255,159,28,0.1);  border-color: rgba(255,159,28,0.4);  color: #ff9f1c; }
+      .token-smoke  { background: rgba(255,255,255,0.05);border-color: rgba(255,255,255,0.18);color: var(--text-dim); }
+      .token-btn:hover { filter: brightness(1.3); transform: translateY(-1px); }
+
+      .p-input {
+        width: 100%; margin-bottom: 5px;
+        font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+        color: var(--text); padding: 7px 10px; border-radius: 3px;
+        transition: border-color 0.2s;
+      }
+      .p-input:focus { outline: none; border-color: var(--gold-glow); }
+      .p-input::placeholder { color: var(--text-dim); }
+      textarea.p-input { min-height: 85px; resize: vertical; line-height: 1.5; }
+      select.p-input {
+        cursor: pointer; appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(200,151,58,0.6)'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 10px center;
+        padding-right: 28px;
+      }
+      input[type="color"] {
+        width: 34px; height: 26px; padding: 2px;
+        border: 1px solid var(--border); border-radius: 3px;
+        background: rgba(255,255,255,0.04); cursor: pointer;
+      }
+      input[type="range"] { width: 100%; accent-color: var(--gold); }
+
+      .training-status {
+        display: flex; align-items: center; gap: 8px;
+        padding: 7px 10px; border-radius: 3px;
+        border: 1px solid var(--border); background: rgba(255,255,255,0.02);
+        margin: 5px 0; font-family: var(--font-hud); font-size: 13px;
+      }
+      .training-pill {
+        margin-left: auto; padding: 2px 7px; border-radius: 2px;
+        border: 1px solid var(--gold-glow); background: var(--gold-dim);
+        font-family: var(--font-hud); font-size: 14px; font-weight: 800; color: var(--gold);
+      }
+
+      .p-small {
+        font-family: var(--font-hud); font-size: 11px;
+        color: var(--text-dim); line-height: 1.5; letter-spacing: 0.02em;
+      }
+      kbd {
+        background: rgba(255,255,255,0.07); padding: 1px 5px;
+        border-radius: 2px; border: 1px solid var(--border);
+        font-family: var(--font-hud); font-size: 10px;
+      }
+
+      /* ── Canvas ── */
+      .canvas-area {
+        background: #080d14; overflow: hidden;
+        position: relative; touch-action: none;
+      }
+      .canvas-area::before {
+        content: ''; position: absolute; top: 8px; left: 8px;
+        width: 20px; height: 20px; z-index: 5; pointer-events: none;
+        border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); opacity: 0.4;
+      }
+      .canvas-area::after {
+        content: ''; position: absolute; bottom: 8px; right: 8px;
+        width: 20px; height: 20px; z-index: 5; pointer-events: none;
+        border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); opacity: 0.4;
+      }
+
+      /* ── Loadout ── */
+      .open-loadout {
+        position: fixed; top: 50px; right: 14px; z-index: 100;
+        padding: 6px 14px; border-radius: 3px;
+        font-family: var(--font-hud); font-size: 11px; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
+        background: linear-gradient(135deg, rgba(200,151,58,0.9), rgba(160,110,20,0.9));
+        border: 1px solid var(--gold-glow);
+        box-shadow: 0 4px 18px rgba(200,151,58,0.3);
+        cursor: pointer; transition: box-shadow 0.2s, transform 0.2s;
+      }
+      .open-loadout:hover { box-shadow: 0 4px 26px rgba(200,151,58,0.5); transform: translateY(-1px); }
+
+      .loadout-panel {
+        position: fixed; top: 0; right: 0; height: 100vh; width: 300px; z-index: 90;
+        transform: translateX(100%); transition: transform 300ms ease;
+        border-left: 1px solid var(--border);
+        box-shadow: -20px 0 60px rgba(0,0,0,0.6);
+        background: rgba(10,15,24,0.98); backdrop-filter: blur(20px);
+        display: flex; flex-direction: column;
+      }
+      .loadout-panel.open { transform: translateX(0); }
+
+      .loadout-header {
+        padding: 12px 14px; border-bottom: 1px solid var(--border);
+        display: flex; justify-content: space-between; align-items: flex-start;
+        position: relative;
+      }
+      .loadout-title {
+        font-family: var(--font-hud); font-size: 13px; font-weight: 700;
+        letter-spacing: 0.1em; color: var(--gold);
+      }
+      .loadout-sub {
+        margin-top: 4px; font-family: var(--font-hud);
+        font-size: 12px; color: var(--text-dim); letter-spacing: 0.06em;
+      }
+      .loadout-close {
+        position: absolute; top: 10px; right: 10px;
+        width: 28px; height: 28px; border-radius: 3px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; color: rgba(255,255,255,0.7);
+        background: rgba(255,255,255,0.05); border: 1px solid var(--border); cursor: pointer;
+        transition: background 0.2s;
+      }
+      .loadout-close:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); }
+
+      .loadout-body { padding: 10px; flex: 1; overflow-y: auto; }
+      .loadout-hint { font-family: var(--font-hud); font-size: 10px; color: var(--text-dim); padding: 4px; }
+      .loadout-group { padding-bottom: 4px; border-bottom: 1px solid var(--border2); margin-bottom: 8px; }
+      .loadout-group-title {
+        font-family: var(--font-hud); font-size: 9px; font-weight: 700;
+        margin: 8px 4px 5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); opacity: 0.7;
+      }
+      .loadout-group-weapons { display: flex; flex-wrap: wrap; gap: 4px; }
+      .weapon-item {
+        font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+        color: var(--text); padding: 5px 10px; border-radius: 3px; cursor: pointer;
+        transition: all 0.15s;
+      }
+      .weapon-item:hover { background: rgba(255,255,255,0.09); }
+      .weapon-item.selected { border-color: var(--gold-glow); background: var(--gold-dim); color: var(--gold); }
+
+      body.loadout-open .open-loadout { display: none; }
+
+      /* ── Responsive ── */
+      @media (max-width: 900px) {
+        .board-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+        .panel { height: auto; max-height: 42vh; border-right: none; border-bottom: 1px solid var(--border); }
+        .canvas-area { height: 58vh; }
+        .topbar-mid { display: none; }
+      }
+    </style>
   </head>
 
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-585D88K6"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
-      ></iframe
-    ></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-585D88K6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-    <!-- HEADER CENTRÉ (branding) -->
-    <div class="header header-centered">
-      <div>
-        <div class="brand">
-          <img
-            src="assets/logoStratHub.png"
-            alt="StratHub"
-            class="brand-logo"
-          />
-          <span class="brand-title">StratHub</span>
-        </div>
-        <div class="brand-subtitle">Plan tactique pour EVA</div>
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
+        <span class="topbar-brand">Strat<span>Hub</span></span>
+        <a href="maps.html" class="back-btn">← Maps</a>
       </div>
-    </div>
+      <div class="topbar-mid">
+        <span class="status-dot"></span>
+        <div id="mapTitle">Board</div>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-hint">Drag & drop · Save/Load · Export</span>
+      </div>
+    </header>
 
-    <!-- HEADER OUTIL (navigation + titre map) -->
-    <div class="header">
-      <a href="index.html" class="btn">← Maps</a>
-      <div id="mapTitle" style="font-weight: 800">Board</div>
-      <div style="opacity: 0.75">Drag & drop • Save/Load • Export</div>
-    </div>
+    <div class="board-layout">
 
-    <div class="board-wrap">
       <div class="panel">
-        <div class="row">
-          <button class="primary" id="toolSelect">Sélection</button>
-          <button id="toolDraw">Flèche/Ligne</button>
+
+        <div class="p-section">
+          <div class="p-label">// Outils</div>
+          <div class="p-row">
+            <button class="p-btn primary" id="toolSelect">Sélection</button>
+            <button class="p-btn" id="toolDraw">Flèche/Ligne</button>
+          </div>
+          <div class="p-row" style="align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-family:var(--font-hud);font-size:9px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;">Couleur</span>
+            <input type="color" id="arrowColorPicker" value="#ffffff" />
+          </div>
+          <div class="p-row">
+            <button class="p-btn primary" id="arrowSolid">Flèche pleine</button>
+            <button class="p-btn" id="arrowDashed">Flèche pointillée</button>
+          </div>
         </div>
 
-        <label style="display: block; margin-top: 10px; font-weight: 800">
-          Couleur flèche
-        </label>
-        <input type="color" id="arrowColorPicker" value="#ffffff" />
-        <div class="row" style="margin-top: 10px">
-          <button id="arrowSolid" class="primary">Flèche pleine</button>
-          <button id="arrowDashed">Flèche pointillée</button>
+        <div class="p-section">
+          <div class="p-label">// Mode</div>
+          <select class="p-input" id="modeSelect">
+            <option value="strat">Mode Strat</option>
+            <option value="train">Mode Entraînement</option>
+            <option value="coach">Mode Coaching</option>
+          </select>
         </div>
 
-        <hr />
-
-        <div style="font-weight: 800; margin-bottom: 6px">Mode</div>
-        <select id="modeSelect">
-          <option value="strat" selected>Mode Strat</option>
-          <option value="train">Mode Entraînement</option>
-          <option value="coach">Mode Coaching</option>
-        </select>
-
-        <hr />
-
-        <div id="modeTrainBlock">
-          <div style="font-weight: 800; margin-bottom: 8px">
-            🎓 Mode entraînement
+        <div class="p-section" id="modeTrainBlock">
+          <div class="p-label">// 🎓 Entraînement</div>
+          <div class="p-row">
+            <button class="p-btn" id="setSolution">Définir solution</button>
+            <button class="p-btn blue" id="startTraining">▶ Start 20s</button>
           </div>
-
-          <div class="row">
-            <button id="setSolution">Définir la solution</button>
-            <button class="primary" id="startTraining">Start 20s</button>
+          <div class="p-row">
+            <button class="p-btn" id="showSolution">Afficher solution</button>
+            <button class="p-btn danger" id="stopTraining">■ Stop</button>
           </div>
-
-          <div class="row">
-            <button id="showSolution">Afficher la solution</button>
-            <button class="danger" id="stopTraining">Stop</button>
-          </div>
-
           <div id="trainingStatus" class="training-status">
             <span>Statut :</span>
             <strong id="trainingLabel">off</strong>
             <span class="training-pill" id="trainingTimer">20</span>
           </div>
-
-          <div class="row">
-            <button id="validatePlanA">✅ Valider Plan A</button>
-            <button id="restorePlanA">↺ Revenir au Plan A</button>
-            <button id="trainEnemiesManual">✍️ Ennemis manuels</button>
-            <button id="trainEnemiesAuto">🎲 Ennemis auto</button>
+          <div class="p-row">
+            <button class="p-btn" id="validatePlanA">✅ Plan A</button>
+            <button class="p-btn" id="restorePlanA">↺ Plan A</button>
           </div>
-
-          <hr />
-        </div>
-
-        <div id="modeCoachBlock" style="display: none">
-          <div style="font-weight: 800; margin-bottom: 8px">
-            🧠 Mode coaching
+          <div class="p-row">
+            <button class="p-btn" id="trainEnemiesManual">✍️ Ennemis manuels</button>
+            <button class="p-btn" id="trainEnemiesAuto">🎲 Ennemis auto</button>
           </div>
+        </div>
 
-          <div class="row">
-            <button class="primary" id="coachSignal">⚡ Signal</button>
-            <button id="coachZone">⚡ Zone</button>
+        <div class="p-section" id="modeCoachBlock" style="display:none">
+          <div class="p-label">// 🧠 Coaching</div>
+          <div class="p-row">
+            <button class="p-btn blue" id="coachSignal">⚡ Signal</button>
+            <button class="p-btn" id="coachZone">⚡ Zone</button>
           </div>
-
-          <small class="muted">
-            Clique sur “Signal”, puis clique sur la map pour placer un ping
-            (1,5s).<br />
-            Clique sur “Zone”, puis clique-glisse sur la map pour surligner une
-            zone (1,5s).
-          </small>
-
-          <hr />
+          <p class="p-small">Signal : clic sur la map (ping 1.5s)<br/>Zone : clique-glisse pour surligner</p>
         </div>
 
-        <div style="font-weight: 800; margin-bottom: 8px">Noms des joueurs</div>
-
-        <input
-          id="nameP1"
-          placeholder="Joueur 1"
-          style="width: 100%; margin-bottom: 6px"
-        />
-        <input
-          id="nameP2"
-          placeholder="Joueur 2"
-          style="width: 100%; margin-bottom: 6px"
-        />
-        <input
-          id="nameP3"
-          placeholder="Joueur 3"
-          style="width: 100%; margin-bottom: 6px"
-        />
-        <input
-          id="nameP4"
-          placeholder="Joueur 4"
-          style="width: 100%; margin-bottom: 6px"
-        />
-
-        <hr />
-
-        <div style="font-weight: 800; margin-bottom: 8px">
-          Ajouter des pions
-        </div>
-        <div class="row">
-          <button id="addP1">Joueur 1</button>
-          <button id="addP2">Joueur 2</button>
-          <button id="addP3">Joueur 3</button>
-          <button id="addP4">Joueur 4</button>
-        </div>
-        <div class="row">
-          <button id="addEnemy">Ennemi</button>
-          <button id="addObj">Objectif</button>
-          <button id="addSmoke">Grenade</button>
+        <div class="p-section">
+          <div class="p-label">// Équipe</div>
+          <input class="p-input" id="nameP1" placeholder="Joueur 1" />
+          <input class="p-input" id="nameP2" placeholder="Joueur 2" />
+          <input class="p-input" id="nameP3" placeholder="Joueur 3" />
+          <input class="p-input" id="nameP4" placeholder="Joueur 4" />
         </div>
 
-        <hr />
-
-        <div class="row">
-          <button id="undoBtn">↶ Retour</button>
-          <button id="redoBtn">↷ Rétablir</button>
+        <div class="p-section">
+          <div class="p-label">// Pions</div>
+          <div class="p-row">
+            <button class="token-btn token-p1" id="addP1">P1</button>
+            <button class="token-btn token-p2" id="addP2">P2</button>
+            <button class="token-btn token-p3" id="addP3">P3</button>
+            <button class="token-btn token-p4" id="addP4">P4</button>
+          </div>
+          <div class="p-row">
+            <button class="token-btn token-enemy" id="addEnemy">Ennemi</button>
+            <button class="token-btn token-obj"   id="addObj">Objectif</button>
+            <button class="token-btn token-smoke" id="addSmoke">Grenade</button>
+          </div>
         </div>
 
-        <div style="font-weight: 800; margin-bottom: 8px">Édition</div>
-        <div class="row">
-          <button id="rotateLeft">↺ -15°</button>
-          <button id="rotateRight">↻ +15°</button>
-          <button class="danger" id="deleteSelected">Supprimer</button>
+        <div class="p-section">
+          <div class="p-label">// Édition</div>
+          <div class="p-row">
+            <button class="p-btn" id="undoBtn">↶ Retour</button>
+            <button class="p-btn" id="redoBtn">↷ Rétablir</button>
+          </div>
+          <div class="p-row">
+            <button class="p-btn" id="rotateLeft">↺ -15°</button>
+            <button class="p-btn" id="rotateRight">↻ +15°</button>
+            <button class="p-btn danger" id="deleteSelected">Supprimer</button>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="p-label" style="margin-bottom:5px;">// Zoom</div>
+            <input type="range" id="zoom" min="50" max="200" value="100" />
+            <p class="p-small" style="margin-top:3px;">Affichage uniquement</p>
+          </div>
         </div>
 
-        <div style="margin-top: 10px">
-          <label style="display: block; font-weight: 800; margin-bottom: 6px"
-            >Zoom</label
-          >
-          <input id="zoom" type="range" min="50" max="200" value="100" />
-          <small class="muted"
-            >Ajuste l’affichage. (Les coordonnées restent cohérentes.)</small
-          >
+        <div class="p-section">
+          <div class="p-label">// Strat</div>
+          <input class="p-input" id="stratName" placeholder="Ex: Cliff — Plan A fast mid" />
+          <div class="p-label" style="margin-top:8px;margin-bottom:5px;">// Notes</div>
+          <textarea class="p-input" id="notes" placeholder="Plan A: 1 hold long, 2 split. Plan B: rotate si pick. Timing: 20s."></textarea>
+          <p class="p-small" style="margin-top:3px;">Sauvegardées dans le JSON.</p>
         </div>
 
-        <hr />
-        <div style="font-weight: 800; margin-bottom: 8px">Nom de la strat</div>
-        <input
-          id="stratName"
-          placeholder="Ex: Cliff — Plan A fast mid"
-          style="
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.06);
-            color: #e8eef6;
-          "
-        />
-
-        <div style="font-weight: 800; margin-bottom: 8px">
-          Notes (Plan de round)
-        </div>
-        <textarea
-          id="notes"
-          placeholder="Ex: Plan A: 1 hold long, 2 split. Plan B: rotate si pick. Timing: 20s."
-          style="
-            width: 100%;
-            min-height: 120px;
-            resize: vertical;
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.06);
-            color: #e8eef6;
-          "
-        ></textarea>
-        <small class="muted">Ces notes seront sauvegardées dans le JSON.</small>
-
-        <div style="font-weight: 800; margin-bottom: 8px">Sauvegarde</div>
-        <div class="row">
-          <button class="primary" id="saveJson">Sauvegarder (JSON)</button>
-          <button id="exportPng">Exporter (PNG)</button>
-        </div>
-        <div style="margin-top: 8px">
-          <label style="display: block; font-weight: 800; margin-bottom: 6px"
-            >Charger une strat (JSON)</label
-          >
-          <input id="loadJson" type="file" accept="application/json" />
+        <div class="p-section">
+          <div class="p-label">// Sauvegarde</div>
+          <div class="p-row">
+            <button class="p-btn primary" id="saveJson">💾 Sauvegarder</button>
+            <button class="p-btn" id="exportPng">📷 PNG</button>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="p-label" style="margin-bottom:5px;">// Charger</div>
+            <input type="file" id="loadJson" accept="application/json" style="font-family:var(--font-hud);font-size:10px;color:var(--text-dim);width:100%;" />
+          </div>
         </div>
 
-        <hr />
-        <small class="muted">
-          Raccourcis : <kbd>Suppr</kbd> pour supprimer • Clique un pion pour le
-          sélectionner.<br />
-          Mode Flèche : clique-déplace-relâche pour tracer.
-        </small>
+        <div class="p-section">
+          <p class="p-small">
+            <kbd>Suppr</kbd> supprimer · <kbd>Clic droit</kbd> options pion<br/>
+            Mode Flèche : clique-glisse pour tracer
+          </p>
+        </div>
+
       </div>
 
       <div class="canvas-area" id="stageParent"></div>
+
     </div>
 
-    <footer class="footer footer--compact">
-      © 2026 — StratHub · Créé par Shizou
-    </footer>
-
-    <!-- LOADOUT (STEP 1) -->
-    <button id="openLoadout" class="open-loadout">🎯 Loadout</button>
+    <button id="openLoadout" class="open-loadout">🎯 LOADOUT</button>
 
     <aside id="loadoutPanel" class="loadout-panel">
-      <div class="loadout-inner">
-        <div class="loadout-header">
-          <div>
-            <div class="loadout-title">WEAPON LOADOUT</div>
-            <div id="loadoutPlayer" class="loadout-sub">Joueur : aucun</div>
-          </div>
-          <button id="closeLoadout" class="loadout-close">→</button>
+      <div class="loadout-header">
+        <div>
+          <div class="loadout-title">// WEAPON LOADOUT</div>
+          <div id="loadoutPlayer" class="loadout-sub">JOUEUR : AUCUN</div>
         </div>
-
-        <div class="loadout-body">
-          <div class="loadout-hint">Ici on mettra les armes plus tard.</div>
-          <div id="loadoutWeapons"></div>
-          <div id="loadoutSelected" class="loadout-hint">
-            Aucune arme sélectionnée
-          </div>
-        </div>
+        <button id="closeLoadout" class="loadout-close">×</button>
+      </div>
+      <div class="loadout-body">
+        <div class="loadout-hint">Sélectionne un joueur sur la map pour assigner ses armes.</div>
+        <div id="loadoutWeapons"></div>
+        <div id="loadoutSelected" class="loadout-hint">Aucune arme sélectionnée</div>
       </div>
     </aside>
 
