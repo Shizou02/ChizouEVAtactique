@@ -12,7 +12,8 @@
       "Cadence RPM": 552,
       "Munitions": 35,
       "Portée": "0-25m=Max / 25-35m= 83% / >35m= 75%"
-    }
+    },
+    "range_m": 25
   },
   {
     "id": "mx42",
@@ -27,7 +28,8 @@
       "Cadence RPM": 660,
       "Munitions": 40,
       "Portée": "0-22m=Max / 22-30m= 85% / >35m= 75%"
-    }
+    },
+    "range_m": 22
   },
   {
     "id": "Vulcan",
@@ -43,9 +45,9 @@
       "Cadence RPM": 750,
       "Munitions": 30,
       "Portée": "0-30m=Max / >30m= 75%"
-    }
+    },
+    "range_m": 30
   },
-
   {
     "id": "atlas",
     "name": "Atlas",
@@ -58,7 +60,8 @@
       "Cadence RPM": 60,
       "Munitions": 5,
       "Portée": " >0m= -25%"
-    }
+    },
+    "range_m": 100
   },
   {
     "id": "fury",
@@ -73,7 +76,8 @@
       "Cadence RPM": 450,
       "Munitions": 75,
       "Portée": "0-50m=Max / 50-70m= 80% / >70m= 70%"
-    }
+    },
+    "range_m": 50
   },
   {
     "id": "Needle",
@@ -88,7 +92,8 @@
       "Cadence RPM": 258,
       "Munitions": 35,
       "Portée": " >0m= 100%"
-    }
+    },
+    "range_m": 100
   },
   {
     "id": "t1Gauss",
@@ -103,7 +108,8 @@
       "Cadence RPM": 54,
       "Munitions": 5,
       "Portée": "0-4m=Max / 4-6m= 50% / 6-10m= 40% / 10-15m=20% >15m=0"
-    }
+    },
+    "range_m": 4
   },
   {
     "id": "mp52",
@@ -118,7 +124,8 @@
       "Cadence RPM": 588,
       "Munitions": 35,
       "Portée": "0-8m=Max / 8-9m= 70% / 9-15m= 55% / >15m= 45%"
-    }
+    },
+    "range_m": 8
   },
   {
     "id": "spectre",
@@ -133,7 +140,8 @@
       "Cadence RPM": 1020,
       "Munitions": 45,
       "Portée": "0-8m=Max / 8-12m= 65% / 12-20m= 50% / >20m= 40%"
-    }
+    },
+    "range_m": 8
   },
   {
     "id": "striker",
@@ -148,7 +156,8 @@
       "Cadence RPM": 780,
       "Munitions": 30,
       "Portée": "0-5m=Max / 5-8m= 65% / 8-10m= 55% / >10m= 30%"
-    }
+    },
+    "range_m": 5
   },
   {
     "id": "ERG",
@@ -164,7 +173,8 @@
       "Munitions": 4,
       "Durée seconde": 1,
       "Portée": "0-20m=Max / 20-30m= 80% / >30m= 70%"
-    }
+    },
+    "range_m": 20
   },
   {
     "id": "warden",
@@ -179,7 +189,8 @@
       "Cadence RPM": 288,
       "Munitions": 9,
       "Portée": ">0m= 100"
-    }
+    },
+    "range_m": 100
   },
   {
     "id": "Westfire",
@@ -194,21 +205,32 @@
       "Cadence RPM": 63,
       "Munitions": 9,
       "Portée": "0-5m= 70% / 5-25m= Max / >25m= 80%"
-    }
+    },
+    "range_m": 25
   },
   {
     "id": "DX3",
     "name": "DX3",
     "group": "Accessoires",
     "image": "armes/DX3.webp",
-    "stats": { "Dégâts": 100, "Temps de recharge seconde": 45, "Portée": "2" }
+    "stats": {
+      "Dégâts": 100,
+      "Temps de recharge seconde": 45,
+      "Portée": "2"
+    },
+    "range_m": 2
   },
   {
     "id": "Sticky",
     "name": "Sticky",
     "group": "Accessoires",
     "image": "armes/Sticky.webp",
-    "stats": { "Dégâts": 95, "Temps de recharge seconde": 20, "Portée": "3" }
+    "stats": {
+      "Dégâts": 95,
+      "Temps de recharge seconde": 20,
+      "Portée": "3"
+    },
+    "range_m": 3
   },
   {
     "id": "Sonar",
@@ -220,7 +242,8 @@
       "Temps de recharge seconde": 40,
       "Portée": "8",
       "Ojectif": "détection des ennemis"
-    }
+    },
+    "range_m": 8
   },
   {
     "id": "Shield",
@@ -231,6 +254,7 @@
       "HP": 400,
       "Temps de recharge seconde": 45,
       "Durée second": "10"
-    }
+    },
+    "range_m": 0
   }
 ]

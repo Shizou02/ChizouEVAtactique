@@ -16,6 +16,9 @@ let redoStack = [];
 let isRestoring = false;
 let historyTimer = null;
 let bgNode = null;
+let wallPixels = null;   // ImageData de la map pour le raycasting
+let wallImgW = 0;        // dimensions naturelles de l'image
+let wallImgH = 0;
 let currentMode = "strat"; // "strat" | "train" | "coach"
 let coachSignalArmed = false; // quand true, le prochain clic pose un ping
 let coachZoneArmed = false; // ✅ quand true, on trace une zone au drag
@@ -27,7 +30,9 @@ const loadout = {
   weapons: [], // toutes les armes (armes.json)
   selectedWeaponIds: [], // max 2 ids d’armes
   selectedPlayerNode: null, // le joueur sélectionné sur la map
-  meterToPx: 10, // conversion m → pixels (on ajustera plus tard)
+  meterToPx: 30, // calculé automatiquement (30px/m pour map 1464px)
+  mapNaturalWidth: 1464,
+  mapCurrentScale: 1,
 };
 
 // Loadout par joueur (persistant)
@@ -132,6 +137,49 @@ function makeCtxBtn(label, onClick) {
 }
 
 // ─── Cône de vision ──────────────────────────────────────────────────────────
+
+// ─── Raycasting — détection de murs ──────────────────────────────────────────
+
+function isWall(px, py) {
+  // px, py : coordonnées dans l'image naturelle (avant scale)
+  if (!wallPixels) return false;
+  const x = Math.round(px), y = Math.round(py);
+  if (x < 0 || y < 0 || x >= wallImgW || y >= wallImgH) return true; // hors map = mur
+  const idx = (y * wallImgW + x) * 4;
+  const r = wallPixels.data[idx];
+  const g = wallPixels.data[idx + 1];
+  const b = wallPixels.data[idx + 2];
+  // Mur = pixel très clair (blanc) ou très sombre hors-map
+  return r > 200 && g > 200 && b > 200;
+}
+
+function castRay(ox, oy, angleRad, maxDist) {
+  // ox, oy : origine en coordonnées naturelles de l'image
+  // Avance pas par pas jusqu'à toucher un mur
+  const step = 1.5; // précision en pixels naturels
+  const dx = Math.cos(angleRad) * step;
+  const dy = Math.sin(angleRad) * step;
+  let x = ox, y = oy;
+  let dist = 0;
+  while (dist < maxDist) {
+    x += dx; y += dy; dist += step;
+    if (isWall(x, y)) break;
+  }
+  return { x, y, dist };
+}
+
+function buildRaycastCone(ox, oy, facingRad, halfAngleDeg, maxDistNatural, numRays) {
+  // Retourne un tableau de points {x,y} en coordonnées naturelles
+  const halfAngle = halfAngleDeg * Math.PI / 180;
+  const points = [{ x: ox, y: oy }];
+  for (let i = 0; i <= numRays; i++) {
+    const a = facingRad - halfAngle + (i / numRays) * halfAngle * 2;
+    const hit = castRay(ox, oy, a, maxDistNatural);
+    points.push({ x: hit.x, y: hit.y });
+  }
+  return points;
+}
+
 function toggleCone(group) {
   const existing = group.findOne(".visionCone");
   if (existing) {
@@ -140,20 +188,55 @@ function toggleCone(group) {
     pushHistory();
     return;
   }
+  addRaycastCone(group);
+  pushHistory();
+}
 
-  // Le cône pointe vers la droite (direction du fusil dans le token)
-  // angle de 60°, longueur 120px (en coordonnées locales du groupe)
-  const angleRad = (60 / 2) * (Math.PI / 180);
-  const length = 120;
+function addRaycastCone(group) {
+  const existing = group.findOne(".visionCone");
+  if (existing) existing.destroy();
 
+  // Paramètres du cône
+  const HALF_ANGLE_DEG = 50;   // demi-angle (total 100°)
+  const NUM_RAYS       = 80;   // nb de rayons (précision)
+  const CONE_METERS    = 20;   // portée max en mètres
+  const PX_PER_M       = 15;   // pixels naturels par mètre (image 1464px)
+
+  const maxDistNatural = CONE_METERS * PX_PER_M; // en pixels naturels
+
+  // Rotation actuelle du groupe (en degrés Konva)
+  const rotDeg  = group.rotation();               // 0 = droite
+  const facingRad = rotDeg * Math.PI / 180;
+
+  // Position du groupe en coordonnées Konva (scalées)
+  // On doit convertir en coordonnées naturelles de l'image
+  const scale   = loadout.mapCurrentScale || 1;
+  const gx      = group.x();
+  const gy      = group.y();
+  // Coordonnées naturelles (dans l'image originale)
+  const ox = gx / scale;
+  const oy = gy / scale;
+
+  // Calcul du raycasting
+  const pts = buildRaycastCone(ox, oy, facingRad, HALF_ANGLE_DEG, maxDistNatural, NUM_RAYS);
+
+  // Convertir les points en coordonnées locales du groupe (Konva)
+  // Le groupe est positionné à (gx, gy) avec scale appliqué sur layerMain
+  // Dans le repère local du groupe: offset par rapport à l'origine du groupe
+  const localPts = pts.map(p => ({
+    x: (p.x - ox) * scale,
+    y: (p.y - oy) * scale,
+  }));
+
+  // Construire le path pour Konva
   const cone = new Konva.Shape({
     name: "visionCone",
     sceneFunc: (ctx, shape) => {
       ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(length * Math.cos(-angleRad), length * Math.sin(-angleRad));
-      ctx.arc(0, 0, length, -angleRad, angleRad);
-      ctx.lineTo(0, 0);
+      ctx.moveTo(localPts[0].x, localPts[0].y);
+      for (let i = 1; i < localPts.length; i++) {
+        ctx.lineTo(localPts[i].x, localPts[i].y);
+      }
       ctx.closePath();
       ctx.fillStrokeShape(shape);
     },
@@ -163,11 +246,9 @@ function toggleCone(group) {
     listening: false,
   });
 
-  // Insérer AVANT les autres enfants pour qu'il soit derrière le pion
   group.add(cone);
   cone.moveToBottom();
   layerMain.draw();
-  pushHistory();
 }
 
 // ─── Ligne de visée ──────────────────────────────────────────────────────────
@@ -233,7 +314,9 @@ function toggleTokenArrow(group, dashed) {
 }
 
 function parseEffectiveRangeMeters(weapon) {
-  // Ex: "0-25m=Max / 25-35m=83% / >35m=75%"
+  // Priorité : champ range_m dans armes.json
+  if (weapon?.range_m != null && weapon.range_m > 0) return weapon.range_m;
+  // Fallback : parse le texte "0-25m=Max / ..."
   const s = String(weapon?.stats?.["Portée"] ?? "");
   const m = s.match(/0\s*-\s*([0-9]+(?:\.[0-9]+)?)\s*m/i);
   return m ? Number(m[1]) : null;
@@ -714,6 +797,16 @@ async function loadBackground(src) {
     img.onload = () => {
       layerBg.destroyChildren();
 
+      // Extraire les pixels pour le raycasting (détection de murs)
+      const offscreen = document.createElement('canvas');
+      offscreen.width  = img.width;
+      offscreen.height = img.height;
+      const offCtx = offscreen.getContext('2d');
+      offCtx.drawImage(img, 0, 0);
+      wallPixels = offCtx.getImageData(0, 0, img.width, img.height);
+      wallImgW = img.width;
+      wallImgH = img.height;
+
       // On place la map en "contain" (on voit toute la map, avec marges possibles)
       bgNode = new Konva.Image({ image: img, x: 0, y: 0 });
       layerBg.add(bgNode);
@@ -742,6 +835,13 @@ async function loadBackground(src) {
         layerFx.position({ x: bgNode.x(), y: bgNode.y() });
         layerFx.scale({ x: scale, y: scale });
         layerFx.draw();
+
+        // Mise à jour automatique de l'échelle de portée
+        // 15 px/m pour une map de 1464px naturelle, scalée dynamiquement
+        loadout.mapNaturalWidth = iw;
+        loadout.mapCurrentScale = scale;
+        loadout.meterToPx = 30 * scale;
+        drawRangesForAllPlayers();
       }
 
       resizeBg();
@@ -793,6 +893,9 @@ function setupUI() {
     stage.position({ x: 0, y: 0 });
     stage.batchDraw();
   });
+
+  // Échelle portée: automatique basée sur la taille de la map
+  // 15 px/m pour une map 1464px naturelle, ajusté dynamiquement au resize
 
   // Sélecteur de couleur des flèches
   const arrowPicker = document.getElementById("arrowColorPicker");
@@ -1184,8 +1287,15 @@ function addToken(kind, opts = {}) {
     e.cancelBubble = true;
   });
 
-  group.on("dragmove", () => layerMain.batchDraw());
-  group.on("dragend", () => pushHistory());
+  group.on("dragmove", () => {
+    // Recalcul du cône en temps réel pendant le drag
+    if (group.findOne(".visionCone")) addRaycastCone(group);
+    layerMain.batchDraw();
+  });
+  group.on("dragend", () => {
+    if (group.findOne(".visionCone")) addRaycastCone(group);
+    pushHistory();
+  });
 
   group.setAttr("tokenKind", kind);
 
@@ -1254,6 +1364,10 @@ function rotateSelected(deltaDeg) {
   const node = getSelected();
   if (!node) return;
   node.rotation((node.rotation() + deltaDeg) % 360);
+  // Recalculer le cône si actif
+  if (node.findOne && node.findOne(".visionCone")) {
+    addRaycastCone(node);
+  }
   layerMain.draw();
   pushHistory();
 }
