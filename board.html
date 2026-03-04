@@ -52,7 +52,7 @@
       /* ── Topbar ── */
       .topbar {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 0 20px; height: 50px;
+        padding: 0 20px; height: 44px;
         border-bottom: 1px solid var(--border);
         background: rgba(6,10,15,0.95);
         backdrop-filter: blur(10px);
@@ -65,23 +65,23 @@
       }
       .topbar-right { display: flex; align-items: center; }
 
-      .topbar-logo  { height: 38px; width: auto; mix-blend-mode: lighten; filter: brightness(1.1); }
+      .topbar-logo  { height: 32px; width: auto; mix-blend-mode: lighten; filter: brightness(1.1); }
       .topbar-brand {
-        font-family: var(--font-title); font-size: 24px; font-weight: 900;
+        font-family: var(--font-title); font-size: 20px; font-weight: 900;
         letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
       }
       .topbar-brand span { color: var(--gold); }
 
       .back-btn {
-        font-family: var(--font-hud); font-size: 12px; letter-spacing: 0.1em;
+        font-family: var(--font-hud); font-size: 14px; letter-spacing: 0.1em;
         color: var(--text-dim); text-decoration: none;
-        border: 1px solid var(--border); padding: 6px 14px; border-radius: 3px;
+        border: 1px solid var(--border); padding: 8px 18px; border-radius: 3px;
         transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
       }
       .back-btn:hover { color: var(--gold); border-color: var(--gold-glow); }
 
       #mapTitle {
-        font-family: var(--font-title); font-size: 18px; font-weight: 700;
+        font-family: var(--font-title); font-size: 16px; font-weight: 700;
         letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
       }
       .status-dot {
@@ -99,7 +99,7 @@
       /* ── Layout ── */
       .board-layout {
         display: grid;
-        grid-template-columns: 360px 1fr;
+        grid-template-columns: 310px 1fr;
         height: calc(100vh - 44px);
         overflow: hidden;
       }
@@ -117,13 +117,13 @@
 
       .p-section {
         border-bottom: 1px solid var(--border2);
-        padding: 13px 15px;
+        padding: 10px 12px;
       }
 
       .p-label {
-        font-family: var(--font-hud); font-size: 13px;
+        font-family: var(--font-hud); font-size: 11px;
         letter-spacing: 0.2em; text-transform: uppercase;
-        color: var(--gold); margin-bottom: 9px;
+        color: var(--gold); margin-bottom: 8px;
         display: flex; align-items: center; gap: 6px;
       }
       .p-label::after {
@@ -134,9 +134,9 @@
       .p-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
 
       .p-btn {
-        font-family: var(--font-ui); font-size: 15px; font-weight: 600;
+        font-family: var(--font-ui); font-size: 13px; font-weight: 600;
         background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-        color: var(--text); padding: 8px 13px; border-radius: 3px; cursor: pointer;
+        color: var(--text); padding: 7px 11px; border-radius: 3px; cursor: pointer;
         transition: all 0.15s; white-space: nowrap; letter-spacing: 0.02em;
       }
       .p-btn:hover { background: rgba(255,255,255,0.1); }
@@ -151,8 +151,8 @@
       }
 
       .token-btn {
-        font-family: var(--font-hud); font-size: 14px; font-weight: 700;
-        padding: 8px 14px; border-radius: 3px; border: 1px solid; cursor: pointer;
+        font-family: var(--font-hud); font-size: 13px; font-weight: 700;
+        padding: 7px 11px; border-radius: 3px; border: 1px solid; cursor: pointer;
         transition: all 0.15s; letter-spacing: 0.04em;
       }
       .token-p1     { background: rgba(77,163,255,0.1);  border-color: rgba(77,163,255,0.4);  color: #4da3ff; }
@@ -166,9 +166,9 @@
 
       .p-input {
         width: 100%; margin-bottom: 5px;
-        font-family: var(--font-ui); font-size: 15px; font-weight: 500;
+        font-family: var(--font-ui); font-size: 13px; font-weight: 500;
         background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-        color: var(--text); padding: 8px 11px; border-radius: 3px;
+        color: var(--text); padding: 7px 10px; border-radius: 3px;
         transition: border-color 0.2s;
       }
       .p-input:focus { outline: none; border-color: var(--gold-glow); }
@@ -200,8 +200,8 @@
       }
 
       .p-small {
-        font-family: var(--font-hud); font-size: 12px;
-        color: var(--text-dim); line-height: 1.6; letter-spacing: 0.02em;
+        font-family: var(--font-hud); font-size: 11px;
+        color: var(--text-dim); line-height: 1.5; letter-spacing: 0.02em;
       }
       kbd {
         background: rgba(255,255,255,0.07); padding: 1px 5px;
@@ -329,7 +329,7 @@
             <button class="p-btn" id="toolDraw">Flèche/Ligne</button>
           </div>
           <div class="p-row" style="align-items:center;gap:8px;margin-bottom:6px;">
-            <span style="font-family:var(--font-hud);font-size:12px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;">Couleur</span>
+            <span style="font-family:var(--font-hud);font-size:9px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;">Couleur</span>
             <input type="color" id="arrowColorPicker" value="#ffffff" />
           </div>
           <div class="p-row">
