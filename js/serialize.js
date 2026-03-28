@@ -65,11 +65,16 @@ function serialize(forHistory = false) {
 }
 
 function clearBoard() {
-  layerMain.getChildren().forEach((n) => {
+  // Copier le tableau d'enfants car destroy() modifie la liste en cours d'itération
+  const children = layerMain.getChildren().slice();
+  for (const n of children) {
     if (n !== transformer) n.destroy();
-  });
+  }
   transformer.nodes([]);
+  // Nettoyer aussi les effets (ranges, pings)
+  layerFx.find(".range").forEach((n) => n.destroy());
   layerMain.draw();
+  layerFx.draw();
 }
 
 function hydrate(data) {

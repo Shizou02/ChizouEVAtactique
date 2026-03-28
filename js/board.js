@@ -116,6 +116,8 @@ function setupStage() {
   // Désélection sur clic vide
   stage.on("mousedown touchstart", (e) => {
     if (tool === "draw") return;
+    if (coachSignalArmed || coachZoneArmed) return;
+    if (training.enemiesManualArmed) return;
     if (e.target === stage) { selectNode(null); return; }
   });
 
@@ -181,7 +183,8 @@ function setupStage() {
   // ── Coaching : ping signal ──
   stage.on("mousedown touchstart", (e) => {
     if (currentMode !== "coach" || !coachSignalArmed) return;
-    if (e.target !== stage && e.target.getLayer() !== layerBg) return;
+    // Accepter clics sur le fond (stage ou bgNode), refuser clics sur pions/flèches
+    if (e.target !== stage && e.target.getLayer() !== layerBg && e.target.hasName && e.target.hasName("token")) return;
 
     const pos = getPointerPosInLayer();
     if (!pos) return;
@@ -205,7 +208,10 @@ function setupStage() {
   // ── Coaching : zone rectangle ──
   stage.on("mousedown touchstart", (e) => {
     if (currentMode !== "coach" || !coachZoneArmed) return;
-    if (e.target !== stage && e.target.getLayer() !== layerBg) return;
+    // Accepter tout clic sauf sur un pion interactif
+    if (e.target.hasName && e.target.hasName("token")) return;
+
+    e.cancelBubble = true;
 
     const pos = getPointerPosInLayer();
     if (!pos) return;
@@ -563,6 +569,9 @@ function setupUI() {
   });
 
   setTool("select");
+
+  // Coaching replay
+  if (typeof setupCoachingUI === "function") setupCoachingUI();
 }
 
 // ─── Lancement ───────────────────────────────────────────────────────────────

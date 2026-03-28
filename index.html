@@ -269,6 +269,136 @@
         flex-shrink: 0;
       }
 
+      /* ── Guide section ────────────────────────────── */
+      .guide {
+        max-width: 960px;
+        margin: 0 auto 60px;
+        padding: 0 28px;
+      }
+
+      .guide-header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+
+      .guide-eyebrow {
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.25em;
+        color: var(--gold); text-transform: uppercase;
+        margin-bottom: 14px;
+        display: flex; align-items: center; justify-content: center; gap: 12px;
+      }
+      .guide-eyebrow::before, .guide-eyebrow::after {
+        content: ''; width: 40px; height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold));
+      }
+      .guide-eyebrow::after {
+        background: linear-gradient(90deg, var(--gold), transparent);
+      }
+
+      .guide-title {
+        font-family: var(--font-title);
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 900; text-transform: uppercase;
+        color: #fff; letter-spacing: 0.04em;
+      }
+      .guide-title span { color: var(--gold); }
+
+      .guide-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .guide-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 28px 24px;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s;
+      }
+      .guide-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .guide-card:hover {
+        border-color: var(--gold-glow);
+      }
+
+      .guide-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, var(--gold), transparent);
+        opacity: 0.5;
+      }
+
+      .guide-card-icon {
+        width: 48px; height: 48px;
+        margin-bottom: 16px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 4px;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.25);
+      }
+      .guide-card-icon svg {
+        width: 24px; height: 24px;
+        stroke: var(--gold);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .guide-card-number {
+        position: absolute; top: 16px; right: 20px;
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.15em;
+        color: var(--gold); opacity: 0.4;
+      }
+
+      .guide-card-title {
+        font-family: var(--font-title);
+        font-size: 22px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        color: #fff; margin-bottom: 10px;
+      }
+
+      .guide-card-text {
+        font-family: var(--font-ui);
+        font-size: 14px; font-weight: 500;
+        color: var(--text-dim); line-height: 1.65;
+      }
+      .guide-card-text strong {
+        color: var(--text); font-weight: 600;
+      }
+
+      .guide-card-tags {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        margin-top: 14px;
+      }
+      .guide-tag {
+        font-family: var(--font-hud);
+        font-size: 10px; letter-spacing: 0.08em;
+        color: var(--gold); opacity: 0.7;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.2);
+        padding: 3px 8px; border-radius: 2px;
+        text-transform: uppercase;
+      }
+
+      /* ── Full-width feature card ── */
+      .guide-card.full {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 640px) {
+        .guide-grid { grid-template-columns: 1fr; }
+      }
+
       /* ── Responsive ────────────────────────────────── */
       @media (max-width: 640px) {
         .nav-cards { grid-template-columns: 1fr; }
@@ -360,6 +490,106 @@
           <span class="desc-feature">Réagir & adapter</span>
         </div>
       </div>
+
+      <!-- Guide -->
+      <section class="guide" id="guide">
+        <div class="guide-header">
+          <div class="guide-eyebrow">// Comment ça marche</div>
+          <h2 class="guide-title">Guide <span>Opérationnel</span></h2>
+        </div>
+
+        <div class="guide-grid">
+
+          <!-- Card 1 — Présentation -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 01</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="guide-card-title">Tableau tactique</div>
+            <p class="guide-card-text">
+              Ouvre une <strong>map EVA</strong>, place tes pions joueurs et ennemis, trace des <strong>flèches de déplacement</strong> et visualise les <strong>cônes de vision</strong> qui s'arrêtent sur les murs. Exporte ton plan en PNG ou sauvegarde-le en JSON.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Drag & Drop</span>
+              <span class="guide-tag">Clic droit</span>
+              <span class="guide-tag">Export PNG</span>
+              <span class="guide-tag">Save JSON</span>
+            </div>
+          </div>
+
+          <!-- Card 2 — Board -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 02</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4"/><path d="M12 19v4"/><path d="M1 12h4"/><path d="M19 12h4"/><path d="M4.22 4.22l2.83 2.83"/><path d="M16.95 16.95l2.83 2.83"/><path d="M4.22 19.78l2.83-2.83"/><path d="M16.95 7.05l2.83-2.83"/></svg>
+            </div>
+            <div class="guide-card-title">Pions & visée</div>
+            <p class="guide-card-text">
+              <strong>4 joueurs</strong> (P1-P4), <strong>ennemis</strong>, <strong>objectifs</strong> et <strong>grenades</strong>. Chaque pion peut être roté, équipé d'un cône de vision (raycasting sur les murs), d'une ligne de visée et d'une flèche directionnelle via le <strong>clic droit</strong>.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Rotation ±15°</span>
+              <span class="guide-tag">Cône de vision</span>
+              <span class="guide-tag">Raycasting</span>
+            </div>
+          </div>
+
+          <!-- Card 3 — Entraînement -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 03</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="guide-card-title">Mode entraînement</div>
+            <p class="guide-card-text">
+              Place les ennemis et ta strat, puis clique <strong>"Définir la solution"</strong>. Lance le timer : tu as <strong>20 secondes</strong> pour replacer tes joueurs et flèches de mémoire. Compare avec la solution. Valide un <strong>Plan A</strong> pour y revenir à tout moment.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Timer 20s</span>
+              <span class="guide-tag">Solution</span>
+              <span class="guide-tag">Plan A</span>
+              <span class="guide-tag">Ennemis auto</span>
+            </div>
+          </div>
+
+          <!-- Card 4 — Coaching -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 04</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="guide-card-title">Mode coaching</div>
+            <p class="guide-card-text">
+              Passe en mode coach pour communiquer en temps réel. <strong>Signal</strong> : clique sur la map pour poser un ping rouge visible 1.5s. <strong>Zone</strong> : dessine un rectangle pour surligner une zone clé. Idéal pour le <strong>debriefing</strong> ou le coaching live.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Ping signal</span>
+              <span class="guide-tag">Zone highlight</span>
+              <span class="guide-tag">Debriefing</span>
+            </div>
+          </div>
+
+          <!-- Card 5 — Armes & Loadout -->
+          <div class="guide-card full">
+            <div class="guide-card-number">// 05</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 12h6l2-7 4 14 2-7h6"/></svg>
+            </div>
+            <div class="guide-card-title">Armes & Loadout</div>
+            <p class="guide-card-text">
+              Consulte toutes les <strong>armes EVA</strong> avec leurs stats détaillées (dégâts, cadence, portée). Sur le board, ouvre le panneau <strong>Loadout</strong> pour assigner jusqu'à <strong>2 armes par joueur</strong>. Des <strong>cercles de portée</strong> s'affichent automatiquement sur la map — vert pour l'arme principale, bleu pour la secondaire — pour visualiser la couverture de ton équipe en un coup d'œil.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Stats détaillées</span>
+              <span class="guide-tag">2 armes / joueur</span>
+              <span class="guide-tag">Cercles de portée</span>
+              <span class="guide-tag">Couverture d'équipe</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
 
       <footer class="footer">
         <div class="footer-left">© 2026 — STRATHUB · ALL SYSTEMS OPERATIONAL</div>
@@ -474,6 +704,24 @@
             return revealed ? c : chars[Math.floor(Math.random() * chars.length)];
           }).join('');
         }, 55);
+      }
+
+      // ── Guide cards scroll animation ─────────────────
+      const guideCards = document.querySelectorAll('.guide-card');
+      if (guideCards.length) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        guideCards.forEach((card, i) => {
+          card.style.transitionDelay = `${i * 0.12}s`;
+          observer.observe(card);
+        });
       }
     </script>
   </body>

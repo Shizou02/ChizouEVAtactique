@@ -274,6 +274,18 @@
             <button class="p-btn" id="coachZone">⚡ Zone</button>
           </div>
           <p class="p-small">Signal : clic sur la map (ping 1.5s)<br/>Zone : clique-glisse pour surligner</p>
+
+          <div class="p-label" style="margin-top:10px;">// 🎬 Replay</div>
+          <div class="p-row">
+            <button class="p-btn" id="replayCapture">📸 Capturer</button>
+            <button class="p-btn danger" id="replayReset">🗑 Reset</button>
+          </div>
+          <div class="p-row" style="align-items:center;">
+            <button class="p-btn" id="replayPrev">◀</button>
+            <span id="replayStatus" style="font-family:var(--font-hud);font-size:12px;color:var(--text-dim);letter-spacing:0.1em;flex:1;text-align:center;">0 / 0</span>
+            <button class="p-btn" id="replayNext">▶</button>
+          </div>
+          <p class="p-small">Place tes pions, capture chaque étape, puis navigue avec ◀ ▶</p>
         </div>
 
         <div class="p-section">
@@ -374,6 +386,7 @@
     <script src="js/history.js"></script>
     <script src="js/tokens.js"></script>
     <script src="js/training.js"></script>
+    <script src="js/coaching.js"></script>
     <script src="js/board.js"></script>
   </body>
 </html>
