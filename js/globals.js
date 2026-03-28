@@ -56,6 +56,7 @@ const loadout = {
   selectedPlayerNode: null,
   meterToPx: 30,
   mapNaturalWidth: 1464,
+  mapNaturalHeight: 1464,
   mapCurrentScale: 1,
 };
 

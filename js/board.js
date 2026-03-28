@@ -312,12 +312,16 @@ async function loadBackground(src) {
     img.onload = () => {
       layerBg.destroyChildren();
 
-      const offscreen = document.createElement('canvas');
-      offscreen.width = img.width; offscreen.height = img.height;
-      const offCtx = offscreen.getContext('2d');
-      offCtx.drawImage(img, 0, 0);
-      wallPixels = offCtx.getImageData(0, 0, img.width, img.height);
-      wallImgW = img.width; wallImgH = img.height;
+      // Fallback : si aucun wallmap dédié n'a été chargé,
+      // on utilise les pixels de la map visuelle pour le raycasting
+      if (!wallPixels) {
+        const offscreen = document.createElement('canvas');
+        offscreen.width = img.width; offscreen.height = img.height;
+        const offCtx = offscreen.getContext('2d');
+        offCtx.drawImage(img, 0, 0);
+        wallPixels = offCtx.getImageData(0, 0, img.width, img.height);
+        wallImgW = img.width; wallImgH = img.height;
+      }
 
       bgNode = new Konva.Image({ image: img, x: 0, y: 0 });
       layerBg.add(bgNode);
@@ -340,6 +344,7 @@ async function loadBackground(src) {
         layerFx.draw();
 
         loadout.mapNaturalWidth = iw;
+        loadout.mapNaturalHeight = ih;
         loadout.mapCurrentScale = scale;
         loadout.meterToPx = pxPerMeter() * scale;
         drawRangesForAllPlayers();
