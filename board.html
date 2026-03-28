@@ -15,88 +15,50 @@
     </script>
 
     <style>
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-      :root {
-        --black:     #060a0f;
-        --panel:     #0d1520;
-        --border:    rgba(255,255,255,0.07);
-        --border2:   rgba(255,255,255,0.04);
-        --gold:      #c8973a;
-        --gold-dim:  rgba(200,151,58,0.15);
-        --gold-glow: rgba(200,151,58,0.4);
-        --cyan:      #2dd4bf;
-        --red:       #ef4444;
-        --blue:      #4da3ff;
-        --text:      #d4dde8;
-        --text-dim:  rgba(212,221,232,0.5);
-        --font-hud:  'Share Tech Mono', monospace;
-        --font-title:'Barlow Condensed', sans-serif;
-        --font-ui:   'Rajdhani', sans-serif;
-      }
+      /* ── Board-specific overrides ──────────────────── */
 
       html, body {
-        height: 100%; overflow: hidden;
-        background: var(--black);
-        color: var(--text);
-        font-family: var(--font-ui);
+        height: 100%;
+        min-height: auto;
+        overflow: hidden;
       }
 
-      /* Scanlines */
-      body::after {
-        content: '';
-        position: fixed; inset: 0; z-index: 999; pointer-events: none;
-        background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
-      }
+      /* Board scanlines are higher z-index */
+      body::after { z-index: 999; }
 
-      /* ── Topbar ── */
+      /* Board doesn't use vignette */
+      body::before { display: none; }
+
+      /* ── Topbar compact ── */
       .topbar {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 20px; height: 44px;
-        border-bottom: 1px solid var(--border);
+        padding: 0 20px;
+        height: 44px;
+        position: relative;
         background: rgba(6,10,15,0.95);
         backdrop-filter: blur(10px);
-        flex-shrink: 0; position: relative; z-index: 20;
+        flex-shrink: 0;
+        z-index: 20;
       }
-      .topbar-left  { display: flex; align-items: center; gap: 14px; }
-      .topbar-mid   {
+
+      .topbar-logo { height: 32px; }
+      .topbar-brand { font-size: 20px; }
+
+      .topbar-mid {
         position: absolute; left: 50%; transform: translateX(-50%);
         display: flex; align-items: center; gap: 8px;
       }
-      .topbar-right { display: flex; align-items: center; }
-
-      .topbar-logo  { height: 32px; width: auto; mix-blend-mode: lighten; filter: brightness(1.1); }
-      .topbar-brand {
-        font-family: var(--font-title); font-size: 20px; font-weight: 900;
-        letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
-      }
-      .topbar-brand span { color: var(--gold); }
-
-      .back-btn {
-        font-family: var(--font-hud); font-size: 14px; letter-spacing: 0.1em;
-        color: var(--text-dim); text-decoration: none;
-        border: 1px solid var(--border); padding: 8px 18px; border-radius: 3px;
-        transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
-      }
-      .back-btn:hover { color: var(--gold); border-color: var(--gold-glow); }
 
       #mapTitle {
         font-family: var(--font-title); font-size: 16px; font-weight: 700;
         letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
       }
-      .status-dot {
-        width: 5px; height: 5px; border-radius: 50%;
-        background: var(--cyan); box-shadow: 0 0 6px var(--cyan);
-        animation: pulse-dot 2s ease-in-out infinite;
-      }
-      @keyframes pulse-dot { 0%,100%{opacity:1}50%{opacity:0.3} }
 
       .topbar-hint {
         font-family: var(--font-hud); font-size: 12px;
         color: var(--text-dim); letter-spacing: 0.05em;
       }
 
-      /* ── Layout ── */
+      /* ── Board layout ── */
       .board-layout {
         display: grid;
         grid-template-columns: 310px 1fr;
@@ -187,18 +149,6 @@
       }
       input[type="range"] { width: 100%; accent-color: var(--gold); }
 
-      .training-status {
-        display: flex; align-items: center; gap: 8px;
-        padding: 7px 10px; border-radius: 3px;
-        border: 1px solid var(--border); background: rgba(255,255,255,0.02);
-        margin: 5px 0; font-family: var(--font-hud); font-size: 13px;
-      }
-      .training-pill {
-        margin-left: auto; padding: 2px 7px; border-radius: 2px;
-        border: 1px solid var(--gold-glow); background: var(--gold-dim);
-        font-family: var(--font-hud); font-size: 14px; font-weight: 800; color: var(--gold);
-      }
-
       .p-small {
         font-family: var(--font-hud); font-size: 11px;
         color: var(--text-dim); line-height: 1.5; letter-spacing: 0.02em;
@@ -209,10 +159,10 @@
         font-family: var(--font-hud); font-size: 10px;
       }
 
-      /* ── Canvas ── */
+      /* ── Canvas area ── */
       .canvas-area {
         background: #080d14; overflow: hidden;
-        position: relative; touch-action: none;
+        position: relative;
       }
       .canvas-area::before {
         content: ''; position: absolute; top: 8px; left: 8px;
@@ -225,70 +175,8 @@
         border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); opacity: 0.4;
       }
 
-      /* ── Loadout ── */
-      .open-loadout {
-        position: fixed; top: 50px; right: 14px; z-index: 100;
-        padding: 6px 14px; border-radius: 3px;
-        font-family: var(--font-hud); font-size: 11px; font-weight: 700;
-        letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
-        background: linear-gradient(135deg, rgba(200,151,58,0.9), rgba(160,110,20,0.9));
-        border: 1px solid var(--gold-glow);
-        box-shadow: 0 4px 18px rgba(200,151,58,0.3);
-        cursor: pointer; transition: box-shadow 0.2s, transform 0.2s;
-      }
-      .open-loadout:hover { box-shadow: 0 4px 26px rgba(200,151,58,0.5); transform: translateY(-1px); }
-
-      .loadout-panel {
-        position: fixed; top: 0; right: 0; height: 100vh; width: 300px; z-index: 90;
-        transform: translateX(100%); transition: transform 300ms ease;
-        border-left: 1px solid var(--border);
-        box-shadow: -20px 0 60px rgba(0,0,0,0.6);
-        background: rgba(10,15,24,0.98); backdrop-filter: blur(20px);
-        display: flex; flex-direction: column;
-      }
-      .loadout-panel.open { transform: translateX(0); }
-
-      .loadout-header {
-        padding: 12px 14px; border-bottom: 1px solid var(--border);
-        display: flex; justify-content: space-between; align-items: flex-start;
-        position: relative;
-      }
-      .loadout-title {
-        font-family: var(--font-hud); font-size: 13px; font-weight: 700;
-        letter-spacing: 0.1em; color: var(--gold);
-      }
-      .loadout-sub {
-        margin-top: 4px; font-family: var(--font-hud);
-        font-size: 12px; color: var(--text-dim); letter-spacing: 0.06em;
-      }
-      .loadout-close {
-        position: absolute; top: 10px; right: 10px;
-        width: 28px; height: 28px; border-radius: 3px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 16px; color: rgba(255,255,255,0.7);
-        background: rgba(255,255,255,0.05); border: 1px solid var(--border); cursor: pointer;
-        transition: background 0.2s;
-      }
-      .loadout-close:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); }
-
-      .loadout-body { padding: 10px; flex: 1; overflow-y: auto; }
-      .loadout-hint { font-family: var(--font-hud); font-size: 10px; color: var(--text-dim); padding: 4px; }
-      .loadout-group { padding-bottom: 4px; border-bottom: 1px solid var(--border2); margin-bottom: 8px; }
-      .loadout-group-title {
-        font-family: var(--font-hud); font-size: 9px; font-weight: 700;
-        margin: 8px 4px 5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); opacity: 0.7;
-      }
-      .loadout-group-weapons { display: flex; flex-wrap: wrap; gap: 4px; }
-      .weapon-item {
-        font-family: var(--font-ui); font-size: 13px; font-weight: 600;
-        background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-        color: var(--text); padding: 5px 10px; border-radius: 3px; cursor: pointer;
-        transition: all 0.15s;
-      }
-      .weapon-item:hover { background: rgba(255,255,255,0.09); }
-      .weapon-item.selected { border-color: var(--gold-glow); background: var(--gold-dim); color: var(--gold); }
-
-      body.loadout-open .open-loadout { display: none; }
+      /* ── Board-specific loadout overrides ── */
+      .open-loadout { top: 50px; padding: 6px 14px; font-size: 11px; }
 
       /* ── Responsive ── */
       @media (max-width: 900px) {
@@ -321,6 +209,13 @@
     <div class="board-layout">
 
       <div class="panel">
+
+        <div class="p-section" id="floorSection" style="display:none;">
+          <div class="p-label">// Étage</div>
+          <div class="row">
+            <button id="floorToggle" class="p-btn primary" onclick="switchFloor()" style="flex:1;">↑ Upper Floor</button>
+          </div>
+        </div>
 
         <div class="p-section">
           <div class="p-label">// Outils</div>
@@ -420,7 +315,6 @@
             <input type="range" id="zoom" min="50" max="200" value="100" />
             <p class="p-small" style="margin-top:3px;">Affichage uniquement</p>
           </div>
-
         </div>
 
         <div class="p-section">
@@ -473,6 +367,13 @@
       </div>
     </aside>
 
-    <script src="app.js"></script>
+    <script src="js/globals.js"></script>
+    <script src="js/raycasting.js"></script>
+    <script src="js/loadout.js"></script>
+    <script src="js/serialize.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/tokens.js"></script>
+    <script src="js/training.js"></script>
+    <script src="js/board.js"></script>
   </body>
 </html>

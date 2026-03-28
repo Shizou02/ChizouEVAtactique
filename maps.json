@@ -1,13 +1,81 @@
 [
-  { "id": "artefact", "name": "Artefact", "file": "maps/Artefact.png" },
-  { "id": "atlantis", "name": "Atlantis", "file": "maps/Atlantis.png" },
-  { "id": "cliff", "name": "Cliff", "file": "maps/Cliff.png" },
-  { "id": "engine", "name": "Engine", "file": "maps/Engine.png" },
-  { "id": "helios_station", "name": "Helios Station", "file": "maps/Helios_Station.png" },
-  { "id": "horizon", "name": "Horizon", "file": "maps/Horizon.png" },
-  { "id": "outlaw", "name": "Outlaw", "file": "maps/Outlaw.png" },
-  { "id": "silva", "name": "Silva", "file": "maps/Silva.png" },
-  { "id": "polaris", "name": "Polaris", "file": "maps/Polaris.png" },
-  { "id": "ceres", "name": "Ceres", "file": "maps/Ceres.png" },
-  { "id": "lunar", "name": "Lunar", "file": "maps/Lunar.png" }
+  {
+    "id": "artefact",
+    "name": "Artefact",
+    "file": "maps/artefact_ground.webp",
+    "wallmap": "maps/artefact_mur.webp",
+    "upper": "maps/artefact_upper.webp",
+    "naturalWidth": 2000
+  },
+  {
+    "id": "atlantis",
+    "name": "Atlantis",
+    "file": "maps/atlantis_ground.webp",
+    "wallmap": "maps/atlantis_mur.webp",
+    "upper": "maps/atlantis_upper.webp",
+    "naturalWidth": 2000
+  },
+  {
+    "id": "cliff",
+    "name": "Cliff",
+    "file": "maps/cliff.webp",
+    "wallmap": "maps/cliff_mur.webp",
+    "naturalWidth": 2000
+  },
+  {
+    "id": "engine",
+    "name": "Engine",
+    "file": "maps/engine.webp",
+    "wallmap": "maps/engine_mur.webp",
+    "naturalWidth": 2000
+  },
+  {
+    "id": "helios_station",
+    "name": "Helios Station",
+    "file": "maps/Helios_Station.webp",
+    "wallmap": "maps/helios_mur_ground.webp",
+    "naturalWidth": 1506
+  },
+  {
+    "id": "horizon",
+    "name": "Horizon",
+    "file": "maps/horizon.webp",
+    "wallmap": "maps/horizon_mur.webp",
+    "naturalWidth": 2000
+  },
+  {
+    "id": "outlaw",
+    "name": "Outlaw",
+    "file": "maps/outlaw.webp",
+    "wallmap": "maps/outlaw_mur.webp",
+    "naturalWidth": 2000
+  },
+  {
+    "id": "polaris",
+    "name": "Polaris",
+    "file": "maps/polaris.webp",
+    "wallmap": "maps/polaris_mur.webp",
+    "naturalWidth": 1920
+  },
+  {
+    "id": "silva",
+    "name": "Silva",
+    "file": "maps/silva.webp",
+    "wallmap": "maps/silva_mur.webp",
+    "naturalWidth": 1920
+  },
+  {
+    "id": "ceres",
+    "name": "Ceres",
+    "file": "maps/ceres.webp",
+    "wallmap": "maps/ceres_mur.webp",
+    "naturalWidth": 768
+  },
+  {
+    "id": "lunar",
+    "name": "Lunar",
+    "file": "maps/lunar.webp",
+    "wallmap": "maps/lunar_mur.webp",
+    "naturalWidth": 985
+  }
 ]

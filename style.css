@@ -1,7 +1,7 @@
 /* ==========================================================
    StratHub — style.css
-   Styles de base partagés. Les styles spécifiques à chaque
-   page sont dans leur balise <style> interne.
+   Styles partagés entre toutes les pages.
+   Chaque page ne garde que ses styles spécifiques.
    ========================================================== */
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -17,11 +17,14 @@
   --dark:      #0b1018;
   --panel:     #0d1520;
   --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.04);
   --gold:      #c8973a;
   --gold-dim:  rgba(200,151,58,0.15);
   --gold-glow: rgba(200,151,58,0.4);
   --cyan:      #2dd4bf;
+  --cyan-dim:  rgba(45,212,191,0.12);
   --red:       #ef4444;
+  --blue:      #4da3ff;
   --text:      #d4dde8;
   --text-dim:  rgba(212,221,232,0.5);
   --font-hud:  'Share Tech Mono', monospace;
@@ -35,12 +38,237 @@ html, body {
   background: var(--black);
   color: var(--text);
   font-family: var(--font-ui), system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 a {
   color: inherit;
   text-decoration: none;
 }
+
+/* ── Scanlines overlay ─────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.06) 2px,
+    rgba(0,0,0,0.06) 4px
+  );
+}
+
+/* ── Vignette ──────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ── Canvas BG (hex grid) ──────────────────────────────── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* ── Page layout ───────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Topbar ────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(6,10,15,0.9);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar-logo {
+  height: 36px;
+  width: auto;
+  mix-blend-mode: lighten;
+  filter: brightness(1.1);
+}
+
+.topbar-brand,
+.topbar-name {
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.topbar-brand span,
+.topbar-name span {
+  color: var(--gold);
+}
+
+.topbar-right {
+  font-family: var(--font-hud);
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* ── Status dot ────────────────────────────────────────── */
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulse-dot 2s ease-in-out infinite;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* ── Back button ───────────────────────────────────────── */
+.back-btn {
+  font-family: var(--font-hud);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 8px 18px;
+  border-radius: 3px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.03);
+}
+.back-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold-glow);
+  background: var(--gold-dim);
+}
+
+/* ── Page header (maps & armes) ────────────────────────── */
+.page-header {
+  padding: 40px 28px 28px;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  animation: fade-up 0.6s ease forwards 0.2s;
+}
+
+.page-eyebrow {
+  font-family: var(--font-hud);
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.page-title {
+  font-family: var(--font-title);
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #fff;
+  line-height: 1;
+}
+.page-title span {
+  color: var(--gold);
+}
+
+.page-subtitle {
+  margin-top: 8px;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Footer ────────────────────────────────────────────── */
+.footer {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6,10,15,0.6);
+}
+
+.footer-left {
+  font-family: var(--font-hud);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+}
+
+.footer-right {
+  font-family: var(--font-hud);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+.footer-right span {
+  color: var(--gold);
+}
+
+/* ── Animations globales ───────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ── Couleurs par groupe armes ─────────────────────────── */
+:root {
+  --c-assaut:   rgba(120, 180, 255, 0.8);
+  --c-longue:   rgba(180, 120, 255, 0.8);
+  --c-rapproch: rgba(255, 160, 120, 0.8);
+  --c-special:  rgba(120, 220, 180, 0.8);
+  --c-access:   rgba(200, 151,  58, 0.8);
+}
+
+.group-fusils-d-assaut   { --group-color: var(--c-assaut); }
+.group-longue-portee     { --group-color: var(--c-longue); }
+.group-armes-rapprochees { --group-color: var(--c-rapproch); }
+.group-speciales         { --group-color: var(--c-special); }
+.group-accessoires       { --group-color: var(--c-access); }
 
 /* ── Touch canvas (Konva) ──────────────────────────────── */
 .canvas-area {
@@ -222,42 +450,7 @@ body.loadout-open .open-loadout {
   color: var(--gold);
 }
 
-/* ── Animations globales ───────────────────────────────── */
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-/* ── Couleurs par groupe armes ─────────────────────────── */
-.group-fusils-d-assaut   { --group-color: rgba(120,180,255,0.85); }
-.group-longue-portee     { --group-color: rgba(180,120,255,0.85); }
-.group-armes-rapprochees { --group-color: rgba(255,160,120,0.85); }
-.group-speciales         { --group-color: rgba(120,220,180,0.85); }
-.group-accessoires       { --group-color: rgba(200,151,58,0.85);  }
-
-/* ── Bouton retour partagé ─────────────────────────────── */
-.back-btn {
-  font-family: var(--font-hud);
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
-  text-decoration: none;
-  border: 1px solid var(--border);
-  padding: 8px 18px;
-  border-radius: 3px;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
-  text-transform: uppercase;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.03);
-}
-.back-btn:hover {
-  color: var(--gold);
-  border-color: var(--gold-glow);
-  background: var(--gold-dim);
+/* ── Responsive commun ─────────────────────────────────── */
+@media (max-width: 700px) {
+  .page-header { padding: 24px 16px 18px; }
 }
