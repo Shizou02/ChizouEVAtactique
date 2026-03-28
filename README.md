@@ -46,7 +46,7 @@ Il pose la question :
 
 - Mode Strat : ✅ fonctionnel  
 - Mode Entraînement : ✅ fonctionnel  
-- Mode Coaching : ✅ fonctionnel  
+- Mode Coaching : 🚧 en développement  
 
 ---
 
