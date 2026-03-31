@@ -452,10 +452,12 @@ function setupUI() {
   const modeSelect = $("modeSelect");
   const trainBlock = $("modeTrainBlock");
   const coachBlock = $("modeCoachBlock");
+  const replayBlock = $("replayBlock");
 
   function applyModeUI(mode) {
     if (trainBlock) trainBlock.style.display = mode === "train" ? "block" : "none";
     if (coachBlock) coachBlock.style.display = mode === "coach" ? "block" : "none";
+    if (replayBlock) replayBlock.style.display = (mode === "strat" || mode === "coach") ? "block" : "none";
   }
 
   if (modeSelect) {
