@@ -426,6 +426,10 @@
           <span><span class="status-dot"></span>SYSTÈME EN LIGNE</span>
           <span>EVA // BATTLE FOR ARENA</span>
           <span id="clock">--:--:--</span>
+          <div class="auth-zone">
+            <span class="auth-user" id="authUser"></span>
+            <button class="auth-btn" id="authBtn">CONNEXION</button>
+          </div>
         </div>
       </header>
 
@@ -597,6 +601,13 @@
       </footer>
 
     </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
 
     <script>
       // ── HUD Clock ────────────────────────────────────

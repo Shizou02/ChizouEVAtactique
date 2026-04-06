@@ -173,7 +173,13 @@
           <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
           <span class="topbar-brand">Strat<span>Hub</span></span>
         </div>
-        <a href="index.html" class="back-btn">← Accueil</a>
+        <div class="topbar-right">
+          <a href="index.html" class="back-btn">← Accueil</a>
+          <div class="auth-zone">
+            <span class="auth-user" id="authUser"></span>
+            <button class="auth-btn" id="authBtn">CONNEXION</button>
+          </div>
+        </div>
       </header>
 
       <div class="page-header">
@@ -192,6 +198,13 @@
       </footer>
 
     </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
 
     <script>
       // BG canvas

@@ -450,6 +450,39 @@ body.loadout-open .open-loadout {
   color: var(--gold);
 }
 
+/* ── Auth topbar ───────────────────────────────────────── */
+.auth-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-user {
+  font-family: var(--font-hud);
+  font-size: 12px;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+}
+
+.auth-btn {
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(200,151,58,0.3);
+  padding: 5px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.auth-btn:hover {
+  background: rgba(200,151,58,0.25);
+  border-color: var(--gold-glow);
+}
+
 /* ── Responsive commun ─────────────────────────────────── */
 @media (max-width: 700px) {
   .page-header { padding: 24px 16px 18px; }
