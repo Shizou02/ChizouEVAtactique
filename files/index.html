@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Plan tactique pour EVA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-585D88K6');
+    </script>
+
+    <style>
+      /* ── Index-specific overrides ──────────────────── */
+      #bg-canvas { opacity: 0.55; }
+
+      .topbar {
+        position: relative; /* pas sticky sur l'accueil */
+      }
+
+      .topbar-logo { height: 52px; }
+      .topbar-name { font-size: 26px; }
+
+      /* ── Hero section ──────────────────────────────── */
+      .hero {
+        flex: 0 0 auto;
+        padding: 70px 28px 50px;
+        text-align: center;
+        position: relative;
+      }
+
+      .hero-eyebrow {
+        font-family: var(--font-hud);
+        font-size: 13px;
+        letter-spacing: 0.25em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fade-up 0.6s ease forwards 0.3s;
+      }
+
+      .hero-title {
+        font-family: var(--font-title);
+        font-size: clamp(52px, 8vw, 96px);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        color: #fff;
+        opacity: 0;
+        animation: fade-up 0.7s ease forwards 0.5s;
+      }
+      .hero-title .accent { color: var(--gold); }
+      .hero-title .dim    { color: var(--text-dim); font-weight: 300; }
+
+      .hero-divider {
+        width: 80px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        margin: 24px auto;
+        opacity: 0;
+        animation: fade-up 0.5s ease forwards 0.8s;
+      }
+
+      .hero-sub {
+        font-family: var(--font-ui);
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0;
+        animation: fade-up 0.5s ease forwards 1s;
+      }
+
+      /* ── Nav cards ─────────────────────────────────── */
+      .nav-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        max-width: 860px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 28px 60px;
+        opacity: 0;
+        animation: fade-up 0.7s ease forwards 1.2s;
+      }
+
+      .nav-card {
+        position: relative;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+        cursor: pointer;
+      }
+
+      .nav-card::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, var(--gold-dim), transparent 60%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+      }
+
+      .nav-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--gold-glow);
+      }
+      .nav-card:hover::before { opacity: 1; }
+
+      .nav-card::after {
+        content: '';
+        position: absolute; top: 0; left: 0;
+        width: 20px; height: 20px;
+        border-top: 2px solid var(--gold);
+        border-left: 2px solid var(--gold);
+        opacity: 0.7; z-index: 2;
+      }
+
+      .card-corner-br {
+        position: absolute; bottom: 0; right: 0;
+        width: 20px; height: 20px;
+        border-bottom: 2px solid var(--gold);
+        border-right: 2px solid var(--gold);
+        opacity: 0.7; z-index: 2;
+      }
+
+      .nav-card-img {
+        width: 100%; height: 220px;
+        object-fit: cover; display: block;
+        filter: saturate(0.8) brightness(0.75);
+        transition: filter 0.3s ease;
+      }
+      .nav-card:hover .nav-card-img {
+        filter: saturate(1) brightness(0.9);
+      }
+
+      .nav-card-body {
+        padding: 18px 20px 20px;
+        position: relative; z-index: 2;
+      }
+
+      .nav-card-tag {
+        font-family: var(--font-hud);
+        font-size: 12px; letter-spacing: 0.2em;
+        color: var(--gold); text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      .nav-card-title {
+        font-family: var(--font-title);
+        font-size: 34px; font-weight: 700;
+        letter-spacing: 0.04em; text-transform: uppercase;
+        color: #fff; line-height: 1; margin-bottom: 6px;
+      }
+
+      .nav-card-desc {
+        font-size: 15px; font-weight: 500;
+        color: var(--text-dim); letter-spacing: 0.04em;
+      }
+
+      .nav-card-arrow {
+        position: absolute; right: 20px; bottom: 20px;
+        font-family: var(--font-hud);
+        font-size: 18px; color: var(--gold);
+        opacity: 0; transform: translateX(-6px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 2;
+      }
+      .nav-card:hover .nav-card-arrow {
+        opacity: 1; transform: translateX(0);
+      }
+
+      /* ── Info strip ────────────────────────────────── */
+      .info-strip {
+        max-width: 860px;
+        margin: 0 auto 50px; padding: 0 28px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 4px; overflow: hidden;
+        opacity: 0;
+        animation: fade-up 0.6s ease forwards 1.5s;
+      }
+
+      .info-item {
+        background: var(--panel);
+        padding: 18px 22px; position: relative;
+      }
+
+      .info-item::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold), transparent);
+        opacity: 0.5;
+      }
+
+      .info-label {
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.2em;
+        color: var(--text-dim); text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      .info-value {
+        font-family: var(--font-title);
+        font-size: 22px; font-weight: 700;
+        color: #fff; letter-spacing: 0.04em;
+      }
+      .info-value span { color: var(--gold); }
+
+      /* ── Description ───────────────────────────────── */
+      .desc-block {
+        max-width: 760px;
+        margin: 0 auto 60px; padding: 0 28px;
+        opacity: 0;
+        animation: fade-up 0.6s ease forwards 1.7s;
+      }
+
+      .desc-title {
+        font-family: var(--font-hud);
+        font-size: 10px; letter-spacing: 0.25em;
+        color: var(--gold); text-transform: uppercase;
+        margin-bottom: 16px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .desc-title::after {
+        content: ''; flex: 1; height: 1px;
+        background: linear-gradient(90deg, var(--border), transparent);
+      }
+
+      .desc-text {
+        font-size: 16px; font-weight: 400;
+        line-height: 1.75; color: var(--text-dim);
+        text-align: center;
+      }
+      .desc-text strong { color: var(--text); font-weight: 600; }
+
+      .desc-features {
+        display: flex; justify-content: center;
+        gap: 32px; margin-top: 24px; flex-wrap: wrap;
+      }
+
+      .desc-feature {
+        display: flex; align-items: center; gap: 8px;
+        font-family: var(--font-ui);
+        font-size: 15px; font-weight: 600;
+        color: var(--text-dim);
+        letter-spacing: 0.06em; text-transform: uppercase;
+      }
+      .desc-feature::before {
+        content: '';
+        width: 6px; height: 6px; border-radius: 1px;
+        background: var(--gold); transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+
+      /* ── Guide section ────────────────────────────── */
+      .guide {
+        max-width: 960px;
+        margin: 0 auto 60px;
+        padding: 0 28px;
+      }
+
+      .guide-header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+
+      .guide-eyebrow {
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.25em;
+        color: var(--gold); text-transform: uppercase;
+        margin-bottom: 14px;
+        display: flex; align-items: center; justify-content: center; gap: 12px;
+      }
+      .guide-eyebrow::before, .guide-eyebrow::after {
+        content: ''; width: 40px; height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold));
+      }
+      .guide-eyebrow::after {
+        background: linear-gradient(90deg, var(--gold), transparent);
+      }
+
+      .guide-title {
+        font-family: var(--font-title);
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 900; text-transform: uppercase;
+        color: #fff; letter-spacing: 0.04em;
+      }
+      .guide-title span { color: var(--gold); }
+
+      .guide-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .guide-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 28px 24px;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s;
+      }
+      .guide-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .guide-card:hover {
+        border-color: var(--gold-glow);
+      }
+
+      .guide-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, var(--gold), transparent);
+        opacity: 0.5;
+      }
+
+      .guide-card-icon {
+        width: 48px; height: 48px;
+        margin-bottom: 16px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 4px;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.25);
+      }
+      .guide-card-icon svg {
+        width: 24px; height: 24px;
+        stroke: var(--gold);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .guide-card-number {
+        position: absolute; top: 16px; right: 20px;
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.15em;
+        color: var(--gold); opacity: 0.4;
+      }
+
+      .guide-card-title {
+        font-family: var(--font-title);
+        font-size: 22px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        color: #fff; margin-bottom: 10px;
+      }
+
+      .guide-card-text {
+        font-family: var(--font-ui);
+        font-size: 14px; font-weight: 500;
+        color: var(--text-dim); line-height: 1.65;
+      }
+      .guide-card-text strong {
+        color: var(--text); font-weight: 600;
+      }
+
+      .guide-card-tags {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        margin-top: 14px;
+      }
+      .guide-tag {
+        font-family: var(--font-hud);
+        font-size: 10px; letter-spacing: 0.08em;
+        color: var(--gold); opacity: 0.7;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.2);
+        padding: 3px 8px; border-radius: 2px;
+        text-transform: uppercase;
+      }
+
+      /* ── Full-width feature card ── */
+      .guide-card.full {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 640px) {
+        .guide-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ── Responsive ────────────────────────────────── */
+      @media (max-width: 640px) {
+        .nav-cards { grid-template-columns: 1fr; }
+        .info-strip { grid-template-columns: 1fr; }
+        .hero-title { font-size: 48px; }
+        .topbar-right { display: none; }
+        .desc-features { gap: 18px; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-585D88K6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="page">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
+          <span class="topbar-name">Strat<span>Hub</span></span>
+        </div>
+        <div class="topbar-right">
+          <span><span class="status-dot"></span>SYSTÈME EN LIGNE</span>
+          <span>EVA // BATTLE FOR ARENA</span>
+          <span id="clock">--:--:--</span>
+          <div class="auth-zone">
+            <span class="auth-user" id="authUser"></span>
+            <button class="auth-btn" id="authBtn">CONNEXION</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-eyebrow">// Briefing tactique pré-match</div>
+        <h1 class="hero-title">
+          <span class="dim">STRAT</span><span class="accent">HUB</span>
+        </h1>
+        <div class="hero-divider"></div>
+        <p class="hero-sub">Planification · Entraînement · Décision</p>
+      </section>
+
+      <nav class="nav-cards">
+        <a class="nav-card" href="maps.html">
+          <img class="nav-card-img" src="maps/Maps.png" alt="Maps" />
+          <div class="nav-card-body">
+            <div class="nav-card-tag">// Module 01</div>
+            <div class="nav-card-title">Maps</div>
+            <div class="nav-card-desc">Stratégies & plans tactiques</div>
+          </div>
+          <div class="card-corner-br"></div>
+          <span class="nav-card-arrow">→</span>
+        </a>
+
+        <a class="nav-card" href="armes.html">
+          <img class="nav-card-img" src="armes/Modele_Arme.webp" alt="Armes" />
+          <div class="nav-card-body">
+            <div class="nav-card-tag">// Module 02</div>
+            <div class="nav-card-title">Armes</div>
+            <div class="nav-card-desc">Stats & équipements</div>
+          </div>
+          <div class="card-corner-br"></div>
+          <span class="nav-card-arrow">→</span>
+        </a>
+      </nav>
+
+      <div class="info-strip">
+        <div class="info-item">
+          <div class="info-label">// Jeu</div>
+          <div class="info-value"><span>EVA</span> Battle for Arena</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">// Modes</div>
+          <div class="info-value">Strat · Train · <span>Coach</span></div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">// Créé par</div>
+          <div class="info-value"><span>Shizou</span> // 2026</div>
+        </div>
+      </div>
+
+      <div class="desc-block">
+        <div class="desc-title">// Objectif</div>
+        <p class="desc-text">
+          <strong>StratHub</strong> va plus loin que dessiner un plan parfait.<br />
+          Il entraîne la <strong>prise de décision</strong>, l'<strong>adaptation</strong>
+          et la <strong>lecture de jeu</strong> quand la strat ne se déroule pas comme prévu.
+        </p>
+        <div class="desc-features">
+          <span class="desc-feature">Préparer les strats</span>
+          <span class="desc-feature">Mémoriser & exécuter</span>
+          <span class="desc-feature">Réagir & adapter</span>
+        </div>
+      </div>
+
+      <!-- Guide -->
+      <section class="guide" id="guide">
+        <div class="guide-header">
+          <div class="guide-eyebrow">// Comment ça marche</div>
+          <h2 class="guide-title">Guide <span>Opérationnel</span></h2>
+        </div>
+
+        <div class="guide-grid">
+
+          <!-- Card 1 — Présentation -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 01</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="guide-card-title">Tableau tactique</div>
+            <p class="guide-card-text">
+              Ouvre une <strong>map EVA</strong>, place tes pions joueurs et ennemis, trace des <strong>flèches de déplacement</strong> et visualise les <strong>cônes de vision</strong> qui s'arrêtent sur les murs. Exporte ton plan en PNG ou sauvegarde-le en JSON.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Drag & Drop</span>
+              <span class="guide-tag">Clic droit</span>
+              <span class="guide-tag">Export PNG</span>
+              <span class="guide-tag">Save JSON</span>
+            </div>
+          </div>
+
+          <!-- Card 2 — Board -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 02</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4"/><path d="M12 19v4"/><path d="M1 12h4"/><path d="M19 12h4"/><path d="M4.22 4.22l2.83 2.83"/><path d="M16.95 16.95l2.83 2.83"/><path d="M4.22 19.78l2.83-2.83"/><path d="M16.95 7.05l2.83-2.83"/></svg>
+            </div>
+            <div class="guide-card-title">Pions & visée</div>
+            <p class="guide-card-text">
+              <strong>4 joueurs</strong> (P1-P4), <strong>ennemis</strong>, <strong>objectifs</strong> et <strong>grenades</strong>. Chaque pion peut être roté, équipé d'un cône de vision (raycasting sur les murs), d'une ligne de visée et d'une flèche directionnelle via le <strong>clic droit</strong>.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Rotation ±15°</span>
+              <span class="guide-tag">Cône de vision</span>
+              <span class="guide-tag">Raycasting</span>
+            </div>
+          </div>
+
+          <!-- Card 3 — Entraînement -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 03</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="guide-card-title">Mode entraînement</div>
+            <p class="guide-card-text">
+              Place les ennemis et ta strat, puis clique <strong>"Définir la solution"</strong>. Lance le timer : tu as <strong>20 secondes</strong> pour replacer tes joueurs et flèches de mémoire. Compare avec la solution. Valide un <strong>Plan A</strong> pour y revenir à tout moment.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Timer 20s</span>
+              <span class="guide-tag">Solution</span>
+              <span class="guide-tag">Plan A</span>
+              <span class="guide-tag">Ennemis auto</span>
+            </div>
+          </div>
+
+          <!-- Card 4 — Coaching -->
+          <div class="guide-card">
+            <div class="guide-card-number">// 04</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="guide-card-title">Mode coaching</div>
+            <p class="guide-card-text">
+              Passe en mode coach pour communiquer en temps réel. <strong>Signal</strong> : clique sur la map pour poser un ping rouge visible 1.5s. <strong>Zone</strong> : dessine un rectangle pour surligner une zone clé. Idéal pour le <strong>debriefing</strong> ou le coaching live.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Ping signal</span>
+              <span class="guide-tag">Zone highlight</span>
+              <span class="guide-tag">Debriefing</span>
+            </div>
+          </div>
+
+          <!-- Card 5 — Armes & Loadout -->
+          <div class="guide-card full">
+            <div class="guide-card-number">// 05</div>
+            <div class="guide-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 12h6l2-7 4 14 2-7h6"/></svg>
+            </div>
+            <div class="guide-card-title">Armes & Loadout</div>
+            <p class="guide-card-text">
+              Consulte toutes les <strong>armes EVA</strong> avec leurs stats détaillées (dégâts, cadence, portée). Sur le board, ouvre le panneau <strong>Loadout</strong> pour assigner jusqu'à <strong>2 armes par joueur</strong>. Des <strong>cercles de portée</strong> s'affichent automatiquement sur la map — vert pour l'arme principale, bleu pour la secondaire — pour visualiser la couverture de ton équipe en un coup d'œil.
+            </p>
+            <div class="guide-card-tags">
+              <span class="guide-tag">Stats détaillées</span>
+              <span class="guide-tag">2 armes / joueur</span>
+              <span class="guide-tag">Cercles de portée</span>
+              <span class="guide-tag">Couverture d'équipe</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-left">© 2026 — STRATHUB · ALL SYSTEMS OPERATIONAL</div>
+        <div class="footer-right">CRÉÉ PAR <span>SHIZOU</span></div>
+      </footer>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+      // ── HUD Clock ────────────────────────────────────
+      function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2,'0');
+        const m = String(now.getMinutes()).padStart(2,'0');
+        const s = String(now.getSeconds()).padStart(2,'0');
+        const el = document.getElementById('clock');
+        if (el) el.textContent = `${h}:${m}:${s}`;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // ── Hex grid canvas background ───────────────────
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+
+      let W, H, hexes = [];
+      const HEX_SIZE = 32;
+      const GOLD  = 'rgba(200,151,58,';
+      const CYAN  = 'rgba(45,212,191,';
+
+      function hexCorners(cx, cy, r) {
+        const pts = [];
+        for (let i = 0; i < 6; i++) {
+          const a = Math.PI / 180 * (60 * i - 30);
+          pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+        return pts;
+      }
+
+      function buildGrid() {
+        hexes = [];
+        const r = HEX_SIZE;
+        const w = r * Math.sqrt(3);
+        const h = r * 2;
+        const cols = Math.ceil(W / w) + 2;
+        const rows = Math.ceil(H / (h * 0.75)) + 2;
+
+        for (let row = -1; row < rows; row++) {
+          for (let col = -1; col < cols; col++) {
+            const x = col * w + (row % 2 === 0 ? 0 : w / 2);
+            const y = row * h * 0.75;
+            hexes.push({
+              x, y,
+              alpha: Math.random() * 0.3,
+              targetAlpha: Math.random() * 0.3,
+              pulse: Math.random() * Math.PI * 2,
+              speed: 0.005 + Math.random() * 0.015,
+              color: Math.random() > 0.85 ? CYAN : GOLD,
+            });
+          }
+        }
+      }
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        buildGrid();
+      }
+
+      function drawHex(pts, alpha, color) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < 6; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+        ctx.closePath();
+        ctx.strokeStyle = color + alpha + ')';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, W, H);
+        for (const h of hexes) {
+          h.pulse += h.speed;
+          h.alpha = (Math.sin(h.pulse) * 0.5 + 0.5) * 0.25 + 0.02;
+          const pts = hexCorners(h.x, h.y, HEX_SIZE - 1);
+          drawHex(pts, h.alpha, h.color);
+        }
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      animate();
+
+      // ── Boot sequence text effect ────────────────────
+      const eyebrow = document.querySelector('.hero-eyebrow');
+      if (eyebrow) {
+        const original = eyebrow.textContent;
+        const chars = '▓▒░█▄▀#@$%&*';
+        let frame = 0;
+        const total = 18;
+        const interval = setInterval(() => {
+          frame++;
+          if (frame >= total) {
+            eyebrow.textContent = original;
+            clearInterval(interval);
+            return;
+          }
+          eyebrow.textContent = original.split('').map((c, i) => {
+            if (c === ' ') return ' ';
+            const revealed = i < (original.length * frame / total);
+            return revealed ? c : chars[Math.floor(Math.random() * chars.length)];
+          }).join('');
+        }, 55);
+      }
+
+      // ── Guide cards scroll animation ─────────────────
+      const guideCards = document.querySelectorAll('.guide-card');
+      if (guideCards.length) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        guideCards.forEach((card, i) => {
+          card.style.transitionDelay = `${i * 0.12}s`;
+          observer.observe(card);
+        });
+      }
+    </script>
+  </body>
+</html>

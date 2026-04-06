@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Armes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      /* ── Armes-specific styles ─────────────────────── */
+
+      .content {
+        padding: 28px;
+        flex: 1;
+        opacity: 0;
+        animation: fade-up 0.6s ease forwards 0.4s;
+      }
+
+      /* ── Weapon group ── */
+      .weapon-group {
+        margin-bottom: 40px;
+      }
+
+      .group-header {
+        display: flex; align-items: center; gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .group-indicator {
+        width: 4px; height: 28px;
+        border-radius: 2px;
+        background: var(--group-color, var(--gold));
+        flex-shrink: 0;
+        box-shadow: 0 0 10px var(--group-color, var(--gold));
+      }
+
+      .group-title {
+        font-family: var(--font-title);
+        font-size: 26px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--group-color, var(--gold));
+      }
+
+      .group-line {
+        flex: 1; height: 1px;
+        background: linear-gradient(90deg, var(--group-color, var(--gold)), transparent);
+        opacity: 0.25;
+      }
+
+      .group-count {
+        font-family: var(--font-hud);
+        font-size: 14px; color: var(--text-dim); letter-spacing: 0.1em;
+      }
+
+      .weapons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 12px;
+      }
+
+      /* ── Weapon card ── */
+      .weapon-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        display: flex; align-items: flex-start; gap: 0;
+        overflow: hidden;
+        transition: border-color 0.2s, transform 0.2s;
+        position: relative;
+      }
+
+      .weapon-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, var(--group-color, var(--gold)), transparent);
+        opacity: 0.4;
+      }
+
+      .weapon-card:hover {
+        border-color: rgba(200,151,58,0.3);
+        transform: translateY(-2px);
+      }
+
+      .weapon-img-wrap {
+        flex-shrink: 0;
+        width: 145px; height: 100%;
+        min-height: 120px;
+        background: rgba(0,0,0,0.4);
+        display: flex; align-items: center; justify-content: center;
+        border-right: 1px solid var(--border);
+        padding: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .weapon-img-wrap::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, var(--gold-dim), transparent 60%);
+        pointer-events: none;
+      }
+
+      .weapon-img {
+        width: 100%; height: 95px;
+        object-fit: contain;
+        filter: brightness(0.9);
+        position: relative; z-index: 1;
+      }
+
+      .weapon-info {
+        flex: 1; padding: 14px 16px;
+        min-width: 0;
+      }
+
+      .weapon-name {
+        font-family: var(--font-title);
+        font-size: 24px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        color: #fff; line-height: 1; margin-bottom: 10px;
+      }
+
+      .weapon-stats {
+        list-style: none;
+        display: flex; flex-direction: column; gap: 3px;
+      }
+
+      .weapon-stats li {
+        font-family: var(--font-ui);
+        font-size: 14px; font-weight: 500;
+        color: var(--text-dim);
+        display: flex; align-items: baseline; gap: 6px;
+      }
+
+      .weapon-stats li strong {
+        font-family: var(--font-hud);
+        font-size: 12px; font-weight: 400;
+        color: var(--group-color, var(--gold));
+        opacity: 0.8; flex-shrink: 0;
+        letter-spacing: 0.05em;
+      }
+
+      .weapon-stats .stat-val {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .weapon-stats .portee-val {
+        font-family: var(--font-hud);
+        font-size: 12px;
+        color: var(--cyan);
+        opacity: 0.85;
+        word-break: break-all;
+      }
+
+      @media (max-width: 700px) {
+        .weapons-grid { grid-template-columns: 1fr; }
+        .weapon-img-wrap { width: 100px; }
+        .content { padding: 16px; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="page">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
+          <span class="topbar-brand">Strat<span>Hub</span></span>
+        </div>
+        <div class="topbar-right">
+          <a href="index.html" class="back-btn">← Accueil</a>
+          <div class="auth-zone">
+            <span class="auth-user" id="authUser"></span>
+            <button class="auth-btn" id="authBtn">CONNEXION</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="page-header">
+        <div class="page-eyebrow">// Module 02 — Arsenal</div>
+        <h1 class="page-title"><span>Armes</span> & Équipements</h1>
+        <p class="page-subtitle">Stats, portées & caractéristiques de combat</p>
+      </div>
+
+      <div class="content">
+        <div id="weapons"></div>
+      </div>
+
+      <footer class="footer">
+        <div class="footer-left">© 2026 — STRATHUB · EVA BATTLE FOR ARENA</div>
+        <div class="footer-right">CRÉÉ PAR <span>SHIZOU</span></div>
+      </footer>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+      // BG canvas
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, hexes = [];
+      const HEX_SIZE = 32;
+      function hexCorners(cx, cy, r) {
+        const pts = [];
+        for (let i = 0; i < 6; i++) {
+          const a = Math.PI / 180 * (60 * i - 30);
+          pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+        return pts;
+      }
+      function buildGrid() {
+        hexes = [];
+        const w = HEX_SIZE * Math.sqrt(3), h = HEX_SIZE * 2;
+        const cols = Math.ceil(W / w) + 2, rows = Math.ceil(H / (h * 0.75)) + 2;
+        for (let row = -1; row < rows; row++)
+          for (let col = -1; col < cols; col++)
+            hexes.push({ x: col * w + (row % 2 === 0 ? 0 : w / 2), y: row * h * 0.75, pulse: Math.random() * Math.PI * 2, speed: 0.005 + Math.random() * 0.012, color: Math.random() > 0.85 ? 'rgba(45,212,191,' : 'rgba(200,151,58,' });
+      }
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; buildGrid(); }
+      function animate() {
+        ctx.clearRect(0, 0, W, H);
+        for (const h of hexes) {
+          h.pulse += h.speed;
+          const alpha = (Math.sin(h.pulse) * 0.5 + 0.5) * 0.18 + 0.02;
+          const pts = hexCorners(h.x, h.y, HEX_SIZE - 1);
+          ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < 6; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+          ctx.closePath(); ctx.strokeStyle = h.color + alpha + ')'; ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        requestAnimationFrame(animate);
+      }
+      window.addEventListener('resize', resize); resize(); animate();
+
+      // Weapons
+      function groupBy(list, keyFn) {
+        const out = {};
+        for (const item of list) { const k = keyFn(item) || 'Autres'; (out[k] ||= []).push(item); }
+        return out;
+      }
+
+      async function loadWeapons() {
+        const res = await fetch("armes.json");
+        const weapons = await res.json();
+        const root = document.getElementById("weapons");
+        const groups = groupBy(weapons, w => w.group);
+
+        const order = ["Fusils d'assaut", "Longue portée", "Armes rapprochées", "Spéciales", "Accessoires"];
+        const rest = Object.keys(groups).filter(g => !order.includes(g)).sort();
+        const groupNames = [...order.filter(g => groups[g]), ...rest];
+
+        root.innerHTML = groupNames.map(groupName => {
+          const groupClass = groupName.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+          const cards = groups[groupName].map(w => {
+            const statsHtml = Object.entries(w.stats || {}).map(([k, v]) => {
+              const isPortee = k === 'Portée';
+              return `<li>
+                <strong>${k} :</strong>
+                <span class="${isPortee ? 'portee-val' : 'stat-val'}">${v}</span>
+              </li>`;
+            }).join('');
+
+            return `
+              <div class="weapon-card">
+                <div class="weapon-img-wrap">
+                  <img class="weapon-img" src="${w.image}" alt="${w.name}" />
+                </div>
+                <div class="weapon-info">
+                  <div class="weapon-name">${w.name}</div>
+                  <ul class="weapon-stats">${statsHtml}</ul>
+                </div>
+              </div>`;
+          }).join('');
+
+          return `
+            <div class="weapon-group group-${groupClass}">
+              <div class="group-header">
+                <div class="group-indicator"></div>
+                <div class="group-title">${groupName}</div>
+                <div class="group-line"></div>
+                <div class="group-count">${groups[groupName].length} armes</div>
+              </div>
+              <div class="weapons-grid">${cards}</div>
+            </div>`;
+        }).join('');
+      }
+
+      loadWeapons().catch(err => {
+        console.error(err);
+        document.getElementById("weapons").innerHTML = '<div style="color:rgba(255,255,255,0.4);font-family:var(--font-hud);font-size:12px;">ERREUR DE CHARGEMENT</div>';
+      });
+    </script>
+  </body>
+</html>

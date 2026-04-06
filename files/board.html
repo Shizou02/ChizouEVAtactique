@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-585D88K6');
+    </script>
+
+    <style>
+      /* ── Board-specific overrides ──────────────────── */
+
+      html, body {
+        height: 100%;
+        min-height: auto;
+        overflow: hidden;
+      }
+
+      /* Board scanlines are higher z-index */
+      body::after { z-index: 999; }
+
+      /* Board doesn't use vignette */
+      body::before { display: none; }
+
+      /* ── Topbar compact ── */
+      .topbar {
+        padding: 0 20px;
+        height: 44px;
+        position: relative;
+        background: rgba(6,10,15,0.95);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        z-index: 20;
+      }
+
+      .topbar-logo { height: 32px; }
+      .topbar-brand { font-size: 20px; }
+
+      .topbar-mid {
+        position: absolute; left: 50%; transform: translateX(-50%);
+        display: flex; align-items: center; gap: 8px;
+      }
+
+      #mapTitle {
+        font-family: var(--font-title); font-size: 16px; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
+      }
+
+      .topbar-hint {
+        font-family: var(--font-hud); font-size: 12px;
+        color: var(--text-dim); letter-spacing: 0.05em;
+      }
+
+      /* ── Board layout ── */
+      .board-layout {
+        display: grid;
+        grid-template-columns: 310px 1fr;
+        height: calc(100vh - 44px);
+        overflow: hidden;
+      }
+
+      /* ── Panel ── */
+      .panel {
+        background: var(--panel);
+        border-right: 1px solid var(--border);
+        overflow-y: auto; overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(200,151,58,0.2) transparent;
+      }
+      .panel::-webkit-scrollbar { width: 3px; }
+      .panel::-webkit-scrollbar-thumb { background: rgba(200,151,58,0.2); border-radius: 2px; }
+
+      .p-section {
+        border-bottom: 1px solid var(--border2);
+        padding: 10px 12px;
+      }
+
+      .p-label {
+        font-family: var(--font-hud); font-size: 11px;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--gold); margin-bottom: 8px;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .p-label::after {
+        content: ''; flex: 1; height: 1px;
+        background: linear-gradient(90deg, var(--gold-dim), transparent);
+      }
+
+      .p-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
+
+      .p-btn {
+        font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+        background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+        color: var(--text); padding: 7px 11px; border-radius: 3px; cursor: pointer;
+        transition: all 0.15s; white-space: nowrap; letter-spacing: 0.02em;
+      }
+      .p-btn:hover { background: rgba(255,255,255,0.1); }
+      .p-btn.active, .p-btn.primary {
+        background: var(--gold-dim); border-color: var(--gold-glow); color: var(--gold);
+      }
+      .p-btn.danger {
+        background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5;
+      }
+      .p-btn.blue {
+        background: rgba(77,163,255,0.1); border-color: rgba(77,163,255,0.3); color: var(--blue);
+      }
+
+      .token-btn {
+        font-family: var(--font-hud); font-size: 13px; font-weight: 700;
+        padding: 7px 11px; border-radius: 3px; border: 1px solid; cursor: pointer;
+        transition: all 0.15s; letter-spacing: 0.04em;
+      }
+      .token-p1     { background: rgba(77,163,255,0.1);  border-color: rgba(77,163,255,0.4);  color: #4da3ff; }
+      .token-p2     { background: rgba(123,211,137,0.1); border-color: rgba(123,211,137,0.4); color: #7bd389; }
+      .token-p3     { background: rgba(255,209,102,0.1); border-color: rgba(255,209,102,0.4); color: #ffd166; }
+      .token-p4     { background: rgba(205,180,255,0.1); border-color: rgba(205,180,255,0.4); color: #cdb4ff; }
+      .token-enemy  { background: rgba(239,68,68,0.1);   border-color: rgba(239,68,68,0.4);   color: #ff6b6b; }
+      .token-obj    { background: rgba(255,159,28,0.1);  border-color: rgba(255,159,28,0.4);  color: #ff9f1c; }
+      .token-smoke  { background: rgba(255,255,255,0.05);border-color: rgba(255,255,255,0.18);color: var(--text-dim); }
+      .token-btn:hover { filter: brightness(1.3); transform: translateY(-1px); }
+
+      .p-input {
+        width: 100%; margin-bottom: 5px;
+        font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+        color: var(--text); padding: 7px 10px; border-radius: 3px;
+        transition: border-color 0.2s;
+      }
+      .p-input:focus { outline: none; border-color: var(--gold-glow); }
+      .p-input::placeholder { color: var(--text-dim); }
+      textarea.p-input { min-height: 85px; resize: vertical; line-height: 1.5; }
+      select.p-input {
+        cursor: pointer; appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(200,151,58,0.6)'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 10px center;
+        padding-right: 28px;
+      }
+      input[type="color"] {
+        width: 34px; height: 26px; padding: 2px;
+        border: 1px solid var(--border); border-radius: 3px;
+        background: rgba(255,255,255,0.04); cursor: pointer;
+      }
+      input[type="range"] { width: 100%; accent-color: var(--gold); }
+
+      .p-small {
+        font-family: var(--font-hud); font-size: 11px;
+        color: var(--text-dim); line-height: 1.5; letter-spacing: 0.02em;
+      }
+      kbd {
+        background: rgba(255,255,255,0.07); padding: 1px 5px;
+        border-radius: 2px; border: 1px solid var(--border);
+        font-family: var(--font-hud); font-size: 10px;
+      }
+
+      /* ── Canvas area ── */
+      .canvas-area {
+        background: #080d14; overflow: hidden;
+        position: relative;
+      }
+      .canvas-area::before {
+        content: ''; position: absolute; top: 8px; left: 8px;
+        width: 20px; height: 20px; z-index: 5; pointer-events: none;
+        border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); opacity: 0.4;
+      }
+      .canvas-area::after {
+        content: ''; position: absolute; bottom: 8px; right: 8px;
+        width: 20px; height: 20px; z-index: 5; pointer-events: none;
+        border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); opacity: 0.4;
+      }
+
+      /* ── Board-specific loadout overrides ── */
+      .open-loadout { top: 50px; padding: 6px 14px; font-size: 11px; }
+
+      /* ── Responsive ── */
+      @media (max-width: 900px) {
+        .board-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+        .panel { height: auto; max-height: 42vh; border-right: none; border-bottom: 1px solid var(--border); }
+        .canvas-area { height: 58vh; }
+        .topbar-mid { display: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-585D88K6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
+        <span class="topbar-brand">Strat<span>Hub</span></span>
+        <a href="maps.html" class="back-btn">← Maps</a>
+      </div>
+      <div class="topbar-mid">
+        <span class="status-dot"></span>
+        <div id="mapTitle">Board</div>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-hint">Drag & drop · Save/Load · Export</span>
+        <div class="auth-zone">
+          <span class="auth-user" id="authUser"></span>
+          <button class="auth-btn" id="authBtn">CONNEXION</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="board-layout">
+
+      <div class="panel">
+
+        <div class="p-section" id="floorSection" style="display:none;">
+          <div class="p-label">// Étage</div>
+          <div class="row">
+            <button id="floorToggle" class="p-btn primary" onclick="switchFloor()" style="flex:1;">↑ Upper Floor</button>
+          </div>
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Outils</div>
+          <div class="p-row">
+            <button class="p-btn primary" id="toolSelect">Sélection</button>
+            <button class="p-btn" id="toolDraw">Flèche/Ligne</button>
+          </div>
+          <div class="p-row" style="align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-family:var(--font-hud);font-size:9px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;">Couleur</span>
+            <input type="color" id="arrowColorPicker" value="#ffffff" />
+          </div>
+          <div class="p-row">
+            <button class="p-btn primary" id="arrowSolid">Flèche pleine</button>
+            <button class="p-btn" id="arrowDashed">Flèche pointillée</button>
+          </div>
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Mode</div>
+          <select class="p-input" id="modeSelect">
+            <option value="strat">Mode Strat</option>
+            <option value="train">Mode Entraînement</option>
+            <option value="coach">Mode Coaching</option>
+          </select>
+        </div>
+
+        <div class="p-section" id="modeTrainBlock">
+          <div class="p-label">// 🎓 Entraînement</div>
+          <div class="p-row">
+            <button class="p-btn" id="setSolution">Définir solution</button>
+            <button class="p-btn blue" id="startTraining">▶ Start 20s</button>
+          </div>
+          <div class="p-row">
+            <button class="p-btn" id="showSolution">Afficher solution</button>
+            <button class="p-btn danger" id="stopTraining">■ Stop</button>
+          </div>
+          <div id="trainingStatus" class="training-status">
+            <span>Statut :</span>
+            <strong id="trainingLabel">off</strong>
+            <span class="training-pill" id="trainingTimer">20</span>
+          </div>
+          <div class="p-row">
+            <button class="p-btn" id="validatePlanA">✅ Plan A</button>
+            <button class="p-btn" id="restorePlanA">↺ Plan A</button>
+          </div>
+          <div class="p-row">
+            <button class="p-btn" id="trainEnemiesManual">✍️ Ennemis manuels</button>
+            <button class="p-btn" id="trainEnemiesAuto">🎲 Ennemis auto</button>
+          </div>
+        </div>
+
+        <div class="p-section" id="modeCoachBlock" style="display:none">
+          <div class="p-label">// 🧠 Coaching</div>
+          <div class="p-row">
+            <button class="p-btn blue" id="coachSignal">⚡ Signal</button>
+            <button class="p-btn" id="coachZone">⚡ Zone</button>
+          </div>
+          <p class="p-small">Signal : clic sur la map (ping 1.5s)<br/>Zone : clique-glisse pour surligner</p>
+        </div>
+
+        <div class="p-section" id="replayBlock">
+          <div class="p-label">// 🎬 Replay</div>
+          <div class="p-row">
+            <button class="p-btn" id="replayCapture">📸 Capturer</button>
+            <button class="p-btn danger" id="replayReset">🗑 Reset</button>
+          </div>
+          <div class="p-row" style="align-items:center;">
+            <button class="p-btn" id="replayPrev">◀</button>
+            <span id="replayStatus" style="font-family:var(--font-hud);font-size:12px;color:var(--text-dim);letter-spacing:0.1em;flex:1;text-align:center;">0 / 0</span>
+            <button class="p-btn" id="replayNext">▶</button>
+          </div>
+          <p class="p-small">Place tes pions, capture chaque étape, puis navigue avec ◀ ▶</p>
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Équipe</div>
+          <input class="p-input" id="nameP1" placeholder="Joueur 1" />
+          <input class="p-input" id="nameP2" placeholder="Joueur 2" />
+          <input class="p-input" id="nameP3" placeholder="Joueur 3" />
+          <input class="p-input" id="nameP4" placeholder="Joueur 4" />
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Pions</div>
+          <div class="p-row">
+            <button class="token-btn token-p1" id="addP1">P1</button>
+            <button class="token-btn token-p2" id="addP2">P2</button>
+            <button class="token-btn token-p3" id="addP3">P3</button>
+            <button class="token-btn token-p4" id="addP4">P4</button>
+          </div>
+          <div class="p-row">
+            <button class="token-btn token-enemy" id="addEnemy">Ennemi</button>
+            <button class="token-btn token-obj"   id="addObj">Objectif</button>
+            <button class="token-btn token-smoke" id="addSmoke">Grenade</button>
+          </div>
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Édition</div>
+          <div class="p-row">
+            <button class="p-btn" id="undoBtn">↶ Retour</button>
+            <button class="p-btn" id="redoBtn">↷ Rétablir</button>
+          </div>
+          <div class="p-row">
+            <button class="p-btn" id="rotateLeft">↺ -15°</button>
+            <button class="p-btn" id="rotateRight">↻ +15°</button>
+            <button class="p-btn danger" id="deleteSelected">Supprimer</button>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="p-label" style="margin-bottom:5px;">// Zoom</div>
+            <input type="range" id="zoom" min="50" max="200" value="100" />
+            <p class="p-small" style="margin-top:3px;">Affichage uniquement</p>
+          </div>
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Strat</div>
+          <input class="p-input" id="stratName" placeholder="Ex: Cliff — Plan A fast mid" />
+          <div class="p-label" style="margin-top:8px;margin-bottom:5px;">// Notes</div>
+          <textarea class="p-input" id="notes" placeholder="Plan A: 1 hold long, 2 split. Plan B: rotate si pick. Timing: 20s."></textarea>
+          <p class="p-small" style="margin-top:3px;">Sauvegardées dans le JSON.</p>
+        </div>
+
+        <div class="p-section">
+          <div class="p-label">// Sauvegarde</div>
+          <div class="p-row">
+            <button class="p-btn primary" id="saveJson">💾 Sauvegarder</button>
+            <button class="p-btn" id="exportPng">📷 PNG</button>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="p-label" style="margin-bottom:5px;">// Charger</div>
+            <input type="file" id="loadJson" accept="application/json" style="font-family:var(--font-hud);font-size:10px;color:var(--text-dim);width:100%;" />
+          </div>
+        </div>
+
+        <div class="p-section">
+          <p class="p-small">
+            <kbd>Suppr</kbd> supprimer · <kbd>Clic droit</kbd> options pion<br/>
+            Mode Flèche : clique-glisse pour tracer
+          </p>
+        </div>
+
+      </div>
+
+      <div class="canvas-area" id="stageParent"></div>
+
+    </div>
+
+    <button id="openLoadout" class="open-loadout">🎯 LOADOUT</button>
+
+    <aside id="loadoutPanel" class="loadout-panel">
+      <div class="loadout-header">
+        <div>
+          <div class="loadout-title">// WEAPON LOADOUT</div>
+          <div id="loadoutPlayer" class="loadout-sub">JOUEUR : AUCUN</div>
+        </div>
+        <button id="closeLoadout" class="loadout-close">×</button>
+      </div>
+      <div class="loadout-body">
+        <div class="loadout-hint">Sélectionne un joueur sur la map pour assigner ses armes.</div>
+        <div id="loadoutWeapons"></div>
+        <div id="loadoutSelected" class="loadout-hint">Aucune arme sélectionnée</div>
+      </div>
+    </aside>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script src="js/globals.js"></script>
+    <script src="js/raycasting.js"></script>
+    <script src="js/loadout.js"></script>
+    <script src="js/serialize.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/tokens.js"></script>
+    <script src="js/training.js"></script>
+    <script src="js/coaching.js"></script>
+    <script src="js/board.js"></script>
+  </body>
+</html>
