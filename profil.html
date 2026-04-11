@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StratHub — Profil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      /* ── Profil-specific styles ─────────────────────── */
+
+      .profil-layout {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 28px 60px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        opacity: 0;
+        animation: fade-up 0.6s ease forwards 0.4s;
+      }
+
+      /* ── Profil card (shared) ── */
+      .profil-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+        transition: border-color 0.3s;
+      }
+      .profil-card:hover {
+        border-color: rgba(200,151,58,0.3);
+      }
+      .profil-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, var(--gold), transparent);
+        opacity: 0.5;
+      }
+
+      .profil-card.full {
+        grid-column: 1 / -1;
+      }
+
+      .profil-card-header {
+        padding: 20px 24px 0;
+        display: flex; align-items: center; gap: 10px;
+      }
+
+      .profil-card-icon {
+        width: 42px; height: 42px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 4px;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.25);
+        flex-shrink: 0;
+      }
+      .profil-card-icon svg {
+        width: 22px; height: 22px;
+        stroke: var(--gold); fill: none;
+        stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      }
+
+      .profil-card-number {
+        position: absolute; top: 14px; right: 18px;
+        font-family: var(--font-hud);
+        font-size: 10px; letter-spacing: 0.15em;
+        color: var(--gold); opacity: 0.35;
+      }
+
+      .profil-card-title {
+        font-family: var(--font-title);
+        font-size: 22px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        color: #fff;
+      }
+
+      .profil-card-body {
+        padding: 18px 24px 24px;
+      }
+
+      /* ── Form elements ── */
+      .pf-field {
+        margin-bottom: 14px;
+      }
+
+      .pf-label {
+        display: block;
+        font-family: var(--font-hud);
+        font-size: 10px; letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--gold); opacity: 0.7;
+        margin-bottom: 6px;
+      }
+
+      .pf-input {
+        width: 100%;
+        font-family: var(--font-ui); font-size: 14px; font-weight: 500;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 3px;
+        transition: border-color 0.2s;
+      }
+      .pf-input:focus {
+        outline: none;
+        border-color: var(--gold-glow);
+      }
+      .pf-input::placeholder { color: var(--text-dim); }
+      .pf-input:read-only {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .pf-btn {
+        font-family: var(--font-title);
+        font-size: 14px; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: box-shadow 0.2s, transform 0.2s;
+        border: 1px solid;
+      }
+      .pf-btn:hover {
+        transform: translateY(-1px);
+      }
+      .pf-btn:disabled {
+        opacity: 0.4; cursor: not-allowed;
+        transform: none;
+      }
+
+      .pf-btn-gold {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(200,151,58,0.9), rgba(160,110,20,0.9));
+        border-color: var(--gold-glow);
+      }
+      .pf-btn-gold:hover {
+        box-shadow: 0 4px 20px rgba(200,151,58,0.35);
+      }
+
+      .pf-btn-outline {
+        color: var(--text-dim);
+        background: rgba(255,255,255,0.05);
+        border-color: var(--border);
+      }
+      .pf-btn-outline:hover {
+        background: rgba(255,255,255,0.1);
+        color: var(--text);
+      }
+
+      .pf-btn-danger {
+        color: #fca5a5;
+        background: rgba(239,68,68,0.1);
+        border-color: rgba(239,68,68,0.3);
+      }
+      .pf-btn-danger:hover {
+        box-shadow: 0 4px 16px rgba(239,68,68,0.2);
+      }
+
+      .pf-btn-cyan {
+        color: var(--cyan);
+        background: rgba(45,212,191,0.1);
+        border-color: rgba(45,212,191,0.3);
+      }
+      .pf-btn-cyan:hover {
+        box-shadow: 0 4px 16px rgba(45,212,191,0.2);
+      }
+
+      .pf-row {
+        display: flex; gap: 8px; align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .pf-msg {
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.05em;
+        margin-top: 8px; min-height: 16px;
+      }
+      .pf-msg.success { color: #4ade80; }
+      .pf-msg.error { color: #ff6b6b; }
+
+      .pf-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 18px 0;
+      }
+
+      .pf-hint {
+        font-family: var(--font-hud);
+        font-size: 11px; color: var(--text-dim);
+        letter-spacing: 0.03em; line-height: 1.5;
+      }
+
+      /* ── Info row (email, date, etc.) ── */
+      .pf-info-row {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border2);
+      }
+      .pf-info-row:last-child { border-bottom: none; }
+
+      .pf-info-key {
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gold); opacity: 0.7;
+        flex-shrink: 0; min-width: 90px;
+      }
+
+      .pf-info-val {
+        font-family: var(--font-ui);
+        font-size: 14px; font-weight: 500;
+        color: var(--text);
+      }
+
+      /* ── Team badge ── */
+      .team-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.25);
+        border-radius: 4px;
+        padding: 10px 16px;
+        margin-bottom: 14px;
+      }
+
+      .team-badge-name {
+        font-family: var(--font-title);
+        font-size: 20px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--gold);
+      }
+
+      .team-badge-code {
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.1em;
+        color: var(--text-dim);
+        background: rgba(0,0,0,0.3);
+        padding: 3px 8px; border-radius: 2px;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      .team-badge-code:hover { color: var(--gold); }
+
+      /* ── Roster list ── */
+      .roster-list {
+        display: flex; flex-direction: column; gap: 6px;
+      }
+
+      .roster-member {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border2);
+        border-radius: 3px;
+        transition: border-color 0.2s;
+      }
+      .roster-member:hover {
+        border-color: rgba(200,151,58,0.2);
+      }
+
+      .roster-avatar {
+        width: 36px; height: 36px;
+        border-radius: 4px;
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.2);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-title);
+        font-size: 16px; font-weight: 700;
+        color: var(--gold);
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .roster-name {
+        font-family: var(--font-ui);
+        font-size: 15px; font-weight: 600;
+        color: var(--text);
+        flex: 1;
+      }
+
+      .roster-role {
+        font-family: var(--font-hud);
+        font-size: 10px; letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 8px; border-radius: 2px;
+      }
+      .roster-role.captain {
+        color: var(--gold);
+        background: var(--gold-dim);
+        border: 1px solid rgba(200,151,58,0.2);
+      }
+      .roster-role.member {
+        color: var(--text-dim);
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border2);
+      }
+
+      .roster-empty {
+        font-family: var(--font-hud);
+        font-size: 12px; color: var(--text-dim);
+        letter-spacing: 0.05em;
+        text-align: center; padding: 20px;
+        opacity: 0.6;
+      }
+
+      /* ── Strats list ── */
+      .strats-empty {
+        text-align: center; padding: 24px;
+      }
+      .strats-empty-icon {
+        font-size: 32px; margin-bottom: 10px; opacity: 0.4;
+      }
+      .strats-empty-text {
+        font-family: var(--font-hud);
+        font-size: 12px; color: var(--text-dim);
+        letter-spacing: 0.05em; line-height: 1.6;
+      }
+
+      /* ── Loading state ── */
+      .pf-loading {
+        text-align: center; padding: 40px;
+        font-family: var(--font-hud);
+        font-size: 12px; letter-spacing: 0.15em;
+        color: var(--text-dim);
+        text-transform: uppercase;
+      }
+      .pf-loading::after {
+        content: '';
+        display: block;
+        width: 30px; height: 2px;
+        background: var(--gold);
+        margin: 12px auto 0;
+        animation: loadbar 1.2s ease-in-out infinite;
+      }
+      @keyframes loadbar {
+        0%, 100% { width: 30px; opacity: 0.3; }
+        50% { width: 60px; opacity: 1; }
+      }
+
+      /* ── Tabs (pour team créer/rejoindre) ── */
+      .pf-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 18px;
+      }
+
+      .pf-tab {
+        flex: 1;
+        padding: 10px 0;
+        text-align: center;
+        font-family: var(--font-hud);
+        font-size: 11px; letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        cursor: pointer;
+        border: none; background: none;
+        border-bottom: 2px solid transparent;
+        transition: color 0.2s, border-color 0.2s;
+      }
+      .pf-tab:hover { color: var(--text); }
+      .pf-tab.active {
+        color: var(--gold);
+        border-bottom-color: var(--gold);
+      }
+
+      .pf-tab-panel { display: none; }
+      .pf-tab-panel.active { display: block; }
+
+      /* ── Responsive ── */
+      @media (max-width: 700px) {
+        .profil-layout {
+          grid-template-columns: 1fr;
+          padding: 0 16px 40px;
+        }
+        .profil-card.full { grid-column: 1; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="page">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
+          <span class="topbar-brand">Strat<span>Hub</span></span>
+        </div>
+        <div class="topbar-right">
+          <a href="index.html" class="back-btn">← Accueil</a>
+          <div class="auth-zone">
+            <span class="auth-user" id="authUser"></span>
+            <button class="auth-btn" id="authBtn">CONNEXION</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="page-header">
+        <div class="page-eyebrow">// Module 03 — Profil</div>
+        <h1 class="page-title"><span>Mon</span> Profil</h1>
+        <p class="page-subtitle">Compte, équipe & statistiques</p>
+      </div>
+
+      <!-- Loading state (visible jusqu'à auth check) -->
+      <div id="profilLoading" class="pf-loading">Vérification de l'identité...</div>
+
+      <!-- Contenu principal (hidden jusqu'à auth ok) -->
+      <div class="profil-layout" id="profilContent" style="display:none;">
+
+        <!-- ═══ BLOC 1 : MON PROFIL ═══ -->
+        <div class="profil-card">
+          <div class="profil-card-number">// 01</div>
+          <div class="profil-card-header">
+            <div class="profil-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="profil-card-title">Mon Profil</div>
+          </div>
+          <div class="profil-card-body">
+            <div class="pf-info-row">
+              <span class="pf-info-key">Email</span>
+              <span class="pf-info-val" id="profEmail">—</span>
+            </div>
+            <div class="pf-info-row">
+              <span class="pf-info-key">Inscrit</span>
+              <span class="pf-info-val" id="profCreated">—</span>
+            </div>
+
+            <div class="pf-divider"></div>
+
+            <div class="pf-field">
+              <label class="pf-label">Pseudo</label>
+              <input class="pf-input" type="text" id="profPseudo" placeholder="Ton pseudo" maxlength="20" />
+            </div>
+            <div class="pf-row">
+              <button class="pf-btn pf-btn-gold" id="profSaveBtn" onclick="savePseudo()">Enregistrer</button>
+            </div>
+            <div class="pf-msg" id="profMsg"></div>
+          </div>
+        </div>
+
+        <!-- ═══ BLOC 2 : MON ÉQUIPE ═══ -->
+        <div class="profil-card">
+          <div class="profil-card-number">// 02</div>
+          <div class="profil-card-header">
+            <div class="profil-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="profil-card-title">Mon Équipe</div>
+          </div>
+          <div class="profil-card-body">
+
+            <!-- État : pas d'équipe -->
+            <div id="teamNone">
+              <p class="pf-hint" style="margin-bottom:14px;">Tu n'es dans aucune équipe. Crée la tienne ou rejoins-en une avec un code d'invitation.</p>
+
+              <div class="pf-tabs">
+                <button class="pf-tab active" onclick="switchTeamTab('create')">Créer</button>
+                <button class="pf-tab" onclick="switchTeamTab('join')">Rejoindre</button>
+              </div>
+
+              <div class="pf-tab-panel active" id="teamTabCreate">
+                <div class="pf-field">
+                  <label class="pf-label">Nom de l'équipe</label>
+                  <input class="pf-input" type="text" id="teamCreateName" placeholder="Ex: Les Survoltés" maxlength="30" />
+                </div>
+                <button class="pf-btn pf-btn-gold" onclick="createTeam()">Créer l'équipe</button>
+              </div>
+
+              <div class="pf-tab-panel" id="teamTabJoin">
+                <div class="pf-field">
+                  <label class="pf-label">Code d'invitation</label>
+                  <input class="pf-input" type="text" id="teamJoinCode" placeholder="Ex: ABC123" maxlength="8" style="text-transform:uppercase;" />
+                </div>
+                <button class="pf-btn pf-btn-cyan" onclick="joinTeam()">Rejoindre</button>
+              </div>
+
+              <div class="pf-msg" id="teamMsg"></div>
+            </div>
+
+            <!-- État : dans une équipe -->
+            <div id="teamActive" style="display:none;">
+              <div class="team-badge">
+                <span class="team-badge-name" id="teamName">—</span>
+                <span class="team-badge-code" id="teamCode" title="Cliquer pour copier le code" onclick="copyTeamCode()">—</span>
+              </div>
+              <p class="pf-hint">Partage le code d'invitation pour que tes coéquipiers rejoignent l'équipe.</p>
+              <div class="pf-divider"></div>
+              <button class="pf-btn pf-btn-danger" onclick="leaveTeam()">Quitter l'équipe</button>
+              <div class="pf-msg" id="teamActiveMsg"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ═══ BLOC 3 : ROSTER ═══ -->
+        <div class="profil-card">
+          <div class="profil-card-number">// 03</div>
+          <div class="profil-card-header">
+            <div class="profil-card-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            </div>
+            <div class="profil-card-title">Roster</div>
+          </div>
+          <div class="profil-card-body">
+            <div id="rosterContent">
+              <div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ BLOC 4 : MES STRATS (placeholder) ═══ -->
+        <div class="profil-card">
+          <div class="profil-card-number">// 04</div>
+          <div class="profil-card-header">
+            <div class="profil-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="profil-card-title">Mes Strats</div>
+          </div>
+          <div class="profil-card-body">
+            <div class="strats-empty">
+              <div class="strats-empty-icon">📁</div>
+              <div class="strats-empty-text">
+                La sauvegarde cloud arrive bientôt.<br/>
+                En attendant, exporte tes strats en JSON depuis le Board.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="footer">
+        <div class="footer-left">© 2026 — STRATHUB · EVA BATTLE FOR ARENA</div>
+        <div class="footer-right">CRÉÉ PAR <span>SHIZOU</span></div>
+      </footer>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+      // ═══════════════════════════════════════════════════
+      //  PROFIL PAGE LOGIC
+      // ═══════════════════════════════════════════════════
+
+      let currentUser = null;
+      let currentUserDoc = null;
+      let currentTeamDoc = null;
+
+      // ── Auth gate ──────────────────────────────────────
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          window.location.href = "login.html";
+          return;
+        }
+        currentUser = user;
+        document.getElementById("profilLoading").style.display = "none";
+        document.getElementById("profilContent").style.display = "";
+        await loadProfile();
+      });
+
+      // ── Load profile data ──────────────────────────────
+      async function loadProfile() {
+        // Infos de base
+        document.getElementById("profEmail").textContent = currentUser.email;
+        document.getElementById("profCreated").textContent = currentUser.metadata.creationTime
+          ? new Date(currentUser.metadata.creationTime).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+          : "—";
+
+        // Charger le doc Firestore
+        try {
+          const snap = await db.collection("users").doc(currentUser.uid).get();
+          if (snap.exists) {
+            currentUserDoc = snap.data();
+            document.getElementById("profPseudo").value = currentUserDoc.pseudo || "";
+          }
+        } catch (e) {
+          console.error("Erreur chargement profil:", e);
+        }
+
+        await loadTeamState();
+      }
+
+      // ── Save pseudo ────────────────────────────────────
+      async function savePseudo() {
+        const pseudo = document.getElementById("profPseudo").value.trim();
+        const msg = document.getElementById("profMsg");
+        const btn = document.getElementById("profSaveBtn");
+
+        if (!pseudo || pseudo.length < 2) {
+          msg.className = "pf-msg error";
+          msg.textContent = "Pseudo trop court (min. 2 caractères).";
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "...";
+
+        try {
+          await currentUser.updateProfile({ displayName: pseudo });
+          await db.collection("users").doc(currentUser.uid).update({ pseudo: pseudo });
+
+          // Mettre à jour dans le roster de la team si applicable
+          if (currentUserDoc?.teamId) {
+            await db.collection("teams").doc(currentUserDoc.teamId)
+              .collection("members").doc(currentUser.uid)
+              .update({ pseudo: pseudo });
+          }
+
+          // Refresh topbar
+          const authUser = document.getElementById("authUser");
+          if (authUser) authUser.textContent = pseudo;
+
+          msg.className = "pf-msg success";
+          msg.textContent = "Pseudo mis à jour.";
+        } catch (e) {
+          console.error("Erreur save pseudo:", e);
+          msg.className = "pf-msg error";
+          msg.textContent = "Erreur : " + e.message;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Enregistrer";
+        }
+      }
+
+      // ── Team state ─────────────────────────────────────
+      async function loadTeamState() {
+        const teamNone = document.getElementById("teamNone");
+        const teamActive = document.getElementById("teamActive");
+
+        if (!currentUserDoc?.teamId) {
+          teamNone.style.display = "";
+          teamActive.style.display = "none";
+          document.getElementById("rosterContent").innerHTML =
+            '<div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>';
+          return;
+        }
+
+        // Charger la team
+        try {
+          const teamSnap = await db.collection("teams").doc(currentUserDoc.teamId).get();
+          if (!teamSnap.exists) {
+            // Team supprimée ? Reset
+            await db.collection("users").doc(currentUser.uid).update({ teamId: null });
+            currentUserDoc.teamId = null;
+            teamNone.style.display = "";
+            teamActive.style.display = "none";
+            return;
+          }
+
+          currentTeamDoc = teamSnap.data();
+          teamNone.style.display = "none";
+          teamActive.style.display = "";
+
+          document.getElementById("teamName").textContent = currentTeamDoc.name;
+          document.getElementById("teamCode").textContent = currentTeamDoc.code;
+
+          await loadRoster();
+        } catch (e) {
+          console.error("Erreur chargement team:", e);
+        }
+      }
+
+      // ── Create team ────────────────────────────────────
+      async function createTeam() {
+        const name = document.getElementById("teamCreateName").value.trim();
+        const msg = document.getElementById("teamMsg");
+
+        if (!name || name.length < 2) {
+          msg.className = "pf-msg error";
+          msg.textContent = "Nom d'équipe trop court.";
+          return;
+        }
+
+        msg.className = "pf-msg";
+        msg.textContent = "Création...";
+
+        try {
+          // Générer un code d'invitation unique (6 chars)
+          const code = generateTeamCode();
+
+          const teamRef = await db.collection("teams").add({
+            name: name,
+            code: code,
+            createdBy: currentUser.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+
+          // Ajouter le créateur comme membre
+          const pseudo = document.getElementById("profPseudo").value.trim() || currentUser.displayName || "Joueur";
+          await teamRef.collection("members").doc(currentUser.uid).set({
+            pseudo: pseudo,
+            role: "captain",
+            joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+
+          // Mettre à jour le user
+          await db.collection("users").doc(currentUser.uid).update({ teamId: teamRef.id });
+          currentUserDoc.teamId = teamRef.id;
+
+          msg.className = "pf-msg success";
+          msg.textContent = "Équipe créée !";
+
+          await loadTeamState();
+        } catch (e) {
+          console.error("Erreur création team:", e);
+          msg.className = "pf-msg error";
+          msg.textContent = "Erreur : " + e.message;
+        }
+      }
+
+      // ── Join team ──────────────────────────────────────
+      async function joinTeam() {
+        const code = document.getElementById("teamJoinCode").value.trim().toUpperCase();
+        const msg = document.getElementById("teamMsg");
+
+        if (!code || code.length < 4) {
+          msg.className = "pf-msg error";
+          msg.textContent = "Code invalide.";
+          return;
+        }
+
+        msg.className = "pf-msg";
+        msg.textContent = "Recherche...";
+
+        try {
+          const snap = await db.collection("teams").where("code", "==", code).limit(1).get();
+
+          if (snap.empty) {
+            msg.className = "pf-msg error";
+            msg.textContent = "Aucune équipe trouvée avec ce code.";
+            return;
+          }
+
+          const teamDoc = snap.docs[0];
+          const teamId = teamDoc.id;
+
+          // Ajouter comme membre
+          const pseudo = document.getElementById("profPseudo").value.trim() || currentUser.displayName || "Joueur";
+          await teamDoc.ref.collection("members").doc(currentUser.uid).set({
+            pseudo: pseudo,
+            role: "member",
+            joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+
+          // Mettre à jour le user
+          await db.collection("users").doc(currentUser.uid).update({ teamId: teamId });
+          currentUserDoc.teamId = teamId;
+
+          msg.className = "pf-msg success";
+          msg.textContent = "Bienvenue dans l'équipe !";
+
+          await loadTeamState();
+        } catch (e) {
+          console.error("Erreur join team:", e);
+          msg.className = "pf-msg error";
+          msg.textContent = "Erreur : " + e.message;
+        }
+      }
+
+      // ── Leave team ─────────────────────────────────────
+      async function leaveTeam() {
+        if (!currentUserDoc?.teamId) return;
+        if (!confirm("Quitter l'équipe ? Tu devras être réinvité pour revenir.")) return;
+
+        const msg = document.getElementById("teamActiveMsg");
+
+        try {
+          // Retirer le membre
+          await db.collection("teams").doc(currentUserDoc.teamId)
+            .collection("members").doc(currentUser.uid).delete();
+
+          // Vérifier s'il reste des membres
+          const remaining = await db.collection("teams").doc(currentUserDoc.teamId)
+            .collection("members").get();
+
+          if (remaining.empty) {
+            // Supprimer la team si vide
+            await db.collection("teams").doc(currentUserDoc.teamId).delete();
+          }
+
+          // Mettre à jour le user
+          await db.collection("users").doc(currentUser.uid).update({ teamId: null });
+          currentUserDoc.teamId = null;
+          currentTeamDoc = null;
+
+          await loadTeamState();
+        } catch (e) {
+          console.error("Erreur leave team:", e);
+          msg.className = "pf-msg error";
+          msg.textContent = "Erreur : " + e.message;
+        }
+      }
+
+      // ── Load roster ────────────────────────────────────
+      async function loadRoster() {
+        const container = document.getElementById("rosterContent");
+
+        if (!currentUserDoc?.teamId) {
+          container.innerHTML = '<div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>';
+          return;
+        }
+
+        try {
+          const snap = await db.collection("teams").doc(currentUserDoc.teamId)
+            .collection("members").orderBy("joinedAt").get();
+
+          if (snap.empty) {
+            container.innerHTML = '<div class="roster-empty">Aucun membre trouvé.</div>';
+            return;
+          }
+
+          let html = '<div class="roster-list">';
+          snap.forEach((doc) => {
+            const m = doc.data();
+            const initial = (m.pseudo || "?")[0].toUpperCase();
+            const isCaptain = m.role === "captain";
+            const isMe = doc.id === currentUser.uid;
+
+            html += `
+              <div class="roster-member">
+                <div class="roster-avatar">${initial}</div>
+                <div class="roster-name">${escHtml(m.pseudo || "Joueur")}${isMe ? ' <span style="opacity:0.4;font-size:12px;">(toi)</span>' : ''}</div>
+                <span class="roster-role ${isCaptain ? 'captain' : 'member'}">${isCaptain ? 'Capitaine' : 'Membre'}</span>
+              </div>
+            `;
+          });
+          html += '</div>';
+          container.innerHTML = html;
+        } catch (e) {
+          console.error("Erreur roster:", e);
+          container.innerHTML = '<div class="roster-empty">Erreur de chargement du roster.</div>';
+        }
+      }
+
+      // ── Helpers ────────────────────────────────────────
+      function generateTeamCode() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let code = "";
+        for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+        return code;
+      }
+
+      function escHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function copyTeamCode() {
+        const code = document.getElementById("teamCode").textContent;
+        navigator.clipboard.writeText(code).then(() => {
+          const el = document.getElementById("teamCode");
+          const orig = el.textContent;
+          el.textContent = "COPIÉ ✓";
+          setTimeout(() => { el.textContent = orig; }, 1500);
+        });
+      }
+
+      function switchTeamTab(tab) {
+        document.querySelectorAll(".pf-tab").forEach((t, i) => {
+          t.classList.toggle("active", (tab === "create" && i === 0) || (tab === "join" && i === 1));
+        });
+        document.getElementById("teamTabCreate").classList.toggle("active", tab === "create");
+        document.getElementById("teamTabJoin").classList.toggle("active", tab === "join");
+        document.getElementById("teamMsg").textContent = "";
+      }
+
+      // ── BG Canvas (réutilisé) ──────────────────────────
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, hexes = [];
+      const HEX_SIZE = 32;
+      function hexCorners(cx, cy, r) {
+        const pts = [];
+        for (let i = 0; i < 6; i++) {
+          const a = Math.PI / 180 * (60 * i - 30);
+          pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+        return pts;
+      }
+      function buildGrid() {
+        hexes = [];
+        const w = HEX_SIZE * Math.sqrt(3), h = HEX_SIZE * 2;
+        const cols = Math.ceil(W / w) + 2, rows = Math.ceil(H / (h * 0.75)) + 2;
+        for (let row = -1; row < rows; row++)
+          for (let col = -1; col < cols; col++)
+            hexes.push({ x: col * w + (row % 2 === 0 ? 0 : w / 2), y: row * h * 0.75, pulse: Math.random() * Math.PI * 2, speed: 0.005 + Math.random() * 0.012, color: Math.random() > 0.85 ? 'rgba(45,212,191,' : 'rgba(200,151,58,' });
+      }
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; buildGrid(); }
+      function animate() {
+        ctx.clearRect(0, 0, W, H);
+        for (const h of hexes) {
+          h.pulse += h.speed;
+          const alpha = (Math.sin(h.pulse) * 0.5 + 0.5) * 0.18 + 0.02;
+          const pts = hexCorners(h.x, h.y, HEX_SIZE - 1);
+          ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < 6; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+          ctx.closePath(); ctx.strokeStyle = h.color + alpha + ')'; ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        requestAnimationFrame(animate);
+      }
+      window.addEventListener('resize', resize); resize(); animate();
+    </script>
+  </body>
+</html>

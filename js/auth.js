@@ -1,7 +1,7 @@
 /*  StratHub — auth.js
     Gestion de l'authentification Firebase.
     Dépend de : firebase-config.js (auth, db)
-    Fonctionne sur toutes les pages (index, maps, armes, board, login).
+    Fonctionne sur toutes les pages (index, maps, armes, board, login, profil).
 */
 
 // ─── État auth sur la topbar ─────────────────────────────────────────────────
@@ -13,16 +13,30 @@ function updateAuthUI(user) {
   if (!authBtn) return;
 
   if (user) {
-    // Connecté → afficher pseudo + bouton déconnexion
+    // Connecté → afficher pseudo cliquable + bouton déconnexion
     const displayName = user.displayName || user.email.split("@")[0];
-    if (authUser) authUser.textContent = displayName;
+
+    if (authUser) {
+      authUser.textContent = displayName;
+      authUser.style.cursor = "pointer";
+      authUser.title = "Mon profil";
+      authUser.onclick = () => {
+        window.location.href = "profil.html";
+      };
+    }
+
     authBtn.textContent = "DÉCONNEXION";
     authBtn.onclick = () => {
       auth.signOut();
     };
   } else {
     // Déconnecté → bouton vers login
-    if (authUser) authUser.textContent = "";
+    if (authUser) {
+      authUser.textContent = "";
+      authUser.style.cursor = "";
+      authUser.title = "";
+      authUser.onclick = null;
+    }
     authBtn.textContent = "CONNEXION";
     authBtn.onclick = () => {
       window.location.href = "login.html";
@@ -45,7 +59,7 @@ async function authRegister(email, password, pseudo) {
   await db.collection("users").doc(cred.user.uid).set({
     pseudo: pseudo,
     email: email,
-    team: null,
+    teamId: null,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
   });
   return cred.user;
