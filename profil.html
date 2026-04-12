@@ -6,10 +6,7 @@
     <title>StratHub — Profil</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 
     <style>
@@ -31,785 +28,165 @@
         position: relative;
         transition: border-color 0.3s;
       }
-      .profil-card:hover {
-        border-color: rgba(200, 151, 58, 0.3);
-      }
+      .profil-card:hover { border-color: rgba(200,151,58,0.3); }
       .profil-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
         background: linear-gradient(90deg, var(--gold), transparent);
         opacity: 0.5;
       }
-      .profil-card.full {
-        grid-column: 1 / -1;
-      }
-      .profil-card-header {
-        padding: 20px 24px 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
+      .profil-card.full { grid-column: 1 / -1; }
+      .profil-card-header { padding: 20px 24px 0; display: flex; align-items: center; gap: 10px; }
       .profil-card-icon {
-        width: 42px;
-        height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 42px; height: 42px;
+        display: flex; align-items: center; justify-content: center;
         border-radius: 4px;
         background: var(--gold-dim);
-        border: 1px solid rgba(200, 151, 58, 0.25);
+        border: 1px solid rgba(200,151,58,0.25);
         flex-shrink: 0;
       }
-      .profil-card-icon svg {
-        width: 22px;
-        height: 22px;
-        stroke: var(--gold);
-        fill: none;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .profil-card-icon.cyan {
-        background: rgba(45, 212, 191, 0.08);
-        border-color: rgba(45, 212, 191, 0.2);
-      }
-      .profil-card-icon.cyan svg {
-        stroke: var(--cyan);
-      }
-      .profil-card-number {
-        position: absolute;
-        top: 14px;
-        right: 18px;
-        font-family: var(--font-hud);
-        font-size: 10px;
-        letter-spacing: 0.15em;
-        color: var(--gold);
-        opacity: 0.35;
-      }
-      .profil-card-title {
-        font-family: var(--font-title);
-        font-size: 22px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: #fff;
-      }
-      .profil-card-body {
-        padding: 18px 24px 24px;
-      }
+      .profil-card-icon svg { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .profil-card-icon.cyan { background: rgba(45,212,191,0.08); border-color: rgba(45,212,191,0.2); }
+      .profil-card-icon.cyan svg { stroke: var(--cyan); }
+      .profil-card-number { position: absolute; top: 14px; right: 18px; font-family: var(--font-hud); font-size: 10px; letter-spacing: 0.15em; color: var(--gold); opacity: 0.35; }
+      .profil-card-title { font-family: var(--font-title); font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; }
+      .profil-card-body { padding: 18px 24px 24px; }
 
-      .pf-field {
-        margin-bottom: 14px;
-      }
-      .pf-label {
-        display: block;
-        font-family: var(--font-hud);
-        font-size: 10px;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--gold);
-        opacity: 0.7;
-        margin-bottom: 6px;
-      }
-      .pf-input,
-      .pf-select {
-        width: 100%;
-        font-family: var(--font-ui);
-        font-size: 14px;
-        font-weight: 500;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border);
-        color: var(--text);
-        padding: 10px 14px;
-        border-radius: 3px;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-      }
-      .pf-input:focus,
-      .pf-select:focus {
-        outline: none;
-        border-color: var(--gold-glow);
-      }
-      .pf-input::placeholder {
-        color: var(--text-dim);
-      }
-      .pf-input:read-only {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      .pf-select {
-        appearance: none;
-        cursor: pointer;
-      }
-      .pf-select option {
-        background: #1a1a2e;
-        color: var(--text);
-      }
+      .pf-field { margin-bottom: 14px; }
+      .pf-label { display: block; font-family: var(--font-hud); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 6px; }
+      .pf-input, .pf-select { width: 100%; font-family: var(--font-ui); font-size: 14px; font-weight: 500; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 3px; transition: border-color 0.2s; box-sizing: border-box; }
+      .pf-input:focus, .pf-select:focus { outline: none; border-color: var(--gold-glow); }
+      .pf-input::placeholder { color: var(--text-dim); }
+      .pf-input:read-only { opacity: 0.5; cursor: not-allowed; }
+      .pf-select { appearance: none; cursor: pointer; }
+      .pf-select option { background: #1a1a2e; color: var(--text); }
 
-      .pf-btn {
-        font-family: var(--font-title);
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        padding: 10px 20px;
-        border-radius: 3px;
-        cursor: pointer;
-        transition:
-          box-shadow 0.2s,
-          transform 0.2s;
-        border: 1px solid;
-      }
-      .pf-btn:hover {
-        transform: translateY(-1px);
-      }
-      .pf-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        transform: none;
-      }
-      .pf-btn-gold {
-        color: #fff;
-        background: linear-gradient(
-          135deg,
-          rgba(200, 151, 58, 0.9),
-          rgba(160, 110, 20, 0.9)
-        );
-        border-color: var(--gold-glow);
-      }
-      .pf-btn-gold:hover {
-        box-shadow: 0 4px 20px rgba(200, 151, 58, 0.35);
-      }
-      .pf-btn-outline {
-        color: var(--text-dim);
-        background: rgba(255, 255, 255, 0.05);
-        border-color: var(--border);
-      }
-      .pf-btn-outline:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text);
-      }
-      .pf-btn-danger {
-        color: #fca5a5;
-        background: rgba(239, 68, 68, 0.1);
-        border-color: rgba(239, 68, 68, 0.3);
-      }
-      .pf-btn-danger:hover {
-        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
-      }
-      .pf-btn-cyan {
-        color: var(--cyan);
-        background: rgba(45, 212, 191, 0.1);
-        border-color: rgba(45, 212, 191, 0.3);
-      }
-      .pf-btn-cyan:hover {
-        box-shadow: 0 4px 16px rgba(45, 212, 191, 0.2);
-      }
-      .pf-btn-sm {
-        font-size: 12px;
-        padding: 7px 14px;
-      }
+      .pf-btn { font-family: var(--font-title); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 20px; border-radius: 3px; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s; border: 1px solid; }
+      .pf-btn:hover { transform: translateY(-1px); }
+      .pf-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+      .pf-btn-gold { color: #fff; background: linear-gradient(135deg, rgba(200,151,58,0.9), rgba(160,110,20,0.9)); border-color: var(--gold-glow); }
+      .pf-btn-gold:hover { box-shadow: 0 4px 20px rgba(200,151,58,0.35); }
+      .pf-btn-outline { color: var(--text-dim); background: rgba(255,255,255,0.05); border-color: var(--border); }
+      .pf-btn-outline:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+      .pf-btn-danger { color: #fca5a5; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+      .pf-btn-danger:hover { box-shadow: 0 4px 16px rgba(239,68,68,0.2); }
+      .pf-btn-cyan { color: var(--cyan); background: rgba(45,212,191,0.1); border-color: rgba(45,212,191,0.3); }
+      .pf-btn-cyan:hover { box-shadow: 0 4px 16px rgba(45,212,191,0.2); }
+      .pf-btn-sm { font-size: 12px; padding: 7px 14px; }
 
-      .pf-row {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .pf-msg {
-        font-family: var(--font-hud);
-        font-size: 11px;
-        letter-spacing: 0.05em;
-        margin-top: 8px;
-        min-height: 16px;
-      }
-      .pf-msg.success {
-        color: #4ade80;
-      }
-      .pf-msg.error {
-        color: #ff6b6b;
-      }
-      .pf-divider {
-        height: 1px;
-        background: var(--border);
-        margin: 18px 0;
-      }
-      .pf-hint {
-        font-family: var(--font-hud);
-        font-size: 11px;
-        color: var(--text-dim);
-        letter-spacing: 0.03em;
-        line-height: 1.5;
-      }
+      .pf-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .pf-msg { font-family: var(--font-hud); font-size: 11px; letter-spacing: 0.05em; margin-top: 8px; min-height: 16px; }
+      .pf-msg.success { color: #4ade80; }
+      .pf-msg.error { color: #ff6b6b; }
+      .pf-divider { height: 1px; background: var(--border); margin: 18px 0; }
+      .pf-hint { font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); letter-spacing: 0.03em; line-height: 1.5; }
 
-      .pf-info-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border2);
-      }
-      .pf-info-row:last-child {
-        border-bottom: none;
-      }
-      .pf-info-key {
-        font-family: var(--font-hud);
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--gold);
-        opacity: 0.7;
-        flex-shrink: 0;
-        min-width: 90px;
-      }
-      .pf-info-val {
-        font-family: var(--font-ui);
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text);
-      }
+      .pf-info-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border2); }
+      .pf-info-row:last-child { border-bottom: none; }
+      .pf-info-key { font-family: var(--font-hud); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); opacity: 0.7; flex-shrink: 0; min-width: 90px; }
+      .pf-info-val { font-family: var(--font-ui); font-size: 14px; font-weight: 500; color: var(--text); }
 
-      .team-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--gold-dim);
-        border: 1px solid rgba(200, 151, 58, 0.25);
-        border-radius: 4px;
-        padding: 10px 16px;
-        margin-bottom: 14px;
-      }
-      .team-badge-name {
-        font-family: var(--font-title);
-        font-size: 20px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--gold);
-      }
-      .team-badge-code {
-        font-family: var(--font-hud);
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        color: var(--text-dim);
-        background: rgba(0, 0, 0, 0.3);
-        padding: 3px 8px;
-        border-radius: 2px;
-        cursor: pointer;
-        transition: color 0.2s;
-      }
-      .team-badge-code:hover {
-        color: var(--gold);
-      }
+      .team-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--gold-dim); border: 1px solid rgba(200,151,58,0.25); border-radius: 4px; padding: 10px 16px; margin-bottom: 14px; }
+      .team-badge-name { font-family: var(--font-title); font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); }
+      .team-badge-code { font-family: var(--font-hud); font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 2px; cursor: pointer; transition: color 0.2s; }
+      .team-badge-code:hover { color: var(--gold); }
 
-      .roster-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .roster-member {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 14px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border2);
-        border-radius: 3px;
-        transition: border-color 0.2s;
-      }
-      .roster-member:hover {
-        border-color: rgba(200, 151, 58, 0.2);
-      }
-      .roster-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 4px;
-        background: var(--gold-dim);
-        border: 1px solid rgba(200, 151, 58, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-title);
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--gold);
-        text-transform: uppercase;
-        flex-shrink: 0;
-      }
-      .roster-name {
-        font-family: var(--font-ui);
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text);
-        flex: 1;
-      }
-      .roster-role {
-        font-family: var(--font-hud);
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        padding: 3px 8px;
-        border-radius: 2px;
-      }
-      .roster-role.captain {
-        color: var(--gold);
-        background: var(--gold-dim);
-        border: 1px solid rgba(200, 151, 58, 0.2);
-      }
-      .roster-role.member {
-        color: var(--text-dim);
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border2);
-      }
-      .roster-empty {
-        font-family: var(--font-hud);
-        font-size: 12px;
-        color: var(--text-dim);
-        letter-spacing: 0.05em;
-        text-align: center;
-        padding: 20px;
-        opacity: 0.6;
-      }
+      .roster-list { display: flex; flex-direction: column; gap: 6px; }
+      .roster-member { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 3px; transition: border-color 0.2s; }
+      .roster-member:hover { border-color: rgba(200,151,58,0.2); }
+      .roster-avatar { width: 36px; height: 36px; border-radius: 4px; background: var(--gold-dim); border: 1px solid rgba(200,151,58,0.2); display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 16px; font-weight: 700; color: var(--gold); text-transform: uppercase; flex-shrink: 0; }
+      .roster-name { font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
+      .roster-role { font-family: var(--font-hud); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+      .roster-role.captain { color: var(--gold); background: var(--gold-dim); border: 1px solid rgba(200,151,58,0.2); }
+      .roster-role.member { color: var(--text-dim); background: rgba(255,255,255,0.04); border: 1px solid var(--border2); }
+      .roster-empty { font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; text-align: center; padding: 20px; opacity: 0.6; }
 
-      .strats-empty {
-        text-align: center;
-        padding: 24px;
-      }
-      .strats-empty-icon {
-        font-size: 32px;
-        margin-bottom: 10px;
-        opacity: 0.4;
-      }
-      .strats-empty-text {
-        font-family: var(--font-hud);
-        font-size: 12px;
-        color: var(--text-dim);
-        letter-spacing: 0.05em;
-        line-height: 1.6;
-      }
+      .strats-empty { text-align: center; padding: 24px; }
+      .strats-empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+      .strats-empty-text { font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; line-height: 1.6; }
 
-      .pf-loading {
-        text-align: center;
-        padding: 40px;
-        font-family: var(--font-hud);
-        font-size: 12px;
-        letter-spacing: 0.15em;
-        color: var(--text-dim);
-        text-transform: uppercase;
-      }
-      .pf-loading::after {
-        content: "";
-        display: block;
-        width: 30px;
-        height: 2px;
-        background: var(--gold);
-        margin: 12px auto 0;
-        animation: loadbar 1.2s ease-in-out infinite;
-      }
-      @keyframes loadbar {
-        0%,
-        100% {
-          width: 30px;
-          opacity: 0.3;
-        }
-        50% {
-          width: 60px;
-          opacity: 1;
-        }
-      }
+      .pf-loading { text-align: center; padding: 40px; font-family: var(--font-hud); font-size: 12px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+      .pf-loading::after { content: ''; display: block; width: 30px; height: 2px; background: var(--gold); margin: 12px auto 0; animation: loadbar 1.2s ease-in-out infinite; }
+      @keyframes loadbar { 0%, 100% { width: 30px; opacity: 0.3; } 50% { width: 60px; opacity: 1; } }
 
-      .pf-tabs {
-        display: flex;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 18px;
-      }
-      .pf-tab {
-        flex: 1;
-        padding: 10px 0;
-        text-align: center;
-        font-family: var(--font-hud);
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--text-dim);
-        cursor: pointer;
-        border: none;
-        background: none;
-        border-bottom: 2px solid transparent;
-        transition:
-          color 0.2s,
-          border-color 0.2s;
-      }
-      .pf-tab:hover {
-        color: var(--text);
-      }
-      .pf-tab.active {
-        color: var(--gold);
-        border-bottom-color: var(--gold);
-      }
-      .pf-tab-panel {
-        display: none;
-      }
-      .pf-tab-panel.active {
-        display: block;
-      }
+      .pf-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+      .pf-tab { flex: 1; padding: 10px 0; text-align: center; font-family: var(--font-hud); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+      .pf-tab:hover { color: var(--text); }
+      .pf-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+      .pf-tab-panel { display: none; }
+      .pf-tab-panel.active { display: block; }
 
       /* ═══ STATS ═══ */
-      .stat-hero {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding: 16px 0;
-        flex-wrap: wrap;
-      }
-      .stat-hero-number {
-        font-family: var(--font-title);
-        font-size: 52px;
-        font-weight: 900;
-        letter-spacing: -0.02em;
-        line-height: 1;
-      }
-      .stat-hero-number.win {
-        color: #4ade80;
-      }
-      .stat-hero-number.lose {
-        color: #ff6b6b;
-      }
-      .stat-hero-number.neutral {
-        color: var(--text-dim);
-      }
-      .stat-hero-label {
-        font-family: var(--font-hud);
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--text-dim);
-      }
-      .stat-hero-group {
-        display: flex;
-        gap: 24px;
-        flex-wrap: wrap;
-      }
-      .stat-mini {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px 16px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border2);
-        border-radius: 3px;
-        min-width: 80px;
-      }
-      .stat-mini-val {
-        font-family: var(--font-title);
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--text);
-      }
-      .stat-mini-label {
-        font-family: var(--font-hud);
-        font-size: 9px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--text-dim);
-        margin-top: 2px;
-      }
+      .stat-hero { display: flex; align-items: center; gap: 20px; padding: 16px 0; flex-wrap: wrap; }
+      .stat-hero-number { font-family: var(--font-title); font-size: 52px; font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
+      .stat-hero-number.win { color: #4ade80; }
+      .stat-hero-number.lose { color: #ff6b6b; }
+      .stat-hero-number.neutral { color: var(--text-dim); }
+      .stat-hero-label { font-family: var(--font-hud); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
+      .stat-hero-group { display: flex; gap: 24px; flex-wrap: wrap; }
+      .stat-mini { display: flex; flex-direction: column; align-items: center; padding: 10px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 3px; min-width: 80px; }
+      .stat-mini-val { font-family: var(--font-title); font-size: 24px; font-weight: 700; color: var(--text); }
+      .stat-mini-label { font-family: var(--font-hud); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
 
-      .map-stats-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: var(--font-ui);
-        font-size: 13px;
-      }
-      .map-stats-table th {
-        font-family: var(--font-hud);
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--gold);
-        opacity: 0.7;
-        text-align: left;
-        padding: 8px 10px;
-        border-bottom: 1px solid var(--border);
-      }
-      .map-stats-table td {
-        padding: 7px 10px;
-        color: var(--text);
-        border-bottom: 1px solid var(--border2);
-        font-weight: 500;
-      }
-      .map-stats-table tr:hover td {
-        background: rgba(255, 255, 255, 0.02);
-      }
-      .wr-good {
-        color: #4ade80;
-      }
-      .wr-bad {
-        color: #ff6b6b;
-      }
-      .wr-na {
-        color: var(--text-dim);
-        opacity: 0.5;
-      }
+      .map-stats-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13px; }
+      .map-stats-table th { font-family: var(--font-hud); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); opacity: 0.7; text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+      .map-stats-table td { padding: 7px 10px; color: var(--text); border-bottom: 1px solid var(--border2); font-weight: 500; }
+      .map-stats-table tr:hover td { background: rgba(255,255,255,0.02); }
+      .wr-good { color: #4ade80; }
+      .wr-bad { color: #ff6b6b; }
+      .wr-na { color: var(--text-dim); opacity: 0.5; }
 
-      .match-form {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-      .match-form .pf-field.full {
-        grid-column: 1 / -1;
-      }
+      .match-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .match-form .pf-field.full { grid-column: 1 / -1; }
 
-      .match-history {
-        max-height: 300px;
-        overflow-y: auto;
-      }
-      .match-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 10px;
-        border-bottom: 1px solid var(--border2);
-        font-family: var(--font-ui);
-        font-size: 13px;
-        font-weight: 500;
-      }
-      .match-row:hover {
-        background: rgba(255, 255, 255, 0.02);
-      }
-      .match-map {
-        color: var(--text);
-        flex: 1;
-        min-width: 0;
-      }
-      .match-action {
-        font-family: var(--font-hud);
-        font-size: 10px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        padding: 2px 8px;
-        border-radius: 2px;
-      }
-      .match-action.pick {
-        color: var(--cyan);
-        background: rgba(45, 212, 191, 0.1);
-      }
-      .match-action.ban {
-        color: #fca5a5;
-        background: rgba(239, 68, 68, 0.1);
-      }
-      .match-opponent {
-        color: var(--text-dim);
-        font-size: 12px;
-      }
-      .match-result {
-        font-family: var(--font-title);
-        font-size: 14px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        min-width: 40px;
-        text-align: right;
-      }
-      .match-result.win {
-        color: #4ade80;
-      }
-      .match-result.lose {
-        color: #ff6b6b;
-      }
-      .match-date {
-        font-family: var(--font-hud);
-        font-size: 10px;
-        color: var(--text-dim);
-        opacity: 0.6;
-      }
-      .match-del {
-        background: none;
-        border: none;
-        color: var(--text-dim);
-        cursor: pointer;
-        font-size: 14px;
-        opacity: 0.4;
-        transition:
-          opacity 0.2s,
-          color 0.2s;
-        padding: 2px 4px;
-      }
-      .match-del:hover {
-        opacity: 1;
-        color: #ff6b6b;
-      }
+      .match-history { max-height: 300px; overflow-y: auto; }
+      .match-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border2); font-family: var(--font-ui); font-size: 13px; font-weight: 500; }
+      .match-row:hover { background: rgba(255,255,255,0.02); }
+      .match-map { color: var(--text); flex: 1; min-width: 0; }
+      .match-action { font-family: var(--font-hud); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
+      .match-action.pick { color: var(--cyan); background: rgba(45,212,191,0.1); }
+      .match-action.ban { color: #fca5a5; background: rgba(239,68,68,0.1); }
+      .match-opponent { color: var(--text-dim); font-size: 12px; }
+      .match-result { font-family: var(--font-title); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; min-width: 40px; text-align: right; }
+      .match-result.win { color: #4ade80; }
+      .match-result.lose { color: #ff6b6b; }
+      .match-date { font-family: var(--font-hud); font-size: 10px; color: var(--text-dim); opacity: 0.6; }
+      .match-del { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; opacity: 0.4; transition: opacity 0.2s, color 0.2s; padding: 2px 4px; }
+      .match-del:hover { opacity: 1; color: #ff6b6b; }
 
-      .player-stat-row {
-        display: grid;
-        grid-template-columns: 1fr 70px 70px 1fr;
-        gap: 8px;
-        align-items: center;
-        padding: 6px 0;
-        border-bottom: 1px solid var(--border2);
-      }
-      .player-stat-row:last-child {
-        border-bottom: none;
-      }
-      .player-stat-name {
-        font-family: var(--font-ui);
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text);
-      }
-      .player-stat-input {
-        width: 100%;
-        padding: 6px 8px;
-        font-family: var(--font-hud);
-        font-size: 13px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border);
-        color: var(--text);
-        border-radius: 3px;
-        text-align: center;
-        box-sizing: border-box;
-      }
-      .player-stat-input:focus {
-        outline: none;
-        border-color: var(--gold-glow);
-      }
+      .player-stat-row { display: grid; grid-template-columns: 1fr 70px 70px 1fr; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border2); }
+      .player-stat-row:last-child { border-bottom: none; }
+      .player-stat-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--text); }
+      .player-stat-input { width: 100%; padding: 6px 8px; font-family: var(--font-hud); font-size: 13px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); border-radius: 3px; text-align: center; box-sizing: border-box; }
+      .player-stat-input:focus { outline: none; border-color: var(--gold-glow); }
 
-      .ps-summary {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .ps-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border2);
-        border-radius: 3px;
-        flex-wrap: wrap;
-      }
-      .ps-row:hover {
-        border-color: rgba(200, 151, 58, 0.2);
-      }
-      .ps-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
-        background: var(--gold-dim);
-        border: 1px solid rgba(200, 151, 58, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-title);
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--gold);
-        text-transform: uppercase;
-        flex-shrink: 0;
-      }
-      .ps-name {
-        font-family: var(--font-ui);
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text);
-        flex: 1;
-        min-width: 80px;
-      }
-      .ps-stat {
-        text-align: center;
-        min-width: 50px;
-      }
-      .ps-stat-val {
-        font-family: var(--font-title);
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text);
-      }
-      .ps-stat-label {
-        font-family: var(--font-hud);
-        font-size: 8px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--text-dim);
-      }
-      .ps-kd {
-        font-family: var(--font-title);
-        font-size: 18px;
-        font-weight: 700;
-      }
-      .ps-kd.good {
-        color: #4ade80;
-      }
-      .ps-kd.bad {
-        color: #ff6b6b;
-      }
-      .ps-kd.neutral {
-        color: var(--text-dim);
-      }
-      .ps-weapon {
-        font-family: var(--font-hud);
-        font-size: 10px;
-        letter-spacing: 0.05em;
-        color: var(--cyan);
-        opacity: 0.8;
-      }
+      .ps-summary { display: flex; flex-direction: column; gap: 6px; }
+      .ps-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 3px; flex-wrap: wrap; }
+      .ps-row:hover { border-color: rgba(200,151,58,0.2); }
+      .ps-avatar { width: 32px; height: 32px; border-radius: 4px; background: var(--gold-dim); border: 1px solid rgba(200,151,58,0.2); display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 14px; font-weight: 700; color: var(--gold); text-transform: uppercase; flex-shrink: 0; }
+      .ps-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--text); flex: 1; min-width: 80px; }
+      .ps-stat { text-align: center; min-width: 50px; }
+      .ps-stat-val { font-family: var(--font-title); font-size: 18px; font-weight: 700; color: var(--text); }
+      .ps-stat-label { font-family: var(--font-hud); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+      .ps-kd { font-family: var(--font-title); font-size: 18px; font-weight: 700; }
+      .ps-kd.good { color: #4ade80; }
+      .ps-kd.bad { color: #ff6b6b; }
+      .ps-kd.neutral { color: var(--text-dim); }
+      .ps-weapon { font-family: var(--font-hud); font-size: 10px; letter-spacing: 0.05em; color: var(--cyan); opacity: 0.8; }
 
-      .stats-locked {
-        text-align: center;
-        padding: 30px;
-        font-family: var(--font-hud);
-        font-size: 12px;
-        color: var(--text-dim);
-        letter-spacing: 0.05em;
-        line-height: 1.6;
-      }
-      .stats-locked-icon {
-        font-size: 28px;
-        margin-bottom: 10px;
-        opacity: 0.3;
-      }
+      .stats-locked { text-align: center; padding: 30px; font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; line-height: 1.6; }
+      .stats-locked-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.3; }
 
-      .filter-row {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        margin-bottom: 14px;
-        flex-wrap: wrap;
-      }
-      .filter-row .pf-select {
-        width: auto;
-        min-width: 140px;
-        padding: 7px 12px;
-        font-size: 12px;
-      }
+      .filter-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+      .filter-row .pf-select { width: auto; min-width: 140px; padding: 7px 12px; font-size: 12px; }
 
       @media (max-width: 700px) {
-        .profil-layout {
-          grid-template-columns: 1fr;
-          padding: 0 16px 40px;
-        }
-        .profil-card.full {
-          grid-column: 1;
-        }
-        .match-form {
-          grid-template-columns: 1fr;
-        }
-        .player-stat-row {
-          grid-template-columns: 1fr 60px 60px 1fr;
-          gap: 4px;
-        }
-        .stat-hero-group {
-          gap: 10px;
-        }
-        .ps-row {
-          gap: 6px;
-        }
+        .profil-layout { grid-template-columns: 1fr; padding: 0 16px 40px; }
+        .profil-card.full { grid-column: 1; }
+        .match-form { grid-template-columns: 1fr; }
+        .player-stat-row { grid-template-columns: 1fr 60px 60px 1fr; gap: 4px; }
+        .stat-hero-group { gap: 10px; }
+        .ps-row { gap: 6px; }
       }
     </style>
   </head>
@@ -818,13 +195,10 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="page">
+
       <header class="topbar">
         <div class="topbar-left">
-          <img
-            src="assets/logoStratHub.png"
-            alt="StratHub"
-            class="topbar-logo"
-          />
+          <img src="assets/logoStratHub.png" alt="StratHub" class="topbar-logo" />
           <span class="topbar-brand">Strat<span>Hub</span></span>
         </div>
         <div class="topbar-right">
@@ -842,52 +216,23 @@
         <p class="page-subtitle">Compte, &eacute;quipe &amp; statistiques</p>
       </div>
 
-      <div id="profilLoading" class="pf-loading">
-        V&eacute;rification de l&rsquo;identit&eacute;...
-      </div>
+      <div id="profilLoading" class="pf-loading">V&eacute;rification de l&rsquo;identit&eacute;...</div>
 
-      <div class="profil-layout" id="profilContent" style="display: none">
+      <div class="profil-layout" id="profilContent" style="display:none;">
+
         <!-- ═══ 01 : MON PROFIL ═══ -->
         <div class="profil-card">
           <div class="profil-card-number">// 01</div>
           <div class="profil-card-header">
-            <div class="profil-card-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </div>
+            <div class="profil-card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
             <div class="profil-card-title">Mon Profil</div>
           </div>
           <div class="profil-card-body">
-            <div class="pf-info-row">
-              <span class="pf-info-key">Email</span
-              ><span class="pf-info-val" id="profEmail">&mdash;</span>
-            </div>
-            <div class="pf-info-row">
-              <span class="pf-info-key">Inscrit</span
-              ><span class="pf-info-val" id="profCreated">&mdash;</span>
-            </div>
+            <div class="pf-info-row"><span class="pf-info-key">Email</span><span class="pf-info-val" id="profEmail">&mdash;</span></div>
+            <div class="pf-info-row"><span class="pf-info-key">Inscrit</span><span class="pf-info-val" id="profCreated">&mdash;</span></div>
             <div class="pf-divider"></div>
-            <div class="pf-field">
-              <label class="pf-label">Pseudo</label
-              ><input
-                class="pf-input"
-                type="text"
-                id="profPseudo"
-                placeholder="Ton pseudo"
-                maxlength="20"
-              />
-            </div>
-            <div class="pf-row">
-              <button
-                class="pf-btn pf-btn-gold"
-                id="profSaveBtn"
-                onclick="savePseudo()"
-              >
-                Enregistrer
-              </button>
-            </div>
+            <div class="pf-field"><label class="pf-label">Pseudo</label><input class="pf-input" type="text" id="profPseudo" placeholder="Ton pseudo" maxlength="20" /></div>
+            <div class="pf-row"><button class="pf-btn pf-btn-gold" id="profSaveBtn" onclick="savePseudo()">Enregistrer</button></div>
             <div class="pf-msg" id="profMsg"></div>
           </div>
         </div>
@@ -896,82 +241,34 @@
         <div class="profil-card">
           <div class="profil-card-number">// 02</div>
           <div class="profil-card-header">
-            <div class="profil-card-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </div>
+            <div class="profil-card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             <div class="profil-card-title">Mon &Eacute;quipe</div>
           </div>
           <div class="profil-card-body">
             <div id="teamNone">
-              <p class="pf-hint" style="margin-bottom: 14px">
-                Tu n&rsquo;es dans aucune &eacute;quipe. Cr&eacute;e la tienne
-                ou rejoins-en une avec un code d&rsquo;invitation.
-              </p>
+              <p class="pf-hint" style="margin-bottom:14px;">Tu n&rsquo;es dans aucune &eacute;quipe. Cr&eacute;e la tienne ou rejoins-en une avec un code d&rsquo;invitation.</p>
               <div class="pf-tabs">
-                <button class="pf-tab active" onclick="switchTeamTab('create')">
-                  Cr&eacute;er
-                </button>
-                <button class="pf-tab" onclick="switchTeamTab('join')">
-                  Rejoindre
-                </button>
+                <button class="pf-tab active" onclick="switchTeamTab('create')">Cr&eacute;er</button>
+                <button class="pf-tab" onclick="switchTeamTab('join')">Rejoindre</button>
               </div>
               <div class="pf-tab-panel active" id="teamTabCreate">
-                <div class="pf-field">
-                  <label class="pf-label">Nom de l&rsquo;&eacute;quipe</label
-                  ><input
-                    class="pf-input"
-                    type="text"
-                    id="teamCreateName"
-                    placeholder="Ex: Les Survolt&eacute;s"
-                    maxlength="30"
-                  />
-                </div>
-                <button class="pf-btn pf-btn-gold" onclick="createTeam()">
-                  Cr&eacute;er l&rsquo;&eacute;quipe
-                </button>
+                <div class="pf-field"><label class="pf-label">Nom de l&rsquo;&eacute;quipe</label><input class="pf-input" type="text" id="teamCreateName" placeholder="Ex: Les Survolt&eacute;s" maxlength="30" /></div>
+                <button class="pf-btn pf-btn-gold" onclick="createTeam()">Cr&eacute;er l&rsquo;&eacute;quipe</button>
               </div>
               <div class="pf-tab-panel" id="teamTabJoin">
-                <div class="pf-field">
-                  <label class="pf-label">Code d&rsquo;invitation</label
-                  ><input
-                    class="pf-input"
-                    type="text"
-                    id="teamJoinCode"
-                    placeholder="Ex: ABC123"
-                    maxlength="8"
-                    style="text-transform: uppercase"
-                  />
-                </div>
-                <button class="pf-btn pf-btn-cyan" onclick="joinTeam()">
-                  Rejoindre
-                </button>
+                <div class="pf-field"><label class="pf-label">Code d&rsquo;invitation</label><input class="pf-input" type="text" id="teamJoinCode" placeholder="Ex: ABC123" maxlength="8" style="text-transform:uppercase;" /></div>
+                <button class="pf-btn pf-btn-cyan" onclick="joinTeam()">Rejoindre</button>
               </div>
               <div class="pf-msg" id="teamMsg"></div>
             </div>
-            <div id="teamActive" style="display: none">
+            <div id="teamActive" style="display:none;">
               <div class="team-badge">
                 <span class="team-badge-name" id="teamName">&mdash;</span>
-                <span
-                  class="team-badge-code"
-                  id="teamCode"
-                  title="Cliquer pour copier le code"
-                  onclick="copyTeamCode()"
-                  >&mdash;</span
-                >
+                <span class="team-badge-code" id="teamCode" title="Cliquer pour copier le code" onclick="copyTeamCode()">&mdash;</span>
               </div>
-              <p class="pf-hint">
-                Partage le code d&rsquo;invitation pour que tes
-                co&eacute;quipiers rejoignent l&rsquo;&eacute;quipe.
-              </p>
+              <p class="pf-hint">Partage le code d&rsquo;invitation pour que tes co&eacute;quipiers rejoignent l&rsquo;&eacute;quipe.</p>
               <div class="pf-divider"></div>
-              <button class="pf-btn pf-btn-danger" onclick="leaveTeam()">
-                Quitter l&rsquo;&eacute;quipe
-              </button>
+              <button class="pf-btn pf-btn-danger" onclick="leaveTeam()">Quitter l&rsquo;&eacute;quipe</button>
               <div class="pf-msg" id="teamActiveMsg"></div>
             </div>
           </div>
@@ -981,48 +278,21 @@
         <div class="profil-card">
           <div class="profil-card-number">// 03</div>
           <div class="profil-card-header">
-            <div class="profil-card-icon">
-              <svg viewBox="0 0 24 24">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <line x1="3" y1="9" x2="21" y2="9" />
-                <line x1="9" y1="21" x2="9" y2="9" />
-              </svg>
-            </div>
+            <div class="profil-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
             <div class="profil-card-title">Roster</div>
           </div>
-          <div class="profil-card-body">
-            <div id="rosterContent">
-              <div class="roster-empty">
-                Rejoins ou cr&eacute;e une &eacute;quipe pour voir le roster.
-              </div>
-            </div>
-          </div>
+          <div class="profil-card-body"><div id="rosterContent"><div class="roster-empty">Rejoins ou cr&eacute;e une &eacute;quipe pour voir le roster.</div></div></div>
         </div>
 
         <!-- ═══ 04 : MES STRATS ═══ -->
         <div class="profil-card">
           <div class="profil-card-number">// 04</div>
           <div class="profil-card-header">
-            <div class="profil-card-icon">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-              </svg>
-            </div>
+            <div class="profil-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
             <div class="profil-card-title">Mes Strats</div>
           </div>
           <div class="profil-card-body">
-            <div class="strats-empty">
-              <div class="strats-empty-icon">📁</div>
-              <div class="strats-empty-text">
-                La sauvegarde cloud arrive bient&ocirc;t.<br />En attendant,
-                exporte tes strats en JSON depuis le Board.
-              </div>
-            </div>
+            <div class="strats-empty"><div class="strats-empty-icon">📁</div><div class="strats-empty-text">La sauvegarde cloud arrive bient&ocirc;t.<br/>En attendant, exporte tes strats en JSON depuis le Board.</div></div>
           </div>
         </div>
 
@@ -1030,124 +300,44 @@
         <div class="profil-card full">
           <div class="profil-card-number">// 05</div>
           <div class="profil-card-header">
-            <div class="profil-card-icon cyan">
-              <svg viewBox="0 0 24 24">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-              </svg>
-            </div>
+            <div class="profil-card-icon cyan"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div class="profil-card-title">Stats &Eacute;quipe</div>
           </div>
           <div class="profil-card-body" id="statsTeamBody">
-            <div class="stats-locked" id="statsTeamLocked">
-              <div class="stats-locked-icon">📊</div>
-              Rejoins ou cr&eacute;e une &eacute;quipe pour acc&eacute;der aux
-              statistiques.
-            </div>
-            <div id="statsTeamContent" style="display: none">
+            <div class="stats-locked" id="statsTeamLocked"><div class="stats-locked-icon">📊</div>Rejoins ou cr&eacute;e une &eacute;quipe pour acc&eacute;der aux statistiques.</div>
+            <div id="statsTeamContent" style="display:none;">
               <div class="stat-hero" id="statsOverview"></div>
               <div class="pf-divider"></div>
 
-              <div style="margin-bottom: 20px">
-                <div class="pf-label" style="margin-bottom: 12px">
-                  Logger un match
-                </div>
+              <div style="margin-bottom:20px;">
+                <div class="pf-label" style="margin-bottom:12px;">Logger un match</div>
                 <div class="match-form">
-                  <div class="pf-field">
-                    <label class="pf-label">Map</label>
-                    <select class="pf-select" id="matchMap">
-                      <option value="">— Choisir —</option>
-                      <option>Artefact</option>
-                      <option>Atlantis</option>
-                      <option>Ceres</option>
-                      <option>Engine</option>
-                      <option>Helios Station</option>
-                      <option>Horizon</option>
-                      <option>Lunar</option>
-                      <option>Outlaw</option>
-                      <option>Polaris</option>
-                      <option>Silva</option>
-                      <option>The Cliff</option>
-                    </select>
+                  <div class="pf-field"><label class="pf-label">Map</label>
+                    <select class="pf-select" id="matchMap"><option value="">— Choisir —</option><option>Artefact</option><option>Atlantis</option><option>Ceres</option><option>Engine</option><option>Helios Station</option><option>Horizon</option><option>Lunar</option><option>Outlaw</option><option>Polaris</option><option>Silva</option><option>The Cliff</option></select>
                   </div>
-                  <div class="pf-field">
-                    <label class="pf-label">Action</label>
-                    <select class="pf-select" id="matchAction">
-                      <option value="pick">Pick</option>
-                      <option value="ban">Ban</option>
-                    </select>
+                  <div class="pf-field"><label class="pf-label">Action</label>
+                    <select class="pf-select" id="matchAction"><option value="pick">Pick</option><option value="ban">Ban</option></select>
                   </div>
-                  <div class="pf-field">
-                    <label class="pf-label">Adversaire</label
-                    ><input
-                      class="pf-input"
-                      type="text"
-                      id="matchOpponent"
-                      placeholder="Nom de l'&eacute;quipe adverse"
-                      maxlength="30"
-                    />
+                  <div class="pf-field"><label class="pf-label">Adversaire</label><input class="pf-input" type="text" id="matchOpponent" placeholder="Nom de l'&eacute;quipe adverse" maxlength="30" /></div>
+                  <div class="pf-field"><label class="pf-label">R&eacute;sultat</label>
+                    <select class="pf-select" id="matchResult"><option value="">— (ban) —</option><option value="win">Win</option><option value="lose">Lose</option></select>
                   </div>
-                  <div class="pf-field">
-                    <label class="pf-label">R&eacute;sultat</label>
-                    <select class="pf-select" id="matchResult">
-                      <option value="">— (ban) —</option>
-                      <option value="win">Win</option>
-                      <option value="lose">Lose</option>
-                    </select>
-                  </div>
-                  <div class="pf-field full">
-                    <div class="pf-row">
-                      <button
-                        class="pf-btn pf-btn-gold pf-btn-sm"
-                        onclick="logMatch()"
-                      >
-                        Enregistrer le match
-                      </button>
-                    </div>
-                    <div class="pf-msg" id="matchMsg"></div>
-                  </div>
+                  <div class="pf-field full"><div class="pf-row"><button class="pf-btn pf-btn-gold pf-btn-sm" onclick="logMatch()">Enregistrer le match</button></div><div class="pf-msg" id="matchMsg"></div></div>
                 </div>
               </div>
               <div class="pf-divider"></div>
 
-              <div style="margin-bottom: 20px">
-                <div class="pf-label" style="margin-bottom: 10px">
-                  R&eacute;cap par map
-                </div>
-                <div style="overflow-x: auto">
-                  <table class="map-stats-table" id="mapStatsTable">
-                    <thead>
-                      <tr>
-                        <th>Map</th>
-                        <th>Picks</th>
-                        <th>Winrate</th>
-                        <th>Bans</th>
-                      </tr>
-                    </thead>
-                    <tbody id="mapStatsBody"></tbody>
-                  </table>
-                </div>
+              <div style="margin-bottom:20px;">
+                <div class="pf-label" style="margin-bottom:10px;">R&eacute;cap par map</div>
+                <div style="overflow-x:auto;"><table class="map-stats-table" id="mapStatsTable"><thead><tr><th>Map</th><th>Picks</th><th>Winrate</th><th>Bans</th></tr></thead><tbody id="mapStatsBody"></tbody></table></div>
               </div>
               <div class="pf-divider"></div>
 
               <div>
-                <div class="pf-label" style="margin-bottom: 10px">
-                  Historique des matchs
-                </div>
+                <div class="pf-label" style="margin-bottom:10px;">Historique des matchs</div>
                 <div class="filter-row">
-                  <select
-                    class="pf-select"
-                    id="filterOpponent"
-                    onchange="renderMatchHistory()"
-                  >
-                    <option value="">Tous les adversaires</option>
-                  </select>
-                  <select
-                    class="pf-select"
-                    id="filterMap"
-                    onchange="renderMatchHistory()"
-                  >
-                    <option value="">Toutes les maps</option>
-                  </select>
+                  <select class="pf-select" id="filterOpponent" onchange="renderMatchHistory()"><option value="">Tous les adversaires</option></select>
+                  <select class="pf-select" id="filterMap" onchange="renderMatchHistory()"><option value="">Toutes les maps</option></select>
                 </div>
                 <div class="match-history" id="matchHistory"></div>
               </div>
@@ -1159,64 +349,34 @@
         <div class="profil-card full">
           <div class="profil-card-number">// 06</div>
           <div class="profil-card-header">
-            <div class="profil-card-icon cyan">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 20h9" />
-                <path
-                  d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
-                />
-              </svg>
-            </div>
+            <div class="profil-card-icon cyan"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
             <div class="profil-card-title">Stats Joueurs</div>
           </div>
           <div class="profil-card-body" id="statsPersoBody">
-            <div class="stats-locked" id="statsPersoLocked">
-              <div class="stats-locked-icon">🎯</div>
-              Rejoins ou cr&eacute;e une &eacute;quipe pour tracker les stats
-              joueurs.
-            </div>
-            <div id="statsPersoContent" style="display: none">
-              <div style="margin-bottom: 20px" id="playerStatsForm">
-                <div class="pf-label" style="margin-bottom: 10px">
-                  Saisir les stats d&rsquo;un match
-                </div>
-                <div class="pf-field">
-                  <label class="pf-label">Match concern&eacute;</label>
-                  <select
-                    class="pf-select"
-                    id="psMatchSelect"
-                    onchange="loadPlayerStatsForm()"
-                  >
-                    <option value="">— Choisir un match —</option>
-                  </select>
+            <div class="stats-locked" id="statsPersoLocked"><div class="stats-locked-icon">🎯</div>Rejoins ou cr&eacute;e une &eacute;quipe pour tracker les stats joueurs.</div>
+            <div id="statsPersoContent" style="display:none;">
+              <div style="margin-bottom:20px;" id="playerStatsForm">
+                <div class="pf-label" style="margin-bottom:10px;">Saisir les stats d&rsquo;un match</div>
+                <div class="pf-field"><label class="pf-label">Match concern&eacute;</label>
+                  <select class="pf-select" id="psMatchSelect" onchange="loadPlayerStatsForm()"><option value="">— Choisir un match —</option></select>
                 </div>
                 <div id="psFormRows"></div>
                 <div class="pf-msg" id="psMsg"></div>
               </div>
               <div class="pf-divider"></div>
               <div>
-                <div class="pf-label" style="margin-bottom: 10px">
-                  R&eacute;sum&eacute; par joueur
-                </div>
-                <div class="ps-summary" id="psSummary">
-                  <div class="roster-empty">
-                    Aucune stat enregistr&eacute;e.
-                  </div>
-                </div>
+                <div class="pf-label" style="margin-bottom:10px;">R&eacute;sum&eacute; par joueur</div>
+                <div class="ps-summary" id="psSummary"><div class="roster-empty">Aucune stat enregistr&eacute;e.</div></div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /profil-layout -->
+
+      </div><!-- /profil-layout -->
 
       <footer class="footer">
-        <div class="footer-left">
-          &copy; 2026 &mdash; STRATHUB &middot; EVA BATTLE FOR ARENA
-        </div>
-        <div class="footer-right">
-          CR&Eacute;&Eacute; PAR <span>SHIZOU</span>
-        </div>
+        <div class="footer-left">&copy; 2026 &mdash; STRATHUB &middot; EVA BATTLE FOR ARENA</div>
+        <div class="footer-right">CR&Eacute;&Eacute; PAR <span>SHIZOU</span></div>
       </footer>
     </div>
 
@@ -1232,38 +392,16 @@
          PROFIL PAGE LOGIC
          ═══════════════════════════════════════════════════ */
 
-      const MAPS = [
-        "Artefact",
-        "Atlantis",
-        "Ceres",
-        "Engine",
-        "Helios Station",
-        "Horizon",
-        "Lunar",
-        "Outlaw",
-        "Polaris",
-        "Silva",
-        "The Cliff",
-      ];
+      const MAPS = ["Artefact","Atlantis","Ceres","Engine","Helios Station","Horizon","Lunar","Outlaw","Polaris","Silva","The Cliff"];
       const WEAPONS = [
-        "AK-77",
-        "Mx42",
-        "Vulcan",
-        "atlas",
-        "fury",
-        "Needle",
-        "T1 Gauss",
-        "MP52",
-        "spectre",
-        "striker",
-        "ERG",
-        "warden",
-        "Westfire",
-        "DX3",
-        "Sticky",
-        "Sonar",
-        "Shield",
-        "Autre",
+        "AK-47","M4A1","FAMAS","AUG","Galil",
+        "AWP","Scout","SG 553",
+        "P90","MP5","UMP-45","MAC-10",
+        "Nova","XM1014","MAG-7","Sawed-Off",
+        "Deagle","Glock","USP-S","P250","Five-SeveN","Tec-9","CZ75",
+        "M249","Negev",
+        "Grenade","Flashbang","Smoke","Molotov",
+        "Autre"
       ];
 
       let currentUser = null;
@@ -1275,10 +413,7 @@
 
       // ── Auth gate ────────────────────────────────────────────
       auth.onAuthStateChanged(async (user) => {
-        if (!user) {
-          window.location.href = "login.html";
-          return;
-        }
+        if (!user) { window.location.href = "login.html"; return; }
         currentUser = user;
         document.getElementById("profilLoading").style.display = "none";
         document.getElementById("profilContent").style.display = "";
@@ -1288,23 +423,24 @@
       // ── Profile ──────────────────────────────────────────────
       async function loadProfile() {
         document.getElementById("profEmail").textContent = currentUser.email;
-        document.getElementById("profCreated").textContent = currentUser
-          .metadata.creationTime
-          ? new Date(currentUser.metadata.creationTime).toLocaleDateString(
-              "fr-FR",
-              { day: "numeric", month: "long", year: "numeric" },
-            )
-          : "—";
+        document.getElementById("profCreated").textContent = currentUser.metadata.creationTime
+          ? new Date(currentUser.metadata.creationTime).toLocaleDateString("fr-FR", { day:"numeric", month:"long", year:"numeric" }) : "—";
         try {
           const snap = await db.collection("users").doc(currentUser.uid).get();
           if (snap.exists) {
             currentUserDoc = snap.data();
-            document.getElementById("profPseudo").value =
-              currentUserDoc.pseudo || "";
+          } else {
+            // Doc user inexistant (compte créé avant Firestore) → le créer
+            currentUserDoc = {
+              pseudo: currentUser.displayName || currentUser.email.split("@")[0],
+              email: currentUser.email,
+              teamId: null,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            };
+            await db.collection("users").doc(currentUser.uid).set(currentUserDoc);
           }
-        } catch (e) {
-          console.error("Erreur chargement profil:", e);
-        }
+          document.getElementById("profPseudo").value = currentUserDoc.pseudo || "";
+        } catch (e) { console.error("Erreur chargement profil:", e); }
         await loadTeamState();
       }
 
@@ -1312,35 +448,19 @@
         const pseudo = document.getElementById("profPseudo").value.trim();
         const msg = document.getElementById("profMsg");
         const btn = document.getElementById("profSaveBtn");
-        if (!pseudo || pseudo.length < 2) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Pseudo trop court (min. 2 caractères).";
-          return;
-        }
-        btn.disabled = true;
-        btn.textContent = "...";
+        if (!pseudo || pseudo.length < 2) { msg.className = "pf-msg error"; msg.textContent = "Pseudo trop court (min. 2 caractères)."; return; }
+        btn.disabled = true; btn.textContent = "...";
         try {
           await currentUser.updateProfile({ displayName: pseudo });
           await db.collection("users").doc(currentUser.uid).update({ pseudo });
           if (currentUserDoc?.teamId) {
-            await db
-              .collection("teams")
-              .doc(currentUserDoc.teamId)
-              .collection("members")
-              .doc(currentUser.uid)
-              .update({ pseudo });
+            await db.collection("teams").doc(currentUserDoc.teamId).collection("members").doc(currentUser.uid).update({ pseudo });
           }
           const authUser = document.getElementById("authUser");
           if (authUser) authUser.textContent = pseudo;
-          msg.className = "pf-msg success";
-          msg.textContent = "Pseudo mis à jour.";
-        } catch (e) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Erreur : " + e.message;
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Enregistrer";
-        }
+          msg.className = "pf-msg success"; msg.textContent = "Pseudo mis à jour.";
+        } catch (e) { msg.className = "pf-msg error"; msg.textContent = "Erreur : " + e.message; }
+        finally { btn.disabled = false; btn.textContent = "Enregistrer"; }
       }
 
       // ── Team ─────────────────────────────────────────────────
@@ -1348,10 +468,8 @@
         const teamNone = document.getElementById("teamNone");
         const teamActive = document.getElementById("teamActive");
         if (!currentUserDoc?.teamId) {
-          teamNone.style.display = "";
-          teamActive.style.display = "none";
-          document.getElementById("rosterContent").innerHTML =
-            '<div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>';
+          teamNone.style.display = ""; teamActive.style.display = "none";
+          document.getElementById("rosterContent").innerHTML = '<div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>';
           document.getElementById("statsTeamLocked").style.display = "";
           document.getElementById("statsTeamContent").style.display = "none";
           document.getElementById("statsPersoLocked").style.display = "";
@@ -1359,21 +477,14 @@
           return;
         }
         try {
-          const teamSnap = await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .get();
+          const teamSnap = await db.collection("teams").doc(currentUserDoc.teamId).get();
           if (!teamSnap.exists) {
-            await db
-              .collection("users")
-              .doc(currentUser.uid)
-              .update({ teamId: null });
+            await db.collection("users").doc(currentUser.uid).update({ teamId: null });
             currentUserDoc.teamId = null;
             return loadTeamState();
           }
           currentTeamDoc = teamSnap.data();
-          teamNone.style.display = "none";
-          teamActive.style.display = "";
+          teamNone.style.display = "none"; teamActive.style.display = "";
           document.getElementById("teamName").textContent = currentTeamDoc.name;
           document.getElementById("teamCode").textContent = currentTeamDoc.code;
           document.getElementById("statsTeamLocked").style.display = "none";
@@ -1383,187 +494,78 @@
           await loadRoster();
           await loadAllMatches();
           await loadAllPlayerStats();
-          renderStatsOverview();
-          renderMapStats();
-          renderMatchHistory();
-          populateFilters();
-          populateMatchSelect();
-          renderPlayerSummary();
-        } catch (e) {
-          console.error("Erreur chargement team:", e);
-        }
+          renderStatsOverview(); renderMapStats(); renderMatchHistory(); populateFilters(); populateMatchSelect(); renderPlayerSummary();
+        } catch (e) { console.error("Erreur chargement team:", e); }
       }
 
       async function createTeam() {
         const name = document.getElementById("teamCreateName").value.trim();
         const msg = document.getElementById("teamMsg");
-        if (!name || name.length < 2) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Nom d'équipe trop court.";
-          return;
-        }
-        msg.className = "pf-msg";
-        msg.textContent = "Création...";
+        if (!name || name.length < 2) { msg.className = "pf-msg error"; msg.textContent = "Nom d'équipe trop court."; return; }
+        msg.className = "pf-msg"; msg.textContent = "Création...";
         try {
           const code = generateTeamCode();
-          const teamRef = await db
-            .collection("teams")
-            .add({
-              name,
-              code,
-              createdBy: currentUser.uid,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-          const pseudo =
-            document.getElementById("profPseudo").value.trim() ||
-            currentUser.displayName ||
-            "Joueur";
-          await teamRef
-            .collection("members")
-            .doc(currentUser.uid)
-            .set({
-              pseudo,
-              role: "captain",
-              joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-          await db
-            .collection("users")
-            .doc(currentUser.uid)
-            .update({ teamId: teamRef.id });
+          const teamRef = await db.collection("teams").add({ name, code, createdBy: currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+          const pseudo = document.getElementById("profPseudo").value.trim() || currentUser.displayName || "Joueur";
+          await teamRef.collection("members").doc(currentUser.uid).set({ pseudo, role: "captain", joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
+          await db.collection("users").doc(currentUser.uid).update({ teamId: teamRef.id });
           currentUserDoc.teamId = teamRef.id;
-          msg.className = "pf-msg success";
-          msg.textContent = "Équipe créée !";
+          msg.className = "pf-msg success"; msg.textContent = "Équipe créée !";
           await loadTeamState();
-        } catch (e) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Erreur : " + e.message;
-        }
+        } catch (e) { msg.className = "pf-msg error"; msg.textContent = "Erreur : " + e.message; }
       }
 
       async function joinTeam() {
-        const code = document
-          .getElementById("teamJoinCode")
-          .value.trim()
-          .toUpperCase();
+        const code = document.getElementById("teamJoinCode").value.trim().toUpperCase();
         const msg = document.getElementById("teamMsg");
-        if (!code || code.length < 4) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Code invalide.";
-          return;
-        }
-        msg.className = "pf-msg";
-        msg.textContent = "Recherche...";
+        if (!code || code.length < 4) { msg.className = "pf-msg error"; msg.textContent = "Code invalide."; return; }
+        msg.className = "pf-msg"; msg.textContent = "Recherche...";
         try {
-          const snap = await db
-            .collection("teams")
-            .where("code", "==", code)
-            .limit(1)
-            .get();
-          if (snap.empty) {
-            msg.className = "pf-msg error";
-            msg.textContent = "Aucune équipe trouvée avec ce code.";
-            return;
-          }
+          const snap = await db.collection("teams").where("code", "==", code).limit(1).get();
+          if (snap.empty) { msg.className = "pf-msg error"; msg.textContent = "Aucune équipe trouvée avec ce code."; return; }
           const teamDoc = snap.docs[0];
-          const pseudo =
-            document.getElementById("profPseudo").value.trim() ||
-            currentUser.displayName ||
-            "Joueur";
-          await teamDoc.ref
-            .collection("members")
-            .doc(currentUser.uid)
-            .set({
-              pseudo,
-              role: "member",
-              joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-          await db
-            .collection("users")
-            .doc(currentUser.uid)
-            .update({ teamId: teamDoc.id });
+          const pseudo = document.getElementById("profPseudo").value.trim() || currentUser.displayName || "Joueur";
+          await teamDoc.ref.collection("members").doc(currentUser.uid).set({ pseudo, role: "member", joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
+          await db.collection("users").doc(currentUser.uid).update({ teamId: teamDoc.id });
           currentUserDoc.teamId = teamDoc.id;
-          msg.className = "pf-msg success";
-          msg.textContent = "Bienvenue dans l'équipe !";
+          msg.className = "pf-msg success"; msg.textContent = "Bienvenue dans l'équipe !";
           await loadTeamState();
-        } catch (e) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Erreur : " + e.message;
-        }
+        } catch (e) { msg.className = "pf-msg error"; msg.textContent = "Erreur : " + e.message; }
       }
 
       async function leaveTeam() {
         if (!currentUserDoc?.teamId) return;
-        if (
-          !confirm("Quitter l'équipe ? Tu devras être réinvité pour revenir.")
-        )
-          return;
+        if (!confirm("Quitter l'équipe ? Tu devras être réinvité pour revenir.")) return;
         const msg = document.getElementById("teamActiveMsg");
         try {
-          await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("members")
-            .doc(currentUser.uid)
-            .delete();
-          const remaining = await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("members")
-            .get();
-          if (remaining.empty)
-            await db.collection("teams").doc(currentUserDoc.teamId).delete();
-          await db
-            .collection("users")
-            .doc(currentUser.uid)
-            .update({ teamId: null });
-          currentUserDoc.teamId = null;
-          currentTeamDoc = null;
+          await db.collection("teams").doc(currentUserDoc.teamId).collection("members").doc(currentUser.uid).delete();
+          const remaining = await db.collection("teams").doc(currentUserDoc.teamId).collection("members").get();
+          if (remaining.empty) await db.collection("teams").doc(currentUserDoc.teamId).delete();
+          await db.collection("users").doc(currentUser.uid).update({ teamId: null });
+          currentUserDoc.teamId = null; currentTeamDoc = null;
           await loadTeamState();
-        } catch (e) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Erreur : " + e.message;
-        }
+        } catch (e) { msg.className = "pf-msg error"; msg.textContent = "Erreur : " + e.message; }
       }
 
       async function loadRoster() {
         const container = document.getElementById("rosterContent");
-        if (!currentUserDoc?.teamId) {
-          container.innerHTML =
-            '<div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>';
-          return;
-        }
+        if (!currentUserDoc?.teamId) { container.innerHTML = '<div class="roster-empty">Rejoins ou crée une équipe pour voir le roster.</div>'; return; }
         try {
-          const snap = await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("members")
-            .orderBy("joinedAt")
-            .get();
+          const snap = await db.collection("teams").doc(currentUserDoc.teamId).collection("members").orderBy("joinedAt").get();
           teamMembers = [];
-          if (snap.empty) {
-            container.innerHTML =
-              '<div class="roster-empty">Aucun membre trouvé.</div>';
-            return;
-          }
+          if (snap.empty) { container.innerHTML = '<div class="roster-empty">Aucun membre trouvé.</div>'; return; }
           let html = '<div class="roster-list">';
-          snap.forEach((doc) => {
+          snap.forEach(doc => {
             const m = doc.data();
-            teamMembers.push({
-              uid: doc.id,
-              pseudo: m.pseudo || "Joueur",
-              role: m.role,
-            });
+            teamMembers.push({ uid: doc.id, pseudo: m.pseudo || "Joueur", role: m.role });
             const initial = (m.pseudo || "?")[0].toUpperCase();
             const isCaptain = m.role === "captain";
             const isMe = doc.id === currentUser.uid;
-            html += `<div class="roster-member"><div class="roster-avatar">${initial}</div><div class="roster-name">${escHtml(m.pseudo || "Joueur")}${isMe ? ' <span style="opacity:0.4;font-size:12px;">(toi)</span>' : ""}</div><span class="roster-role ${isCaptain ? "captain" : "member"}">${isCaptain ? "Capitaine" : "Membre"}</span></div>`;
+            html += `<div class="roster-member"><div class="roster-avatar">${initial}</div><div class="roster-name">${escHtml(m.pseudo || "Joueur")}${isMe ? ' <span style="opacity:0.4;font-size:12px;">(toi)</span>' : ''}</div><span class="roster-role ${isCaptain?'captain':'member'}">${isCaptain?'Capitaine':'Membre'}</span></div>`;
           });
-          html += "</div>";
+          html += '</div>';
           container.innerHTML = html;
-        } catch (e) {
-          container.innerHTML =
-            '<div class="roster-empty">Erreur de chargement du roster.</div>';
-        }
+        } catch (e) { container.innerHTML = '<div class="roster-empty">Erreur de chargement du roster.</div>'; }
       }
 
       /* ═══════════════════════════════════════════════════
@@ -1574,16 +576,9 @@
         allMatches = [];
         if (!currentUserDoc?.teamId) return;
         try {
-          const snap = await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("matches")
-            .orderBy("date", "desc")
-            .get();
-          snap.forEach((doc) => allMatches.push({ id: doc.id, ...doc.data() }));
-        } catch (e) {
-          console.error("Erreur chargement matchs:", e);
-        }
+          const snap = await db.collection("teams").doc(currentUserDoc.teamId).collection("matches").orderBy("date", "desc").get();
+          snap.forEach(doc => allMatches.push({ id: doc.id, ...doc.data() }));
+        } catch (e) { console.error("Erreur chargement matchs:", e); }
       }
 
       async function logMatch() {
@@ -1592,100 +587,48 @@
         const opponent = document.getElementById("matchOpponent").value.trim();
         const result = document.getElementById("matchResult").value;
         const msg = document.getElementById("matchMsg");
-        if (!map) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Choisis une map.";
-          return;
-        }
-        if (!opponent) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Indique l'adversaire.";
-          return;
-        }
-        if (action === "pick" && !result) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Indique le résultat (Win/Lose) pour un pick.";
-          return;
-        }
-        msg.className = "pf-msg";
-        msg.textContent = "Enregistrement...";
+        if (!map) { msg.className="pf-msg error"; msg.textContent="Choisis une map."; return; }
+        if (!opponent) { msg.className="pf-msg error"; msg.textContent="Indique l'adversaire."; return; }
+        if (action==="pick" && !result) { msg.className="pf-msg error"; msg.textContent="Indique le résultat (Win/Lose) pour un pick."; return; }
+        msg.className="pf-msg"; msg.textContent="Enregistrement...";
         try {
-          await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("matches")
-            .add({
-              map,
-              action,
-              opponent,
-              result: action === "ban" ? "" : result,
-              date: firebase.firestore.FieldValue.serverTimestamp(),
-              createdBy: currentUser.uid,
-            });
+          await db.collection("teams").doc(currentUserDoc.teamId).collection("matches").add({
+            map, action, opponent, result: action==="ban" ? "" : result,
+            date: firebase.firestore.FieldValue.serverTimestamp(), createdBy: currentUser.uid,
+          });
           await loadAllMatches();
-          renderStatsOverview();
-          renderMapStats();
-          renderMatchHistory();
-          populateFilters();
-          populateMatchSelect();
+          renderStatsOverview(); renderMapStats(); renderMatchHistory(); populateFilters(); populateMatchSelect();
           document.getElementById("matchMap").value = "";
           document.getElementById("matchOpponent").value = "";
           document.getElementById("matchResult").value = "";
-          msg.className = "pf-msg success";
-          msg.textContent = "Match enregistré !";
-        } catch (e) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Erreur : " + e.message;
-        }
+          msg.className="pf-msg success"; msg.textContent="Match enregistré !";
+        } catch (e) { msg.className="pf-msg error"; msg.textContent="Erreur : "+e.message; }
       }
 
       async function deleteMatch(matchId) {
         if (!confirm("Supprimer ce match ?")) return;
         try {
-          const psSnap = await db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("matches")
-            .doc(matchId)
-            .collection("playerStats")
-            .get();
+          const psSnap = await db.collection("teams").doc(currentUserDoc.teamId).collection("matches").doc(matchId).collection("playerStats").get();
           const batch = db.batch();
-          psSnap.forEach((doc) => batch.delete(doc.ref));
-          batch.delete(
-            db
-              .collection("teams")
-              .doc(currentUserDoc.teamId)
-              .collection("matches")
-              .doc(matchId),
-          );
+          psSnap.forEach(doc => batch.delete(doc.ref));
+          batch.delete(db.collection("teams").doc(currentUserDoc.teamId).collection("matches").doc(matchId));
           await batch.commit();
           delete allPlayerStats[matchId];
           await loadAllMatches();
-          renderStatsOverview();
-          renderMapStats();
-          renderMatchHistory();
-          populateFilters();
-          populateMatchSelect();
-          renderPlayerSummary();
-        } catch (e) {
-          console.error("Erreur suppression match:", e);
-        }
+          renderStatsOverview(); renderMapStats(); renderMatchHistory(); populateFilters(); populateMatchSelect(); renderPlayerSummary();
+        } catch (e) { console.error("Erreur suppression match:", e); }
       }
 
       function renderStatsOverview() {
         const c = document.getElementById("statsOverview");
-        const played = allMatches.filter(
-          (m) => m.action === "pick" && m.result,
-        );
-        const wins = played.filter((m) => m.result === "win").length;
-        const losses = played.filter((m) => m.result === "lose").length;
+        const played = allMatches.filter(m => m.action==="pick" && m.result);
+        const wins = played.filter(m => m.result==="win").length;
+        const losses = played.filter(m => m.result==="lose").length;
         const total = played.length;
-        const wr = total > 0 ? Math.round((wins / total) * 100) : 0;
-        const wrClass = total === 0 ? "neutral" : wr >= 50 ? "win" : "lose";
-        const opponents = new Set(
-          allMatches.map((m) => m.opponent).filter(Boolean),
-        );
-        c.innerHTML = `<div><div class="stat-hero-number ${wrClass}">${total > 0 ? wr + "%" : "—"}</div><div class="stat-hero-label">Winrate global</div></div>
+        const wr = total > 0 ? Math.round((wins/total)*100) : 0;
+        const wrClass = total===0 ? "neutral" : wr>=50 ? "win" : "lose";
+        const opponents = new Set(allMatches.map(m=>m.opponent).filter(Boolean));
+        c.innerHTML = `<div><div class="stat-hero-number ${wrClass}">${total>0?wr+"%":"—"}</div><div class="stat-hero-label">Winrate global</div></div>
           <div class="stat-hero-group">
             <div class="stat-mini"><div class="stat-mini-val">${total}</div><div class="stat-mini-label">Matchs</div></div>
             <div class="stat-mini"><div class="stat-mini-val" style="color:#4ade80;">${wins}</div><div class="stat-mini-label">Wins</div></div>
@@ -1696,46 +639,27 @@
 
       function renderMapStats() {
         const body = document.getElementById("mapStatsBody");
-        body.innerHTML = MAPS.map((map) => {
-          const picks = allMatches.filter(
-            (m) => m.map === map && m.action === "pick",
-          );
-          const bans = allMatches.filter(
-            (m) => m.map === map && m.action === "ban",
-          );
-          const winsOnPick = picks.filter((m) => m.result === "win").length;
-          const nbPick = picks.length,
-            nbBan = bans.length;
-          if (nbPick === 0 && nbBan === 0)
-            return `<tr><td>${map}</td><td>0</td><td class="wr-na">—</td><td>0</td></tr>`;
-          const wr = nbPick > 0 ? Math.round((winsOnPick / nbPick) * 100) : -1;
-          const wrStr = wr >= 0 ? wr + "%" : "—";
-          const wrClass = wr < 0 ? "wr-na" : wr >= 50 ? "wr-good" : "wr-bad";
+        body.innerHTML = MAPS.map(map => {
+          const picks = allMatches.filter(m => m.map===map && m.action==="pick");
+          const bans = allMatches.filter(m => m.map===map && m.action==="ban");
+          const winsOnPick = picks.filter(m => m.result==="win").length;
+          const nbPick = picks.length, nbBan = bans.length;
+          if (nbPick===0 && nbBan===0) return `<tr><td>${map}</td><td>0</td><td class="wr-na">—</td><td>0</td></tr>`;
+          const wr = nbPick>0 ? Math.round((winsOnPick/nbPick)*100) : -1;
+          const wrStr = wr>=0 ? wr+"%" : "—";
+          const wrClass = wr<0 ? "wr-na" : wr>=50 ? "wr-good" : "wr-bad";
           return `<tr><td>${map}</td><td>${nbPick}</td><td class="${wrClass}">${wrStr}</td><td>${nbBan}</td></tr>`;
         }).join("");
       }
 
       function populateFilters() {
-        const opponents = [
-          ...new Set(allMatches.map((m) => m.opponent).filter(Boolean)),
-        ].sort();
-        const maps = [...new Set(allMatches.map((m) => m.map))].sort();
-        const fO = document.getElementById("filterOpponent"),
-          fM = document.getElementById("filterMap");
-        const pO = fO.value,
-          pM = fM.value;
-        fO.innerHTML =
-          '<option value="">Tous les adversaires</option>' +
-          opponents
-            .map((o) => `<option value="${escHtml(o)}">${escHtml(o)}</option>`)
-            .join("");
-        fM.innerHTML =
-          '<option value="">Toutes les maps</option>' +
-          maps
-            .map((m) => `<option value="${escHtml(m)}">${escHtml(m)}</option>`)
-            .join("");
-        fO.value = pO;
-        fM.value = pM;
+        const opponents = [...new Set(allMatches.map(m=>m.opponent).filter(Boolean))].sort();
+        const maps = [...new Set(allMatches.map(m=>m.map))].sort();
+        const fO = document.getElementById("filterOpponent"), fM = document.getElementById("filterMap");
+        const pO = fO.value, pM = fM.value;
+        fO.innerHTML = '<option value="">Tous les adversaires</option>' + opponents.map(o=>`<option value="${escHtml(o)}">${escHtml(o)}</option>`).join("");
+        fM.innerHTML = '<option value="">Toutes les maps</option>' + maps.map(m=>`<option value="${escHtml(m)}">${escHtml(m)}</option>`).join("");
+        fO.value = pO; fM.value = pM;
       }
 
       function renderMatchHistory() {
@@ -1743,29 +667,14 @@
         const fO = document.getElementById("filterOpponent").value;
         const fM = document.getElementById("filterMap").value;
         let filtered = allMatches;
-        if (fO) filtered = filtered.filter((m) => m.opponent === fO);
-        if (fM) filtered = filtered.filter((m) => m.map === fM);
-        if (!filtered.length) {
-          c.innerHTML =
-            '<div class="roster-empty">Aucun match enregistré.</div>';
-          return;
-        }
-        c.innerHTML = filtered
-          .map((m) => {
-            const dateStr = m.date?.toDate
-              ? m.date
-                  .toDate()
-                  .toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                  })
-              : "—";
-            const resultHtml = m.result
-              ? `<span class="match-result ${m.result}">${m.result === "win" ? "WIN" : "LOSE"}</span>`
-              : "";
-            return `<div class="match-row"><span class="match-map">${escHtml(m.map)}</span><span class="match-action ${m.action}">${m.action.toUpperCase()}</span><span class="match-opponent">vs ${escHtml(m.opponent)}</span>${resultHtml}<span class="match-date">${dateStr}</span><button class="match-del" title="Supprimer" onclick="deleteMatch('${m.id}')">✕</button></div>`;
-          })
-          .join("");
+        if (fO) filtered = filtered.filter(m=>m.opponent===fO);
+        if (fM) filtered = filtered.filter(m=>m.map===fM);
+        if (!filtered.length) { c.innerHTML = '<div class="roster-empty">Aucun match enregistré.</div>'; return; }
+        c.innerHTML = filtered.map(m => {
+          const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}) : "—";
+          const resultHtml = m.result ? `<span class="match-result ${m.result}">${m.result==="win"?"WIN":"LOSE"}</span>` : "";
+          return `<div class="match-row"><span class="match-map">${escHtml(m.map)}</span><span class="match-action ${m.action}">${m.action.toUpperCase()}</span><span class="match-opponent">vs ${escHtml(m.opponent)}</span>${resultHtml}<span class="match-date">${dateStr}</span><button class="match-del" title="Supprimer" onclick="deleteMatch('${m.id}')">✕</button></div>`;
+        }).join("");
       }
 
       /* ═══════════════════════════════════════════════════
@@ -1775,66 +684,36 @@
       async function loadAllPlayerStats() {
         allPlayerStats = {};
         if (!currentUserDoc?.teamId) return;
-        const matchesWithResult = allMatches.filter(
-          (m) => m.result === "win" || m.result === "lose",
-        );
+        const matchesWithResult = allMatches.filter(m => m.result==="win"||m.result==="lose");
         for (const match of matchesWithResult) {
           try {
-            const snap = await db
-              .collection("teams")
-              .doc(currentUserDoc.teamId)
-              .collection("matches")
-              .doc(match.id)
-              .collection("playerStats")
-              .get();
-            if (!snap.empty) {
-              allPlayerStats[match.id] = [];
-              snap.forEach((doc) =>
-                allPlayerStats[match.id].push({ id: doc.id, ...doc.data() }),
-              );
-            }
-          } catch (e) {
-            /* skip */
-          }
+            const snap = await db.collection("teams").doc(currentUserDoc.teamId).collection("matches").doc(match.id).collection("playerStats").get();
+            if (!snap.empty) { allPlayerStats[match.id] = []; snap.forEach(doc => allPlayerStats[match.id].push({id:doc.id,...doc.data()})); }
+          } catch (e) { /* skip */ }
         }
       }
 
       function populateMatchSelect() {
         const sel = document.getElementById("psMatchSelect");
-        const matchesWithResult = allMatches.filter(
-          (m) => m.result === "win" || m.result === "lose",
-        );
-        sel.innerHTML =
-          '<option value="">— Choisir un match —</option>' +
-          matchesWithResult
-            .map((m) => {
-              const dateStr = m.date?.toDate
-                ? m.date
-                    .toDate()
-                    .toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                    })
-                : "";
-              const hasStats = allPlayerStats[m.id]?.length > 0;
-              return `<option value="${m.id}">${m.map} vs ${m.opponent} (${dateStr}) ${m.result === "win" ? "✓" : "✗"} ${hasStats ? "📊" : ""}</option>`;
-            })
-            .join("");
+        const matchesWithResult = allMatches.filter(m => m.result==="win"||m.result==="lose");
+        sel.innerHTML = '<option value="">— Choisir un match —</option>' +
+          matchesWithResult.map(m => {
+            const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}) : "";
+            const hasStats = allPlayerStats[m.id]?.length > 0;
+            return `<option value="${m.id}">${m.map} vs ${m.opponent} (${dateStr}) ${m.result==="win"?"✓":"✗"} ${hasStats?"📊":""}</option>`;
+          }).join("");
       }
 
       function loadPlayerStatsForm() {
         const matchId = document.getElementById("psMatchSelect").value;
         const container = document.getElementById("psFormRows");
         document.getElementById("psMsg").textContent = "";
-        if (!matchId) {
-          container.innerHTML = "";
-          return;
-        }
+        if (!matchId) { container.innerHTML = ""; return; }
         const existingStats = allPlayerStats[matchId] || [];
         let html = '<div style="margin-top:10px;">';
         html += `<div class="player-stat-row" style="border-bottom:1px solid var(--border);"><div class="pf-label" style="margin:0;">Joueur</div><div class="pf-label" style="margin:0;text-align:center;">Kills</div><div class="pf-label" style="margin:0;text-align:center;">Morts</div><div class="pf-label" style="margin:0;">Arme</div></div>`;
         for (const member of teamMembers) {
-          const existing = existingStats.find((s) => s.uid === member.uid);
+          const existing = existingStats.find(s => s.uid===member.uid);
           const kills = existing ? existing.kills : "";
           const deaths = existing ? existing.deaths : "";
           const weapon = existing ? existing.weapon : "";
@@ -1842,7 +721,7 @@
             <div class="player-stat-name">${escHtml(member.pseudo)}</div>
             <input class="player-stat-input" type="number" min="0" max="99" id="ps-k-${member.uid}" value="${kills}" placeholder="0" />
             <input class="player-stat-input" type="number" min="0" max="99" id="ps-d-${member.uid}" value="${deaths}" placeholder="0" />
-            <select class="pf-select" style="padding:6px 8px;font-size:12px;" id="ps-w-${member.uid}"><option value="">— Arme —</option>${WEAPONS.map((w) => `<option value="${w}" ${weapon === w ? "selected" : ""}>${w}</option>`).join("")}</select>
+            <select class="pf-select" style="padding:6px 8px;font-size:12px;" id="ps-w-${member.uid}"><option value="">— Arme —</option>${WEAPONS.map(w=>`<option value="${w}" ${weapon===w?"selected":""}>${w}</option>`).join("")}</select>
           </div>`;
         }
         html += `<div style="margin-top:12px;"><button class="pf-btn pf-btn-cyan pf-btn-sm" onclick="savePlayerStats('${matchId}')">Enregistrer les stats</button></div></div>`;
@@ -1851,41 +730,21 @@
 
       async function savePlayerStats(matchId) {
         const msg = document.getElementById("psMsg");
-        msg.className = "pf-msg";
-        msg.textContent = "Enregistrement...";
+        msg.className="pf-msg"; msg.textContent="Enregistrement...";
         try {
           const batch = db.batch();
-          const matchRef = db
-            .collection("teams")
-            .doc(currentUserDoc.teamId)
-            .collection("matches")
-            .doc(matchId);
+          const matchRef = db.collection("teams").doc(currentUserDoc.teamId).collection("matches").doc(matchId);
           for (const member of teamMembers) {
-            const kills =
-              parseInt(document.getElementById(`ps-k-${member.uid}`).value) ||
-              0;
-            const deaths =
-              parseInt(document.getElementById(`ps-d-${member.uid}`).value) ||
-              0;
+            const kills = parseInt(document.getElementById(`ps-k-${member.uid}`).value) || 0;
+            const deaths = parseInt(document.getElementById(`ps-d-${member.uid}`).value) || 0;
             const weapon = document.getElementById(`ps-w-${member.uid}`).value;
-            batch.set(matchRef.collection("playerStats").doc(member.uid), {
-              uid: member.uid,
-              playerName: member.pseudo,
-              kills,
-              deaths,
-              weapon,
-            });
+            batch.set(matchRef.collection("playerStats").doc(member.uid), { uid:member.uid, playerName:member.pseudo, kills, deaths, weapon });
           }
           await batch.commit();
           await loadAllPlayerStats();
-          populateMatchSelect();
-          renderPlayerSummary();
-          msg.className = "pf-msg success";
-          msg.textContent = "Stats joueurs enregistrées !";
-        } catch (e) {
-          msg.className = "pf-msg error";
-          msg.textContent = "Erreur : " + e.message;
-        }
+          populateMatchSelect(); renderPlayerSummary();
+          msg.className="pf-msg success"; msg.textContent="Stats joueurs enregistrées !";
+        } catch (e) { msg.className="pf-msg error"; msg.textContent="Erreur : "+e.message; }
       }
 
       function renderPlayerSummary() {
@@ -1893,169 +752,52 @@
         const playerAgg = {};
         for (const matchId of Object.keys(allPlayerStats)) {
           for (const ps of allPlayerStats[matchId]) {
-            if (!playerAgg[ps.uid])
-              playerAgg[ps.uid] = {
-                pseudo: ps.playerName,
-                totalKills: 0,
-                totalDeaths: 0,
-                weapons: {},
-                matchCount: 0,
-              };
+            if (!playerAgg[ps.uid]) playerAgg[ps.uid] = { pseudo:ps.playerName, totalKills:0, totalDeaths:0, weapons:{}, matchCount:0 };
             const a = playerAgg[ps.uid];
-            a.totalKills += ps.kills || 0;
-            a.totalDeaths += ps.deaths || 0;
-            a.matchCount++;
-            if (ps.weapon)
-              a.weapons[ps.weapon] = (a.weapons[ps.weapon] || 0) + 1;
+            a.totalKills += ps.kills||0; a.totalDeaths += ps.deaths||0; a.matchCount++;
+            if (ps.weapon) a.weapons[ps.weapon] = (a.weapons[ps.weapon]||0)+1;
           }
         }
         const uids = Object.keys(playerAgg);
-        if (!uids.length) {
-          container.innerHTML =
-            '<div class="roster-empty">Aucune stat enregistrée. Sélectionne un match ci-dessus pour saisir les stats.</div>';
-          return;
-        }
-        uids.sort((a, b) => {
-          const kdA =
-            playerAgg[a].totalDeaths > 0
-              ? playerAgg[a].totalKills / playerAgg[a].totalDeaths
-              : playerAgg[a].totalKills;
-          const kdB =
-            playerAgg[b].totalDeaths > 0
-              ? playerAgg[b].totalKills / playerAgg[b].totalDeaths
-              : playerAgg[b].totalKills;
-          return kdB - kdA;
+        if (!uids.length) { container.innerHTML = '<div class="roster-empty">Aucune stat enregistrée. Sélectionne un match ci-dessus pour saisir les stats.</div>'; return; }
+        uids.sort((a,b) => {
+          const kdA = playerAgg[a].totalDeaths>0 ? playerAgg[a].totalKills/playerAgg[a].totalDeaths : playerAgg[a].totalKills;
+          const kdB = playerAgg[b].totalDeaths>0 ? playerAgg[b].totalKills/playerAgg[b].totalDeaths : playerAgg[b].totalKills;
+          return kdB-kdA;
         });
-        container.innerHTML = uids
-          .map((uid) => {
-            const p = playerAgg[uid];
-            const kd =
-              p.totalDeaths > 0
-                ? (p.totalKills / p.totalDeaths).toFixed(2)
-                : p.totalKills > 0
-                  ? p.totalKills.toFixed(2)
-                  : "0.00";
-            const kdClass =
-              parseFloat(kd) >= 1
-                ? "good"
-                : parseFloat(kd) > 0
-                  ? "bad"
-                  : "neutral";
-            const initial = (p.pseudo || "?")[0].toUpperCase();
-            let topWeapon = "—",
-              topCount = 0;
-            for (const [w, c] of Object.entries(p.weapons)) {
-              if (c > topCount) {
-                topWeapon = w;
-                topCount = c;
-              }
-            }
-            return `<div class="ps-row"><div class="ps-avatar">${initial}</div><div class="ps-name">${escHtml(p.pseudo)}</div><div class="ps-stat"><div class="ps-stat-val">${p.totalKills}</div><div class="ps-stat-label">Kills</div></div><div class="ps-stat"><div class="ps-stat-val">${p.totalDeaths}</div><div class="ps-stat-label">Morts</div></div><div class="ps-stat"><div class="ps-kd ${kdClass}">${kd}</div><div class="ps-stat-label">K/D</div></div><div class="ps-stat"><div class="ps-weapon">${escHtml(topWeapon)}</div><div class="ps-stat-label">Arme fav.</div></div><div class="ps-stat"><div class="ps-stat-val" style="font-size:14px;">${p.matchCount}</div><div class="ps-stat-label">Matchs</div></div></div>`;
-          })
-          .join("");
+        container.innerHTML = uids.map(uid => {
+          const p = playerAgg[uid];
+          const kd = p.totalDeaths>0 ? (p.totalKills/p.totalDeaths).toFixed(2) : p.totalKills>0 ? p.totalKills.toFixed(2) : "0.00";
+          const kdClass = parseFloat(kd)>=1 ? "good" : parseFloat(kd)>0 ? "bad" : "neutral";
+          const initial = (p.pseudo||"?")[0].toUpperCase();
+          let topWeapon = "—", topCount = 0;
+          for (const [w,c] of Object.entries(p.weapons)) { if (c>topCount) { topWeapon=w; topCount=c; } }
+          return `<div class="ps-row"><div class="ps-avatar">${initial}</div><div class="ps-name">${escHtml(p.pseudo)}</div><div class="ps-stat"><div class="ps-stat-val">${p.totalKills}</div><div class="ps-stat-label">Kills</div></div><div class="ps-stat"><div class="ps-stat-val">${p.totalDeaths}</div><div class="ps-stat-label">Morts</div></div><div class="ps-stat"><div class="ps-kd ${kdClass}">${kd}</div><div class="ps-stat-label">K/D</div></div><div class="ps-stat"><div class="ps-weapon">${escHtml(topWeapon)}</div><div class="ps-stat-label">Arme fav.</div></div><div class="ps-stat"><div class="ps-stat-val" style="font-size:14px;">${p.matchCount}</div><div class="ps-stat-label">Matchs</div></div></div>`;
+        }).join("");
       }
 
       /* ═══════════════════════════════════════════════════
          HELPERS
          ═══════════════════════════════════════════════════ */
 
-      function generateTeamCode() {
-        const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        let r = "";
-        for (let i = 0; i < 6; i++)
-          r += c[Math.floor(Math.random() * c.length)];
-        return r;
-      }
-      function escHtml(s) {
-        const d = document.createElement("div");
-        d.textContent = s;
-        return d.innerHTML;
-      }
-      function copyTeamCode() {
-        const c = document.getElementById("teamCode").textContent;
-        navigator.clipboard.writeText(c).then(() => {
-          const el = document.getElementById("teamCode");
-          const o = el.textContent;
-          el.textContent = "COPIÉ ✓";
-          setTimeout(() => {
-            el.textContent = o;
-          }, 1500);
-        });
-      }
+      function generateTeamCode() { const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let r=""; for(let i=0;i<6;i++) r+=c[Math.floor(Math.random()*c.length)]; return r; }
+      function escHtml(s) { const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+      function copyTeamCode() { const c=document.getElementById("teamCode").textContent; navigator.clipboard.writeText(c).then(()=>{ const el=document.getElementById("teamCode"); const o=el.textContent; el.textContent="COPIÉ ✓"; setTimeout(()=>{el.textContent=o;},1500); }); }
       function switchTeamTab(tab) {
-        document
-          .querySelectorAll(".pf-tab")
-          .forEach((t, i) =>
-            t.classList.toggle(
-              "active",
-              (tab === "create" && i === 0) || (tab === "join" && i === 1),
-            ),
-          );
-        document
-          .getElementById("teamTabCreate")
-          .classList.toggle("active", tab === "create");
-        document
-          .getElementById("teamTabJoin")
-          .classList.toggle("active", tab === "join");
-        document.getElementById("teamMsg").textContent = "";
+        document.querySelectorAll(".pf-tab").forEach((t,i)=>t.classList.toggle("active",(tab==="create"&&i===0)||(tab==="join"&&i===1)));
+        document.getElementById("teamTabCreate").classList.toggle("active",tab==="create");
+        document.getElementById("teamTabJoin").classList.toggle("active",tab==="join");
+        document.getElementById("teamMsg").textContent="";
       }
 
       // ── BG Canvas ────────────────────────────────────────────
-      const canvas = document.getElementById("bg-canvas"),
-        ctx = canvas.getContext("2d");
-      let W,
-        H,
-        hexes = [];
-      const HEX_SIZE = 32;
-      function hexCorners(cx, cy, r) {
-        const p = [];
-        for (let i = 0; i < 6; i++) {
-          const a = (Math.PI / 180) * (60 * i - 30);
-          p.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
-        }
-        return p;
-      }
-      function buildGrid() {
-        hexes = [];
-        const w = HEX_SIZE * Math.sqrt(3),
-          h = HEX_SIZE * 2;
-        const cols = Math.ceil(W / w) + 2,
-          rows = Math.ceil(H / (h * 0.75)) + 2;
-        for (let r = -1; r < rows; r++)
-          for (let c = -1; c < cols; c++)
-            hexes.push({
-              x: c * w + (r % 2 === 0 ? 0 : w / 2),
-              y: r * h * 0.75,
-              pulse: Math.random() * Math.PI * 2,
-              speed: 0.005 + Math.random() * 0.012,
-              color:
-                Math.random() > 0.85 ? "rgba(45,212,191," : "rgba(200,151,58,",
-            });
-      }
-      function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        buildGrid();
-      }
-      function animate() {
-        ctx.clearRect(0, 0, W, H);
-        for (const h of hexes) {
-          h.pulse += h.speed;
-          const a = (Math.sin(h.pulse) * 0.5 + 0.5) * 0.18 + 0.02;
-          const p = hexCorners(h.x, h.y, HEX_SIZE - 1);
-          ctx.beginPath();
-          ctx.moveTo(p[0][0], p[0][1]);
-          for (let i = 1; i < 6; i++) ctx.lineTo(p[i][0], p[i][1]);
-          ctx.closePath();
-          ctx.strokeStyle = h.color + a + ")";
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
-        }
-        requestAnimationFrame(animate);
-      }
-      window.addEventListener("resize", resize);
-      resize();
-      animate();
+      const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+      let W,H,hexes=[]; const HEX_SIZE=32;
+      function hexCorners(cx,cy,r){const p=[];for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}
+      function buildGrid(){hexes=[];const w=HEX_SIZE*Math.sqrt(3),h=HEX_SIZE*2;const cols=Math.ceil(W/w)+2,rows=Math.ceil(H/(h*0.75))+2;for(let r=-1;r<rows;r++)for(let c=-1;c<cols;c++)hexes.push({x:c*w+(r%2===0?0:w/2),y:r*h*0.75,pulse:Math.random()*Math.PI*2,speed:0.005+Math.random()*0.012,color:Math.random()>0.85?'rgba(45,212,191,':'rgba(200,151,58,'});}
+      function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;buildGrid();}
+      function animate(){ctx.clearRect(0,0,W,H);for(const h of hexes){h.pulse+=h.speed;const a=(Math.sin(h.pulse)*0.5+0.5)*0.18+0.02;const p=hexCorners(h.x,h.y,HEX_SIZE-1);ctx.beginPath();ctx.moveTo(p[0][0],p[0][1]);for(let i=1;i<6;i++)ctx.lineTo(p[i][0],p[i][1]);ctx.closePath();ctx.strokeStyle=h.color+a+')';ctx.lineWidth=0.8;ctx.stroke();}requestAnimationFrame(animate);}
+      window.addEventListener('resize',resize);resize();animate();
     </script>
   </body>
 </html>
