@@ -188,6 +188,29 @@
         .stat-hero-group { gap: 10px; }
         .ps-row { gap: 6px; }
       }
+
+      /* ── Pick/Ban rows ── */
+      .pb-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+      .pb-row select { flex: 1; }
+      .pb-tag { font-family: var(--font-hud); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; }
+      .pb-tag.ban { color: #fca5a5; background: rgba(239,68,68,0.12); }
+      .pb-tag.pick { color: var(--cyan); background: rgba(45,212,191,0.12); }
+      .pb-remove { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; padding: 2px 4px; opacity: 0.4; transition: opacity 0.2s; }
+      .pb-remove:hover { opacity: 1; color: #ff6b6b; }
+
+      /* ── Match detail in history ── */
+      .match-detail { padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border2); border-radius: 3px; margin-bottom: 8px; }
+      .match-detail-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+      .match-detail-vs { font-family: var(--font-title); font-size: 18px; font-weight: 700; color: var(--text); }
+      .match-detail-result { font-family: var(--font-title); font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+      .match-detail-result.win { color: #4ade80; }
+      .match-detail-result.lose { color: #ff6b6b; }
+      .match-detail-date { font-family: var(--font-hud); font-size: 10px; color: var(--text-dim); opacity: 0.6; margin-left: auto; }
+      .match-detail-map { font-family: var(--font-hud); font-size: 11px; color: var(--cyan); letter-spacing: 0.05em; }
+      .match-detail-pb { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+      .match-detail-col-label { font-family: var(--font-hud); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+      .match-detail-items { display: flex; flex-wrap: wrap; gap: 4px; }
+      .match-detail-items .pb-tag { font-size: 10px; padding: 3px 8px; }
     </style>
   </head>
 
@@ -309,35 +332,62 @@
               <div class="stat-hero" id="statsOverview"></div>
               <div class="pf-divider"></div>
 
+              <!-- Logger un match complet -->
               <div style="margin-bottom:20px;">
                 <div class="pf-label" style="margin-bottom:12px;">Logger un match</div>
-                <div class="match-form">
-                  <div class="pf-field"><label class="pf-label">Map</label>
-                    <select class="pf-select" id="matchMap"><option value="">— Choisir —</option><option>Artefact</option><option>Atlantis</option><option>Ceres</option><option>Engine</option><option>Helios Station</option><option>Horizon</option><option>Lunar</option><option>Outlaw</option><option>Polaris</option><option>Silva</option><option>The Cliff</option></select>
+
+                <div class="match-form" style="margin-bottom:14px;">
+                  <div class="pf-field"><label class="pf-label">Date</label>
+                    <input class="pf-input" type="date" id="matchDate" />
                   </div>
-                  <div class="pf-field"><label class="pf-label">Action</label>
-                    <select class="pf-select" id="matchAction"><option value="pick">Pick</option><option value="ban">Ban</option></select>
+                  <div class="pf-field"><label class="pf-label">Adversaire</label>
+                    <input class="pf-input" type="text" id="matchOpponent" placeholder="Nom de l'&eacute;quipe adverse" maxlength="30" />
                   </div>
-                  <div class="pf-field"><label class="pf-label">Adversaire</label><input class="pf-input" type="text" id="matchOpponent" placeholder="Nom de l'&eacute;quipe adverse" maxlength="30" /></div>
                   <div class="pf-field"><label class="pf-label">R&eacute;sultat</label>
-                    <select class="pf-select" id="matchResult"><option value="">— (ban) —</option><option value="win">Win</option><option value="lose">Lose</option></select>
+                    <select class="pf-select" id="matchResult"><option value="win">Win</option><option value="lose">Lose</option></select>
                   </div>
-                  <div class="pf-field full"><div class="pf-row"><button class="pf-btn pf-btn-gold pf-btn-sm" onclick="logMatch()">Enregistrer le match</button></div><div class="pf-msg" id="matchMsg"></div></div>
+                  <div class="pf-field"><label class="pf-label">Map jou&eacute;e</label>
+                    <select class="pf-select" id="matchMapPlayed"><option value="">— Choisir —</option></select>
+                  </div>
                 </div>
+
+                <!-- Picks / Bans dynamiques -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">
+                  <!-- Notre équipe -->
+                  <div>
+                    <div class="pf-label" style="margin-bottom:8px;color:var(--cyan);">Notre &eacute;quipe</div>
+                    <div id="ourBansContainer" style="margin-bottom:8px;"></div>
+                    <button class="pf-btn pf-btn-outline pf-btn-sm" style="margin-bottom:10px;" onclick="addPickBanRow('ourBans')">+ Ban</button>
+                    <div id="ourPicksContainer" style="margin-bottom:8px;"></div>
+                    <button class="pf-btn pf-btn-outline pf-btn-sm" onclick="addPickBanRow('ourPicks')">+ Pick</button>
+                  </div>
+                  <!-- Équipe adverse -->
+                  <div>
+                    <div class="pf-label" style="margin-bottom:8px;color:#fca5a5;">&Eacute;quipe adverse</div>
+                    <div id="theirBansContainer" style="margin-bottom:8px;"></div>
+                    <button class="pf-btn pf-btn-outline pf-btn-sm" style="margin-bottom:10px;" onclick="addPickBanRow('theirBans')">+ Ban</button>
+                    <div id="theirPicksContainer" style="margin-bottom:8px;"></div>
+                    <button class="pf-btn pf-btn-outline pf-btn-sm" onclick="addPickBanRow('theirPicks')">+ Pick</button>
+                  </div>
+                </div>
+
+                <div class="pf-row"><button class="pf-btn pf-btn-gold pf-btn-sm" onclick="logMatch()">Enregistrer le match</button></div>
+                <div class="pf-msg" id="matchMsg"></div>
               </div>
               <div class="pf-divider"></div>
 
+              <!-- Récap par map -->
               <div style="margin-bottom:20px;">
                 <div class="pf-label" style="margin-bottom:10px;">R&eacute;cap par map</div>
-                <div style="overflow-x:auto;"><table class="map-stats-table" id="mapStatsTable"><thead><tr><th>Map</th><th>Picks</th><th>Winrate</th><th>Bans</th></tr></thead><tbody id="mapStatsBody"></tbody></table></div>
+                <div style="overflow-x:auto;"><table class="map-stats-table" id="mapStatsTable"><thead><tr><th>Map</th><th>Jou&eacute;e</th><th>Winrate</th><th>Nos Picks</th><th>Nos Bans</th><th>Leurs Picks</th><th>Leurs Bans</th></tr></thead><tbody id="mapStatsBody"></tbody></table></div>
               </div>
               <div class="pf-divider"></div>
 
+              <!-- Historique -->
               <div>
                 <div class="pf-label" style="margin-bottom:10px;">Historique des matchs</div>
                 <div class="filter-row">
                   <select class="pf-select" id="filterOpponent" onchange="renderMatchHistory()"><option value="">Tous les adversaires</option></select>
-                  <select class="pf-select" id="filterMap" onchange="renderMatchHistory()"><option value="">Toutes les maps</option></select>
                 </div>
                 <div class="match-history" id="matchHistory"></div>
               </div>
@@ -355,17 +405,57 @@
           <div class="profil-card-body" id="statsPersoBody">
             <div class="stats-locked" id="statsPersoLocked"><div class="stats-locked-icon">🎯</div>Rejoins ou cr&eacute;e une &eacute;quipe pour tracker les stats joueurs.</div>
             <div id="statsPersoContent" style="display:none;">
-              <div style="margin-bottom:20px;" id="playerStatsForm">
-                <div class="pf-label" style="margin-bottom:10px;">Saisir les stats d&rsquo;un match</div>
-                <div class="pf-field"><label class="pf-label">Match concern&eacute;</label>
-                  <select class="pf-select" id="psMatchSelect" onchange="loadPlayerStatsForm()"><option value="">— Choisir un match —</option></select>
-                </div>
-                <div id="psFormRows"></div>
-                <div class="pf-msg" id="psMsg"></div>
+
+              <!-- Tabs Match / Entraînement -->
+              <div class="pf-tabs" style="margin-bottom:18px;">
+                <button class="pf-tab active" onclick="switchStatsTab('match')">Stats Match</button>
+                <button class="pf-tab" onclick="switchStatsTab('training')">Stats Entra&icirc;nement</button>
               </div>
+
+              <!-- TAB : Stats Match -->
+              <div class="pf-tab-panel active" id="statsTabMatch">
+                <div style="margin-bottom:20px;" id="playerStatsForm">
+                  <div class="pf-hint" style="margin-bottom:12px;">Saisir les stats de chaque joueur apr&egrave;s un match comp&eacute;titif.</div>
+                  <div class="pf-field"><label class="pf-label">Match concern&eacute;</label>
+                    <select class="pf-select" id="psMatchSelect" onchange="loadPlayerStatsForm()"><option value="">— Choisir un match —</option></select>
+                  </div>
+                  <div id="psFormRows"></div>
+                  <div class="pf-msg" id="psMsg"></div>
+                </div>
+              </div>
+
+              <!-- TAB : Stats Entraînement -->
+              <div class="pf-tab-panel" id="statsTabTraining">
+                <div style="margin-bottom:20px;">
+                  <div class="pf-hint" style="margin-bottom:12px;">Enregistre tes stats perso apr&egrave;s une session d&rsquo;entra&icirc;nement ou une game non comp&eacute;titive.</div>
+                  <div class="match-form">
+                    <div class="pf-field"><label class="pf-label">Joueur</label>
+                      <select class="pf-select" id="trainPlayer"></select>
+                    </div>
+                    <div class="pf-field"><label class="pf-label">Arme utilis&eacute;e</label>
+                      <select class="pf-select" id="trainWeapon"><option value="">— Arme —</option></select>
+                    </div>
+                    <div class="pf-field"><label class="pf-label">Kills</label>
+                      <input class="pf-input" type="number" min="0" max="999" id="trainKills" placeholder="0" />
+                    </div>
+                    <div class="pf-field"><label class="pf-label">Morts</label>
+                      <input class="pf-input" type="number" min="0" max="999" id="trainDeaths" placeholder="0" />
+                    </div>
+                    <div class="pf-field full">
+                      <div class="pf-row"><button class="pf-btn pf-btn-cyan pf-btn-sm" onclick="saveTrainingStat()">Enregistrer</button></div>
+                      <div class="pf-msg" id="trainMsg"></div>
+                    </div>
+                  </div>
+
+                  <div class="pf-divider"></div>
+                  <div class="pf-label" style="margin-bottom:10px;">Historique entra&icirc;nement</div>
+                  <div class="match-history" id="trainingHistory"></div>
+                </div>
+              </div>
+
               <div class="pf-divider"></div>
               <div>
-                <div class="pf-label" style="margin-bottom:10px;">R&eacute;sum&eacute; par joueur</div>
+                <div class="pf-label" style="margin-bottom:10px;">R&eacute;sum&eacute; global par joueur <span style="opacity:0.5;font-size:9px;">(matchs + entra&icirc;nement)</span></div>
                 <div class="ps-summary" id="psSummary"><div class="roster-empty">Aucune stat enregistr&eacute;e.</div></div>
               </div>
             </div>
@@ -394,13 +484,11 @@
 
       const MAPS = ["Artefact","Atlantis","Ceres","Engine","Helios Station","Horizon","Lunar","Outlaw","Polaris","Silva","The Cliff"];
       const WEAPONS = [
-        "AK-47","M4A1","FAMAS","AUG","Galil",
-        "AWP","Scout","SG 553",
-        "P90","MP5","UMP-45","MAC-10",
-        "Nova","XM1014","MAG-7","Sawed-Off",
-        "Deagle","Glock","USP-S","P250","Five-SeveN","Tec-9","CZ75",
-        "M249","Negev",
-        "Grenade","Flashbang","Smoke","Molotov",
+        "AK-77","MX-42","Vulcan",
+        "Atlas","Fury","Needle",
+        "T1 Gauss","MP-52","Spectre","Striker",
+        "ERG","Warden","Westfire",
+        "DX3","Sticky","Sonar","Shield",
         "Autre"
       ];
 
@@ -410,6 +498,7 @@
       let teamMembers = [];
       let allMatches = [];
       let allPlayerStats = {};
+      let allTrainingStats = []; // {id, uid, playerName, kills, deaths, weapon, date}
 
       // ── Auth gate ────────────────────────────────────────────
       auth.onAuthStateChanged(async (user) => {
@@ -494,7 +583,10 @@
           await loadRoster();
           await loadAllMatches();
           await loadAllPlayerStats();
-          renderStatsOverview(); renderMapStats(); renderMatchHistory(); populateFilters(); populateMatchSelect(); renderPlayerSummary();
+          await loadAllTrainingStats();
+          initMatchForm();
+          renderStatsOverview(); renderMapStats(); renderMatchHistory(); populateFilters(); populateMatchSelect();
+          populateTrainingForm(); renderTrainingHistory(); renderPlayerSummary();
         } catch (e) { console.error("Erreur chargement team:", e); }
       }
 
@@ -582,27 +674,68 @@
       }
 
       async function logMatch() {
-        const map = document.getElementById("matchMap").value;
-        const action = document.getElementById("matchAction").value;
+        const dateVal = document.getElementById("matchDate").value;
         const opponent = document.getElementById("matchOpponent").value.trim();
         const result = document.getElementById("matchResult").value;
+        const mapPlayed = document.getElementById("matchMapPlayed").value;
         const msg = document.getElementById("matchMsg");
-        if (!map) { msg.className="pf-msg error"; msg.textContent="Choisis une map."; return; }
+
         if (!opponent) { msg.className="pf-msg error"; msg.textContent="Indique l'adversaire."; return; }
-        if (action==="pick" && !result) { msg.className="pf-msg error"; msg.textContent="Indique le résultat (Win/Lose) pour un pick."; return; }
+        if (!dateVal) { msg.className="pf-msg error"; msg.textContent="Indique la date du match."; return; }
+
+        // Collecter picks/bans
+        const ourBans = collectPickBans("ourBans");
+        const ourPicks = collectPickBans("ourPicks");
+        const theirBans = collectPickBans("theirBans");
+        const theirPicks = collectPickBans("theirPicks");
+
         msg.className="pf-msg"; msg.textContent="Enregistrement...";
         try {
           await db.collection("teams").doc(currentUserDoc.teamId).collection("matches").add({
-            map, action, opponent, result: action==="ban" ? "" : result,
-            date: firebase.firestore.FieldValue.serverTimestamp(), createdBy: currentUser.uid,
+            date: firebase.firestore.Timestamp.fromDate(new Date(dateVal + "T12:00:00")),
+            opponent, result, mapPlayed,
+            ourBans, ourPicks, theirBans, theirPicks,
+            createdBy: currentUser.uid,
           });
           await loadAllMatches();
           renderStatsOverview(); renderMapStats(); renderMatchHistory(); populateFilters(); populateMatchSelect();
-          document.getElementById("matchMap").value = "";
+          // Reset form
           document.getElementById("matchOpponent").value = "";
-          document.getElementById("matchResult").value = "";
+          document.getElementById("matchMapPlayed").value = "";
+          document.getElementById("matchDate").value = "";
+          ["ourBans","ourPicks","theirBans","theirPicks"].forEach(id => document.getElementById(id+"Container").innerHTML = "");
           msg.className="pf-msg success"; msg.textContent="Match enregistré !";
         } catch (e) { msg.className="pf-msg error"; msg.textContent="Erreur : "+e.message; }
+      }
+
+      // ── Pick/Ban dynamic rows ──────────────────────────
+      function addPickBanRow(containerId) {
+        const container = document.getElementById(containerId + "Container");
+        const type = containerId.includes("Ban") ? "ban" : "pick";
+        const div = document.createElement("div");
+        div.className = "pb-row";
+        div.innerHTML = `<span class="pb-tag ${type}">${type.toUpperCase()}</span>
+          <select class="pf-select" style="padding:6px 10px;font-size:12px;">
+            <option value="">— Map —</option>${MAPS.map(m=>`<option value="${m}">${m}</option>`).join("")}
+          </select>
+          <button class="pb-remove" onclick="this.parentElement.remove()" title="Retirer">✕</button>`;
+        container.appendChild(div);
+      }
+
+      function collectPickBans(containerId) {
+        const container = document.getElementById(containerId + "Container");
+        const selects = container.querySelectorAll("select");
+        const values = [];
+        selects.forEach(s => { if (s.value) values.push(s.value); });
+        return values;
+      }
+
+      function initMatchForm() {
+        // Peupler le select map jouée
+        const sel = document.getElementById("matchMapPlayed");
+        sel.innerHTML = '<option value="">— Choisir —</option>' + MAPS.map(m => `<option value="${m}">${m}</option>`).join("");
+        // Date par défaut = aujourd'hui
+        document.getElementById("matchDate").value = new Date().toISOString().split("T")[0];
       }
 
       async function deleteMatch(matchId) {
@@ -621,7 +754,7 @@
 
       function renderStatsOverview() {
         const c = document.getElementById("statsOverview");
-        const played = allMatches.filter(m => m.action==="pick" && m.result);
+        const played = allMatches.filter(m => m.result);
         const wins = played.filter(m => m.result==="win").length;
         const losses = played.filter(m => m.result==="lose").length;
         const total = played.length;
@@ -640,40 +773,63 @@
       function renderMapStats() {
         const body = document.getElementById("mapStatsBody");
         body.innerHTML = MAPS.map(map => {
-          const picks = allMatches.filter(m => m.map===map && m.action==="pick");
-          const bans = allMatches.filter(m => m.map===map && m.action==="ban");
-          const winsOnPick = picks.filter(m => m.result==="win").length;
-          const nbPick = picks.length, nbBan = bans.length;
-          if (nbPick===0 && nbBan===0) return `<tr><td>${map}</td><td>0</td><td class="wr-na">—</td><td>0</td></tr>`;
-          const wr = nbPick>0 ? Math.round((winsOnPick/nbPick)*100) : -1;
-          const wrStr = wr>=0 ? wr+"%" : "—";
-          const wrClass = wr<0 ? "wr-na" : wr>=50 ? "wr-good" : "wr-bad";
-          return `<tr><td>${map}</td><td>${nbPick}</td><td class="${wrClass}">${wrStr}</td><td>${nbBan}</td></tr>`;
+          // Compteurs
+          let played = 0, wins = 0, ourPicks = 0, ourBans = 0, theirPicks = 0, theirBans = 0;
+          for (const m of allMatches) {
+            if (m.mapPlayed === map) { played++; if (m.result === "win") wins++; }
+            if (m.ourPicks?.includes(map)) ourPicks++;
+            if (m.ourBans?.includes(map)) ourBans++;
+            if (m.theirPicks?.includes(map)) theirPicks++;
+            if (m.theirBans?.includes(map)) theirBans++;
+          }
+          const wr = played > 0 ? Math.round((wins/played)*100) : -1;
+          const wrStr = wr >= 0 ? wr+"%" : "—";
+          const wrClass = wr < 0 ? "wr-na" : wr >= 50 ? "wr-good" : "wr-bad";
+          const hasData = played || ourPicks || ourBans || theirPicks || theirBans;
+          if (!hasData) return `<tr><td>${map}</td><td>0</td><td class="wr-na">—</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>`;
+          return `<tr><td>${map}</td><td>${played}</td><td class="${wrClass}">${wrStr}</td><td>${ourPicks}</td><td>${ourBans}</td><td>${theirPicks}</td><td>${theirBans}</td></tr>`;
         }).join("");
       }
 
       function populateFilters() {
         const opponents = [...new Set(allMatches.map(m=>m.opponent).filter(Boolean))].sort();
-        const maps = [...new Set(allMatches.map(m=>m.map))].sort();
-        const fO = document.getElementById("filterOpponent"), fM = document.getElementById("filterMap");
-        const pO = fO.value, pM = fM.value;
+        const fO = document.getElementById("filterOpponent");
+        const pO = fO.value;
         fO.innerHTML = '<option value="">Tous les adversaires</option>' + opponents.map(o=>`<option value="${escHtml(o)}">${escHtml(o)}</option>`).join("");
-        fM.innerHTML = '<option value="">Toutes les maps</option>' + maps.map(m=>`<option value="${escHtml(m)}">${escHtml(m)}</option>`).join("");
-        fO.value = pO; fM.value = pM;
+        fO.value = pO;
       }
 
       function renderMatchHistory() {
         const c = document.getElementById("matchHistory");
         const fO = document.getElementById("filterOpponent").value;
-        const fM = document.getElementById("filterMap").value;
         let filtered = allMatches;
         if (fO) filtered = filtered.filter(m=>m.opponent===fO);
-        if (fM) filtered = filtered.filter(m=>m.map===fM);
         if (!filtered.length) { c.innerHTML = '<div class="roster-empty">Aucun match enregistré.</div>'; return; }
         c.innerHTML = filtered.map(m => {
-          const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}) : "—";
-          const resultHtml = m.result ? `<span class="match-result ${m.result}">${m.result==="win"?"WIN":"LOSE"}</span>` : "";
-          return `<div class="match-row"><span class="match-map">${escHtml(m.map)}</span><span class="match-action ${m.action}">${m.action.toUpperCase()}</span><span class="match-opponent">vs ${escHtml(m.opponent)}</span>${resultHtml}<span class="match-date">${dateStr}</span><button class="match-del" title="Supprimer" onclick="deleteMatch('${m.id}')">✕</button></div>`;
+          const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
+
+          // Picks/bans display
+          const renderTags = (arr, type) => (arr||[]).map(v => `<span class="pb-tag ${type}">${escHtml(v)}</span>`).join("");
+
+          return `<div class="match-detail">
+            <div class="match-detail-header">
+              <span class="match-detail-vs">vs ${escHtml(m.opponent)}</span>
+              <span class="match-detail-result ${m.result}">${m.result==="win"?"WIN":"LOSE"}</span>
+              ${m.mapPlayed ? `<span class="match-detail-map">▶ ${escHtml(m.mapPlayed)}</span>` : ""}
+              <span class="match-detail-date">${dateStr}</span>
+              <button class="match-del" title="Supprimer" onclick="deleteMatch('${m.id}')">✕</button>
+            </div>
+            <div class="match-detail-pb">
+              <div>
+                <div class="match-detail-col-label">Notre &eacute;quipe</div>
+                <div class="match-detail-items">${renderTags(m.ourBans,"ban")}${renderTags(m.ourPicks,"pick")}</div>
+              </div>
+              <div>
+                <div class="match-detail-col-label">${escHtml(m.opponent)}</div>
+                <div class="match-detail-items">${renderTags(m.theirBans,"ban")}${renderTags(m.theirPicks,"pick")}</div>
+              </div>
+            </div>
+          </div>`;
         }).join("");
       }
 
@@ -700,7 +856,8 @@
           matchesWithResult.map(m => {
             const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}) : "";
             const hasStats = allPlayerStats[m.id]?.length > 0;
-            return `<option value="${m.id}">${m.map} vs ${m.opponent} (${dateStr}) ${m.result==="win"?"✓":"✗"} ${hasStats?"📊":""}</option>`;
+            const mapLabel = m.mapPlayed || m.map || "—";
+            return `<option value="${m.id}">${mapLabel} vs ${m.opponent} (${dateStr}) ${m.result==="win"?"✓":"✗"} ${hasStats?"📊":""}</option>`;
           }).join("");
       }
 
@@ -750,16 +907,27 @@
       function renderPlayerSummary() {
         const container = document.getElementById("psSummary");
         const playerAgg = {};
+
+        // Agréger les stats matchs
         for (const matchId of Object.keys(allPlayerStats)) {
           for (const ps of allPlayerStats[matchId]) {
-            if (!playerAgg[ps.uid]) playerAgg[ps.uid] = { pseudo:ps.playerName, totalKills:0, totalDeaths:0, weapons:{}, matchCount:0 };
+            if (!playerAgg[ps.uid]) playerAgg[ps.uid] = { pseudo:ps.playerName, totalKills:0, totalDeaths:0, weapons:{}, matchCount:0, trainCount:0 };
             const a = playerAgg[ps.uid];
             a.totalKills += ps.kills||0; a.totalDeaths += ps.deaths||0; a.matchCount++;
             if (ps.weapon) a.weapons[ps.weapon] = (a.weapons[ps.weapon]||0)+1;
           }
         }
+
+        // Agréger les stats entraînement
+        for (const ts of allTrainingStats) {
+          if (!playerAgg[ts.uid]) playerAgg[ts.uid] = { pseudo:ts.playerName, totalKills:0, totalDeaths:0, weapons:{}, matchCount:0, trainCount:0 };
+          const a = playerAgg[ts.uid];
+          a.totalKills += ts.kills||0; a.totalDeaths += ts.deaths||0; a.trainCount++;
+          if (ts.weapon) a.weapons[ts.weapon] = (a.weapons[ts.weapon]||0)+1;
+        }
+
         const uids = Object.keys(playerAgg);
-        if (!uids.length) { container.innerHTML = '<div class="roster-empty">Aucune stat enregistrée. Sélectionne un match ci-dessus pour saisir les stats.</div>'; return; }
+        if (!uids.length) { container.innerHTML = '<div class="roster-empty">Aucune stat enregistrée. Utilise les onglets ci-dessus pour saisir des stats.</div>'; return; }
         uids.sort((a,b) => {
           const kdA = playerAgg[a].totalDeaths>0 ? playerAgg[a].totalKills/playerAgg[a].totalDeaths : playerAgg[a].totalKills;
           const kdB = playerAgg[b].totalDeaths>0 ? playerAgg[b].totalKills/playerAgg[b].totalDeaths : playerAgg[b].totalKills;
@@ -772,8 +940,93 @@
           const initial = (p.pseudo||"?")[0].toUpperCase();
           let topWeapon = "—", topCount = 0;
           for (const [w,c] of Object.entries(p.weapons)) { if (c>topCount) { topWeapon=w; topCount=c; } }
-          return `<div class="ps-row"><div class="ps-avatar">${initial}</div><div class="ps-name">${escHtml(p.pseudo)}</div><div class="ps-stat"><div class="ps-stat-val">${p.totalKills}</div><div class="ps-stat-label">Kills</div></div><div class="ps-stat"><div class="ps-stat-val">${p.totalDeaths}</div><div class="ps-stat-label">Morts</div></div><div class="ps-stat"><div class="ps-kd ${kdClass}">${kd}</div><div class="ps-stat-label">K/D</div></div><div class="ps-stat"><div class="ps-weapon">${escHtml(topWeapon)}</div><div class="ps-stat-label">Arme fav.</div></div><div class="ps-stat"><div class="ps-stat-val" style="font-size:14px;">${p.matchCount}</div><div class="ps-stat-label">Matchs</div></div></div>`;
+          const totalGames = p.matchCount + p.trainCount;
+          return `<div class="ps-row"><div class="ps-avatar">${initial}</div><div class="ps-name">${escHtml(p.pseudo)}</div><div class="ps-stat"><div class="ps-stat-val">${p.totalKills}</div><div class="ps-stat-label">Kills</div></div><div class="ps-stat"><div class="ps-stat-val">${p.totalDeaths}</div><div class="ps-stat-label">Morts</div></div><div class="ps-stat"><div class="ps-kd ${kdClass}">${kd}</div><div class="ps-stat-label">K/D</div></div><div class="ps-stat"><div class="ps-weapon">${escHtml(topWeapon)}</div><div class="ps-stat-label">Arme fav.</div></div><div class="ps-stat"><div class="ps-stat-val" style="font-size:14px;">${totalGames}</div><div class="ps-stat-label">Games</div></div></div>`;
         }).join("");
+      }
+
+      /* ═══════════════════════════════════════════════════
+         STATS ENTRAÎNEMENT
+         ═══════════════════════════════════════════════════ */
+
+      async function loadAllTrainingStats() {
+        allTrainingStats = [];
+        if (!currentUserDoc?.teamId) return;
+        try {
+          const snap = await db.collection("teams").doc(currentUserDoc.teamId).collection("trainingStats").orderBy("date", "desc").get();
+          snap.forEach(doc => allTrainingStats.push({ id: doc.id, ...doc.data() }));
+        } catch (e) { console.error("Erreur chargement training stats:", e); }
+      }
+
+      function populateTrainingForm() {
+        // Joueur select
+        const sel = document.getElementById("trainPlayer");
+        sel.innerHTML = teamMembers.map(m => `<option value="${m.uid}">${escHtml(m.pseudo)}</option>`).join("");
+
+        // Arme select
+        const wSel = document.getElementById("trainWeapon");
+        wSel.innerHTML = '<option value="">— Arme —</option>' + WEAPONS.map(w => `<option value="${w}">${w}</option>`).join("");
+      }
+
+      async function saveTrainingStat() {
+        const uid = document.getElementById("trainPlayer").value;
+        const weapon = document.getElementById("trainWeapon").value;
+        const kills = parseInt(document.getElementById("trainKills").value) || 0;
+        const deaths = parseInt(document.getElementById("trainDeaths").value) || 0;
+        const msg = document.getElementById("trainMsg");
+
+        if (!uid) { msg.className="pf-msg error"; msg.textContent="Choisis un joueur."; return; }
+
+        const member = teamMembers.find(m => m.uid === uid);
+        msg.className="pf-msg"; msg.textContent="Enregistrement...";
+
+        try {
+          await db.collection("teams").doc(currentUserDoc.teamId).collection("trainingStats").add({
+            uid, playerName: member?.pseudo || "Joueur", kills, deaths, weapon,
+            date: firebase.firestore.FieldValue.serverTimestamp(), createdBy: currentUser.uid,
+          });
+          await loadAllTrainingStats();
+          renderTrainingHistory();
+          renderPlayerSummary();
+          document.getElementById("trainKills").value = "";
+          document.getElementById("trainDeaths").value = "";
+          document.getElementById("trainWeapon").value = "";
+          msg.className="pf-msg success"; msg.textContent="Stats entraînement enregistrées !";
+        } catch (e) { msg.className="pf-msg error"; msg.textContent="Erreur : "+e.message; }
+      }
+
+      async function deleteTrainingStat(id) {
+        if (!confirm("Supprimer cette entrée ?")) return;
+        try {
+          await db.collection("teams").doc(currentUserDoc.teamId).collection("trainingStats").doc(id).delete();
+          await loadAllTrainingStats();
+          renderTrainingHistory();
+          renderPlayerSummary();
+        } catch (e) { console.error("Erreur suppression training:", e); }
+      }
+
+      function renderTrainingHistory() {
+        const c = document.getElementById("trainingHistory");
+        if (!allTrainingStats.length) { c.innerHTML = '<div class="roster-empty">Aucune session enregistrée.</div>'; return; }
+        c.innerHTML = allTrainingStats.map(t => {
+          const dateStr = t.date?.toDate ? t.date.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}) : "—";
+          const kd = t.deaths>0 ? (t.kills/t.deaths).toFixed(1) : t.kills;
+          return `<div class="match-row">
+            <span class="match-map">${escHtml(t.playerName)}</span>
+            <span style="color:var(--text);font-family:var(--font-hud);font-size:12px;">${t.kills}K / ${t.deaths}D</span>
+            <span style="font-family:var(--font-title);font-weight:700;color:${parseFloat(kd)>=1?'#4ade80':'#ff6b6b'};font-size:14px;">${kd}</span>
+            <span class="ps-weapon">${escHtml(t.weapon||"—")}</span>
+            <span class="match-date">${dateStr}</span>
+            <button class="match-del" title="Supprimer" onclick="deleteTrainingStat('${t.id}')">✕</button>
+          </div>`;
+        }).join("");
+      }
+
+      function switchStatsTab(tab) {
+        const tabs = document.querySelectorAll("#statsPersoContent > .pf-tabs .pf-tab");
+        tabs.forEach((t, i) => t.classList.toggle("active", (tab==="match"&&i===0)||(tab==="training"&&i===1)));
+        document.getElementById("statsTabMatch").classList.toggle("active", tab==="match");
+        document.getElementById("statsTabTraining").classList.toggle("active", tab==="training");
       }
 
       /* ═══════════════════════════════════════════════════
